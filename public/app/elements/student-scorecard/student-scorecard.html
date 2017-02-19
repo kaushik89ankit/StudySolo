@@ -1,0 +1,269 @@
+<dom-module id="student-scorecard">
+    <template>
+        <style>
+        :host {
+            display: block;
+        }
+        
+        .top_container {
+            @apply(--layout-vertical);
+            margin: 5px;
+            margin-left: 3vw;
+            margin-right: 3vw;
+        }
+        
+        .bottom_container {
+            @apply(--layout-vertical);
+            margin-left: auto;
+            margin-right: auto;
+            width: 40vw;
+            text-align: center;
+        }
+        
+        table {
+            @apply(--layout-center-justified);
+            @apply(--layout-horizontal);
+            margin: 1vh;
+            padding: 2%;
+        }
+        
+        th,
+        td {
+            border: 1px solid black;
+            width: 3%;
+            margin: 5%;
+            padding: 2%;
+            text-align: center;
+            font-size: 20px;
+            @apply(--layout-justified);
+            font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #E9EAED;
+        }
+        
+        #correct {
+            background-color: white;
+        }
+        
+        #incorrect {
+            background-color: white;
+        }
+        
+        #tdata {
+            background-color: white;
+        }
+        
+        .okButton {
+            background-color: var(--button-normal);
+            color: var(--color-white);
+        }
+        
+        .okButton:hover {
+            background-color: var(--button-hover);
+        }
+        </style>
+        <paper-card style="background:white; margin:5px; height:88vh;" elevation="2">
+            <paper-button style="width:10vw; height:6vh;margin-top:1vh; margin-left:10px;" class="okButton" on-click="_goback"> Go Back</paper-button>
+            <h2 style="width:100%; text-align:center;"><u>Score Card</u></h2>
+            <div class="top_container">
+                <div style="width:10vw;" class="horizontal layout"><b>Test ID :</b> <span style="padding-left:5px;text-transform: uppercase;">{{test_id}}</span></div>
+                <div class="horizontal layout" style="margin-top:5px;">
+                    <div><b>Test Title :</b> </div>
+                    <div style="padding-left:5px; text-transform: uppercase;  word-wrap: break-word;">{{test_title}}</div>
+                </div>
+            </div>
+            <div>
+                <table>
+                    <tr>
+                        <th>Maximum Marks</th>
+                        <th>Your Score</th>
+                        <th>Total Questions</th>
+                        <th>Questions Attempted</th>
+                        <th>Correct Questions</th>
+                        <th>Incorrect Questions</th>
+                    </tr>
+                    <tr>
+                        <td id="tdata">{{total_marks}}</td>
+                        <td id="tdata">{{your_score}}</td>
+                        <td id="tdata">{{total_q}}</td>
+                        <td id="tdata">{{q_attempt}}</td>
+                        <td id="correct">{{correct_q}}</td>
+                        <td id="incorrect">{{incorrect_q}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="bottom_container">
+                <h3 id="viewRankText">Rank will be announced at <span>{{resultTime}}</span></h3>
+                <div class="horizontal layout">
+                    <paper-button id="viewRank" style="width:10vw; margin-top:1vh;  margin-left:auto; margin-right:auto;" class="okButton" on-click="_viewrank"> View Rank</paper-button>
+                </div>
+            </div>
+        </paper-card>
+        <iron-ajax id="get_previousresponse" url="/api/testresponses" params="{{responseget_Params}}" method="GET" on-response="getresponse_onresponse" on-error="getresponse_onerror"></iron-ajax>
+    </template>
+    <script>
+    (function() {
+        'use strict';
+        Polymer({
+            is: 'student-scorecard',
+            properties: {
+                test_id: {
+                    value: '',
+                    notify: true
+                },
+                test_title: {
+                    value: '',
+                    notify: true
+                },
+                total_marks: {
+                    value: '',
+                    notify: true
+                },
+                your_score: {
+                    value: '',
+                    notify: true
+                },
+                total_q: {
+                    value: '',
+                    notify: true
+                },
+                q_attempt: {
+                    value: '',
+                    notify: true
+                },
+                correct_q: {
+                    value: '',
+                    notify: true
+                },
+                incorrect_q: {
+                    value: '',
+                    notify: true
+                },
+                responseget_Params: {
+                    type: String,
+                    notify: true
+                },
+                resultTime:{
+                    type:String,
+                    notify:true
+                },
+                endTime:{
+                    type:String,
+                    notify:true
+                }
+            },
+
+            loadScore: function(testId, testTitle, totalMarks, endTime) {
+                this.test_id = testId;
+                this.test_title = testTitle;
+                this.total_marks = totalMarks;
+                this.resultTime = this.calcTime(endTime);
+                this.endTime = endTime;
+                this.checkRankstatus();
+                this.setResponseGetParams();
+                this.callAjax();
+            },
+            setResponseGetParams: function() {
+                var selObj = JSON.stringify({
+                    "where": {
+                        student_id: localStorage.loginid,
+                        test_id: this.test_id,
+                        status: "submitted"
+                    },
+                    "fields": {
+                        correct_questions: true,
+                        wrong_questions: true,
+                        total_questions: true,
+                        score: true
+                    }
+                });
+                var tempVar = {
+                    filter: selObj
+                };
+
+                this.responseget_Params = tempVar;
+            },
+            callAjax: function() {
+                app.waitDialogMessage = "Please wait getting scorecard..";
+                app.$.commonWaitDialog.open();
+                this.$.get_previousresponse.generateRequest();
+            },
+            getresponse_onresponse: function() {
+                if (this.$.get_previousresponse.lastResponse != null) {
+                    var tempResponse = this.$.get_previousresponse.lastResponse[0];
+                    var tempAttempted = tempResponse.correct_questions + tempResponse.wrong_questions;
+                    this.your_score = tempResponse.score;
+                    this.total_q = tempResponse.total_questions;
+                    this.q_attempt = tempAttempted;
+                    this.correct_q = tempResponse.correct_questions;
+                    this.incorrect_q = tempResponse.wrong_questions;
+                }
+                 app.$.commonWaitDialog.close();
+
+            },
+            getresponse_onerror: function() {
+                app.$.commonWaitDialog.close();
+                alert("Something went wrong please try again");
+            },
+            _goback: function() {
+                window.history.back();
+            },
+            _viewrank: function() {
+                page("/studentviewrank/" + this.test_id + "/" + this.test_title);
+            },
+            calcTime:function(endTime){
+                var tempDate = new Date(endTime);
+                var tempTime = tempDate.getTime() + 30*60*1000;
+                return this.convertDate(new Date(tempTime));
+
+            },
+            convertDate: function(datetoFormat) {
+                    var tempMonth = 0;
+                    var tempHours = 0;
+                    var tempMins = 0;
+                    var tempType = "A.M";
+                    if (parseInt(datetoFormat.getMonth() + 1) < 10) {
+                        tempMonth = "0" + parseInt(datetoFormat.getMonth() + 1);
+                    } else
+                        tempMonth = parseInt(datetoFormat.getMonth() + 1);
+
+                    if (parseInt(datetoFormat.getHours()) > 12) {
+                        tempType = "P.M";
+                        tempHours = parseInt(datetoFormat.getHours()) - 12;
+                    } else if (parseInt(datetoFormat.getHours()) < 10)
+                        tempHours = "0" + parseInt(datetoFormat.getHours());
+                    else if (parseInt(datetoFormat.getHours()) == 12) {
+                        tempType = "P.M";
+                        tempHours = parseInt(datetoFormat.getHours());
+                    } else
+                        tempHours = parseInt(datetoFormat.getHours())
+
+                    if (parseInt(datetoFormat.getMinutes()) < 10) {
+                        tempMins = "0" + parseInt(datetoFormat.getMinutes());
+                    } else
+                        tempMins = parseInt(datetoFormat.getMinutes());
+
+                    var final_date = datetoFormat.getDate() + "/" + tempMonth + "/" + datetoFormat.getFullYear() + "(" + tempHours + ":" + tempMins + " " + tempType + ")";
+
+                    return final_date;
+                },
+                checkRankstatus:function(){
+                    var todayDate = Date.now();
+                    var tempTime = new Date(this.endTime).getTime() + 30*60*1000;
+
+                    if(todayDate > tempTime)
+                    {
+                        this.$.viewRank.style.display = "block";
+                        this.$.viewRankText.style.display ="none";
+                    }
+                    else
+                    {
+                        this.$.viewRank.style.display = "none";
+                        this.$.viewRankText.style.display ="block";
+                    }
+
+
+                }
+        });
+    })();
+    </script>
+</dom-module>

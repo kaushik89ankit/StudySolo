@@ -1,0 +1,1124 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="../../../bower_components/paper-dialog-behavior/paper-dialog-shared-styles.html">
+<link rel="import" href="../../../bower_components/neon-animation/neon-animations.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../student-question/student-question.html">
+<link rel="import" href="../student-questionpalette/student-questionpalette.html">
+<link rel="import" href="../student-answer/student-answer.html">
+<dom-module id="student-taketest">
+    <template>
+        <style>
+        :host {}
+        
+        paper-material {
+            border-radius: 5px;
+            background: white;
+            padding: 5px;
+        }
+        
+        #image_dialog {
+            width: 50%;
+            height: 88%;
+            margin: 0px;
+            padding: 0px;
+        }
+        
+        .answerimage {
+            height: 100%;
+            width: 100%;
+            padding: 0px;
+            margin: 0px;
+        }
+        
+        .heading {
+            padding: 10px 15px;
+            margin-top: 20px;
+            background-color: #f3f3f3;
+            border: 1px solid #dedede;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            width: 100%;
+            text-align: left;
+        }
+        
+        #timer {
+            margin-top: 7px;
+            padding: 6px;
+        }
+        
+        .seconddiv {
+            width: 25%;
+            margin-right: 5px;
+        }
+        
+        #questionpalette {
+            @apply(--layout-self-stretch);
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .student_container {
+            @apply(--layout-horizontal);
+            height: 100%;
+        }
+        
+        .student_firstdiv {
+            @apply(--layout-vertical);
+            width: 75%;
+            margin: 3px;
+            margin-right: 0px;
+            height: 100%;
+        }
+        
+        .legend {
+            background: white;
+            height: 75px;
+            width: 92%;
+            background-color: white;
+        }
+        
+        #divlegend {
+            padding: 5px;
+            padding-left: 0;
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+            height: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .top_container {
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+            padding: 5px;
+            padding-left: 10px;
+            padding-right: 10px;
+            margin: 5px;
+            height: 8vh;
+        }
+        
+        .main_container {
+            height: 64vh;
+            overflow-y: auto;
+            padding: 10px;
+            margin: 5px;
+            margin-top: 1px;
+            margin-bottom: 0px;
+            background: white;
+        }
+        
+        .bottom_container {
+            @apply(--layout-horizontal);
+            @apply(--layout-justified);
+            padding: 10px;
+            margin: 5px;
+            width: 96%;
+            height: 6vh;
+        }
+        
+        .okButton {
+            background-color: var(--button-normal);
+            color: var(--color-white);
+            height: 6vh;
+        }
+        
+        .okButton:hover {
+            background-color: var(--button-hover);
+        }
+        </style>
+        <div class="student_container">
+            <div class="student_firstdiv">
+                <paper-material elevation="1" class="top_container">
+                    <div style="width:20vw;" class="horizontal start-justified layout"><b>Test ID :</b> <span style="padding-left:5px;text-transform: uppercase;">{{test_ID }}</span></div>
+                    <div style="width:40vw; text-overflow: ellipsis;" class="horizontal end-justified layout"><span style="width:6vw;"><b>Test Title :</b> </span><span style="padding-left:5px;text-transform: uppercase;text-overflow: ellipsis; ">{{test_title}}</span></div>
+                </paper-material>
+                <paper-material class="main_container" elevation="1">
+                    <div class="layout vertical justified" style="border-bottom: 2px solid #ccccff;">
+                        <student-question id="studentquestion" current_number_of_question="{{current_number_of_question}}" current_question_text="{{current_question_text}}" questionimage="{{current_question_image_URL}}" current_question_type="{{current_question_type}}" current_question_marks="{{current_question_marks}}"></student-question>
+                    </div>
+                    <div style="margin:-5px; margin-top:5px;">
+                        <paper-item style="color:black; margin:-5px; margin-top:-10px; padding-left:10px;" disabled><b>Options :</b></paper-item>
+                        <div id="current_answer_container" class="layout vertical justified" style="margin:-5px;padding:0px;overflow-x:hidden;"></div>
+                    </div>
+                </paper-material>
+                <paper-material class="bottom_container" elevation="1">
+                    <paper-button raised class="okButton" id="previousButton" on-click="take_student_to_previous_question">Previous</paper-button>
+                    <paper-button raised class="okButton" id="mark_for_review_button" on-click="mark_question_and_next">Mark for Review and Next</paper-button>
+                    <paper-button id="nextButton" on-click="take_student_to_next_question" raised class="okButton">Next</paper-button>
+                </paper-material>
+            </div>
+            <div class="seconddiv">
+                <div class="layout vertical">
+                    <paper-material id="timer" elevation="1" class="horizontal layout center" style="height:8vh;padding-left:10px;padding-right:10px;">
+                        <div style="width:100%;" class="horizontal start-justified layout"><b><span style="padding:2px; margin-right:3px;">{{test_time_remaining}}</span></b>
+                        </div>
+                        <div style="width:100%;" class="horizontal end-justified layout"><b>Attempted:</b><span style="margin-left:2px;">{{number_of_questions_attempted}}</span>
+                        </div>
+                    </paper-material>
+                    <paper-material id="questionpalette" style="border-radius:3px;max-height:400px;overflow-y:auto;padding-bottom:0; ">
+                        <student-questionpalette id="student_questionpalette" total_number_of_questions={{total_number_of_questions}} current_number_of_question={{current_number_of_question}}></student-questionpalette>
+                        <div class="legend" style="margin-bottom: 0;margin-left:8px;padding:0;padding-top: 10%;">
+                            <div class="vertical layout" style="margin-bottom:0;margin-left: 0;padding-left:0;height:45px; margin-bottom:-20px;">
+                                <div id="divlegend">
+                                    <div style="margin-right:15px;">
+                                        <paper-fab mini style="height:2px;width:2px;background:#b3c6ff"></paper-fab>
+                                    </div>
+                                    <div>
+                                        <h5>Attempted</h5>
+                                    </div>
+                                </div>
+                                <div id="divlegend">
+                                    <div style="margin-right:15px;">
+                                        <paper-fab mini style="height:2px;width:2px;background:#ecb3ff"></paper-fab>
+                                    </div>
+                                    <div>
+                                        <h5>Marked for Review </h5>
+                                    </div>
+                                </div>
+                                <div id="divlegend">
+                                    <div style="margin-right:15px;">
+                                        <paper-fab mini style="height:2px;width:2px;background:white"></paper-fab>
+                                    </div>
+                                    <div>
+                                        <h5>Unattempted  </h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </paper-material>
+                    <paper-button on-click="openInstructions" style="margin-left: 0;margin-right: 0;margin-bottom:5px;color:#303f9f">+ View Instructions</paper-button>
+                    <paper-material elevation="1" style="padding:10px;">
+                        <paper-button class="okButton" raised on-click="showSubmitDialog" style="margin-left: 0;margin-right: 0; width:100%">Submit Test</paper-button>
+                    </paper-material>
+                </div>
+            </div>
+            <paper-dialog class="size-position" id="image_dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+                <iron-image class="answerimage" src={{dialog_image}} sizing="contain"></iron-image>
+            </paper-dialog>
+            <paper-dialog style="border: 3px solid #3F51B5; padding:10px;" id="submitTestWarning" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+                <h4>Do you want to submit this test ?</h4>
+                <div class="layout horizontal center-justified">
+                    <paper-button class="okButton" dialog-confirm on-click="submitTest">Yes</paper-button>
+                    <paper-button class="okButton" dialog-dismiss autofocus>No</paper-button>
+                </div>
+            </paper-dialog>
+            <iron-ajax id="ajax_call_get_test_detail" url={{ajax_URL_get_test_detail}} handle-as="json" content-type='application/json' method="GET" on-response="ajax_response_get_test_detail" on-error="ajax_error_get_test_detail"></iron-ajax>
+    </template>
+    <script>
+    (function() {
+        'use strict';
+        Polymer({
+            is: 'student-taketest',
+            properties: {
+                test_ID: {
+                    type: String,
+                    notify: true
+                },
+                test_title: {
+                    type: String,
+                    notify: true
+                },
+                test_time_remaining: {
+                    type: Number,
+                    notify: true
+                },
+                number_of_questions_attempted: {
+                    type: Number,
+                    notify: true
+                },
+                ajax_URL_get_test_detail: {
+                    type: String,
+                    notify: true
+                },
+                test_detail_object: {
+                    type: Object,
+                    notify: true
+                },
+                total_number_of_questions: {
+                    type: Number,
+                    notify: true
+                },
+                current_number_of_question: {
+                    type: Number,
+                    notify: true,
+                    observer: '_current_number_of_question_changed'
+                },
+                current_question_type: {
+                    type: String,
+                    notify: true
+                },
+                current_question_image_URL: {
+                    type: String,
+                    notify: true
+                },
+                current_question_marks: {
+                    type: Number,
+                    notify: true,
+                    value: 100
+                },
+                current_question_text: {
+                    type: Number,
+                    notify: true
+                },
+                current_question_response: {
+                    type: Array,
+                    notify: true,
+                    value: []
+                },
+                studentResponse: {
+                    type: Array,
+                    notify: true,
+                    value: []
+                },
+                current_question_status: {
+                    type: Array,
+                    notify: true,
+                    value: []
+                },
+                number_of_options_ticked:{
+                    type:Number,
+                    notify:true
+                },
+                review_button_text:{
+                    type:String,
+                    notify:true
+                }
+
+
+            },
+            ready: function() {
+
+                // When the icon in question palette is tapped
+                this.addEventListener('icon_question_palette_tapped',function(e){
+                    this.change_to_question_number(e.detail.question_number_to);
+                });
+                
+                
+
+            },
+            change_to_question_number:  function(question_number_to)
+            {
+                 // Save the response of the current question first
+                 this.save_response_of_current_question_localObject(this.current_number_of_question);
+                 // changing the color of the palette icon
+                 if(this.current_question_status[this.current_number_of_question - 1] != "marked_for_review"){
+                    
+                    if(this.number_of_options_ticked > 0){
+                        this.$.student_questionpalette.$.student_questions.childNodes[this.current_number_of_question - 1].style.background = "#b3c6ff";   
+                    }else {
+                        this.$.student_questionpalette.$.student_questions.childNodes[this.current_number_of_question - 1].style.background = "white"; 
+                    }
+                }
+
+                 this.current_number_of_question = question_number_to;
+
+            },
+            load_test_for_test_ID: function(test_ID) {
+
+                // Created the URL as could not get ajax params working.The URL will be 
+                // used at server end to break it into required parameter (test_ID)
+                this.ajax_URL_get_test_detail = "/studenttake/test/" + test_ID;
+
+                // Generate request as one presses 'Take Test' on client side
+                this.$.ajax_call_get_test_detail.generateRequest();
+
+            },
+            ajax_response_get_test_detail: function(testdetail) {
+                // Parsing JS object into JSON string and then JSON object    
+                this.test_detail_object = JSON.parse(JSON.stringify(testdetail.detail.response));
+                // Setting up various values for corresponding properties
+                this.test_ID = this.test_detail_object.test_ID;
+                this.test_title = this.test_detail_object.test_title;
+                this.total_number_of_questions = this.test_detail_object.test_questions.length;
+                // Populating question palette
+                this.$.student_questionpalette.load_question_palette();
+                // Assigning the user to see first question
+                this.current_number_of_question = 1;
+
+            },
+            ajax_error_get_test_detail: function(e) {
+                console.error(e);
+            },
+            save_response_of_current_question_localObject: function(question_number) {
+                // Checking to makes sure not fired away as soon as one logs in
+                if (this.$.current_answer_container.childNodes.length > 0) {
+                    //Initializing
+                    this.current_question_response = [];
+                    this.number_of_options_ticked = 0;
+                    for (var i = 1; i <= this.test_detail_object.test_questions[question_number - 1].options.length; i++) {
+                        //Pushing response into array
+                        this.current_question_response[i - 1] = this.$.current_answer_container.childNodes[i - 1].$.answer_checkbox.checked;
+
+                        // Saving the number of options ticked
+                        if(this.current_question_response[i - 1] === true){
+                            this.number_of_options_ticked = this.number_of_options_ticked + 1;
+                        }
+
+                    }
+                    // Saving individual responses in a larger array
+                    this.studentResponse[question_number - 1] = this.current_question_response;
+                }
+            },
+            _current_number_of_question_changed: function(new_question_number, previous_question_number) {
+
+                this.save_response_of_current_question_localObject(previous_question_number);
+                // Storing the question text from AJAX response
+                this.current_question_text = this.test_detail_object.test_questions[new_question_number - 1].questionText;
+                //Storing question type 
+                this.current_question_type = this.test_detail_object.test_questions[new_question_number - 1].questionType;
+                //Storing question marks
+                this.current_question_marks = this.test_detail_object.test_questions[new_question_number - 1].questionMarks;
+                //Storing question image
+                this.current_question_image_URL = this.test_detail_object.test_questions[new_question_number - 1].questionImage;
+                //To append options , their text and their images, call below method
+                this.append_current_options();
+            
+
+            },
+            take_student_to_previous_question: function() {
+                // When student presses previous button
+                // Here the save function is being used twice so cut the usage by applying
+                // better technique of mapping palette icons
+             this.save_response_of_current_question_localObject(this.current_number_of_question);
+             if(this.current_question_status[this.current_number_of_question - 1] != "marked_for_review"){
+                    
+                    if(this.number_of_options_ticked > 0){
+                        this.$.student_questionpalette.$.student_questions.childNodes[this.current_number_of_question - 1].style.background = "#b3c6ff";   
+                    }else {
+                        this.$.student_questionpalette.$.student_questions.childNodes[this.current_number_of_question - 1].style.background = "white"; 
+                    }
+                }
+            if (this.current_number_of_question === 1) {
+                
+                return;
+                }
+                this.current_number_of_question = this.current_number_of_question - 1;
+            },
+            take_student_to_next_question: function() {
+                // When student presses next button
+                this.save_response_of_current_question_localObject(this.current_number_of_question);
+                if(this.current_question_status[this.current_number_of_question - 1] != "marked_for_review"){
+                    
+                    if(this.number_of_options_ticked > 0){
+                        this.$.student_questionpalette.$.student_questions.childNodes[this.current_number_of_question - 1].style.background = "#b3c6ff";   
+                    }else {
+                        this.$.student_questionpalette.$.student_questions.childNodes[this.current_number_of_question - 1].style.background = "white"; 
+                    }
+                }
+
+                if (this.current_number_of_question === this.total_number_of_questions) {
+                    return;
+                }
+                    this.current_number_of_question = this.current_number_of_question + 1;
+
+
+            },
+            mark_question_and_next: function() {
+                // When student marks a question for review
+                // if(this.current_question_status[this.current_number_of_question - 1]="marked_for_review"){
+
+                //     this.review_button_text = "Unmark and Next";
+                // }
+                this.save_response_of_current_question_localObject(this.current_number_of_question);
+
+                if(this.current_question_status[this.current_number_of_question - 1] != "marked_for_review"){
+
+                    this.$.student_questionpalette.$.student_questions.childNodes[this.current_number_of_question - 1].style.background = "violet";
+                    this.current_question_status[this.current_number_of_question - 1]="marked_for_review";
+                    
+
+                }else{
+
+                    if(this.number_of_options_ticked>0){
+
+                        this.$.student_questionpalette.$.student_questions.childNodes[this.current_number_of_question - 1].style.background = "#b3c6ff";
+                        this.current_question_status[this.current_number_of_question - 1]="Unmarked_for_review";
+                     
+
+                    }
+                    else{
+
+                        this.$.student_questionpalette.$.student_questions.childNodes[this.current_number_of_question - 1].style.background = "white";
+                        this.current_question_status[this.current_number_of_question - 1]="Unmarked_for_review";
+                        
+                    }
+
+                }
+
+                if (this.current_number_of_question === this.total_number_of_questions) {
+                    return;
+                }
+                else {
+
+                this.current_number_of_question = this.current_number_of_question + 1;
+                }
+
+            },
+            append_current_options: function() {
+
+                //Removing the child nodes of the answer container
+                while (this.$.current_answer_container.firstChild) {
+                    this.$.current_answer_container.removeChild(this.$.current_answer_container.firstChild);
+                }
+
+                //Append the options in the answer container
+                for (var i = 1; i <= this.test_detail_object.test_questions[0].options.length; i++) {
+                    // Create variable to store newly created option
+                    var student_option_element = document.createElement("student-answer");
+                    //setting the option number
+                    student_option_element.option_number = i;
+                    //setting the option text
+                    student_option_element.answer_text = this.test_detail_object.test_questions[this.current_number_of_question - 1].options[i - 1].optionText;
+                    //setting the option image
+                    student_option_element.answer_image = this.test_detail_object.test_questions[this.current_number_of_question - 1].options[i - 1].optionImage;
+                    //Setting the options selected be true or false
+
+                    //Accessing saved options to display
+                    if (typeof this.studentResponse[this.current_number_of_question - 1] !== "undefined") {
+                        student_option_element.$.answer_checkbox.checked = this.studentResponse[this.current_number_of_question - 1][i - 1];
+                    }
+
+                    //Highlight the alternate options
+                    if (student_option_element.option_number % 2 == 0) {
+                        student_option_element.style.background = "white";
+                    } else {
+                        student_option_element.style.background = "#e6f9ff";
+                    }
+                    // FInally append the element 
+                    this.$.current_answer_container.appendChild(student_option_element);
+                }
+
+            }
+        })
+    })();
+    </script>
+</dom-module>
+
+<!-- Note:
+1. Code for different states of button
+    a. A -- Attempted.
+    b. U -- UnAttempted.
+    c. RU -- Marked for review and UnAttempted.
+    d. RA -- MArked for review and Attempted.
+ -->
+
+<!-- ajax call starts here -->
+            <!-- ajax call to get the test question starts here -->
+           <!--  <iron-ajax id="student_testget_ironajax" url="/api/testdata/" handle-as="json" content-type='application/json' params="{{testget_Params}}" method="GET" on-response="testgetonResponse" on-error="onError"></iron-ajax> -->
+            <!-- ajax call to get the test question ends here -->
+            <!-- ajax to get test response starts here -->
+            <!-- <iron-ajax id="responseget_ironajax" url="/api/testresponses/" handle-as="json" content-type='application/json' method="GET" params="{{responseget_Params}}" on-response="responsegetonResponse" on-error="onError"></iron-ajax> -->
+            <!-- ajax to get test response ends here -->
+            <!-- ajax call to update questions starts here -->
+            <!-- <iron-ajax id="responseupdate_ironajax" url="/api/testresponses/update" handle-as="json" content-type='application/json' params="{{responseupdate_params}}" method="POST" body="{{responseupdate_body}}" on-response="responseupdateonResponse" on-error="responseupdateonError"></iron-ajax> -->
+            <!-- ajax call to update questions ends here -->
+            <!-- ajax call to submit test starts here -->
+            <!-- <iron-ajax id="responsesubmit_ironajax" url="/api/testresponses/update" handle-as="json" content-type='application/json' params="{{responseupdate_params}}" method="POST" body="{{responseupdate_body}}" on-response="responsesubmitonResponse" on-error="responsesubmiteonError"></iron-ajax> -->
+            <!-- ajax call to submit test ends here -->
+            <!-- For posting the create test starts here -->
+            <!-- <iron-ajax id="createresponse_ironajax" url="/api/testresponses/" handle-as="json" content-type='application/json' method="POST" body="{{createresponse_postbody}}" on-response="_createresponseonResponse" on-error="_createresponseonError"></iron-ajax> -->
+            <!-- For posting the create test ends here -->
+            <!-- ajax call ends here -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+properties: {
+                getquestion_object: {
+                    notify: true
+                },
+                dialog_image: {
+                    notify: true
+                },
+                duration: {
+                    type: Number,
+                    notify: true
+                },
+                testTitle: {
+                    type: String,
+                    value: "",
+                    notify: true
+                },
+                testId: {
+                    type: String,
+                    notify: true
+                },
+                testget_Params: {
+                    type: Object,
+                    notify: true
+                },
+                responseget_Params: {
+                    type: Object,
+                    notify: true
+                },
+                responseupdate_params: {
+                    type: Object,
+                    notify: true
+                },
+                createresponse_postbody: {
+                    type: Object,
+                    notify: true
+                },
+                responseupdate_body: {
+                    type: Object,
+                    notify: true
+                },
+                currentquestion: {
+                    type: Number,
+                    value: 0,
+                    notify: true,
+                    observer: '_currentquestionChanged'
+                },
+                questions: {
+                    type: Array,
+                    notify: true
+                },
+                responses: {
+                    type: Array,
+                    notify: true
+                },
+                totalQuestions: {
+                    type: Number,
+                    notify: true
+                },
+                questiontext: {
+                    type: String,
+                    notify: true
+                },
+                questionimage: {
+                    type: String,
+                    notify: true
+                },
+                typeselected: {
+                    type: String,
+                    notify: true
+                },
+                questionmarks: {
+                    type: Number,
+                    notify: true
+                },
+                remainingTime: {
+                    type: Number,
+                    notify: true
+                },
+                timeLeft: {
+                    type: String,
+                    notify: true,
+                    computed: 'formatTime(remainingTime)'
+                },
+                attemptedQuestions: {
+                    type: Number,
+                    notify: true,
+                    value: 0
+                },
+                numberOfoptions: {
+                    type: Number,
+                    notify: true
+                },
+                tempresponses: {
+                    type: String,
+                    notify: true
+                },
+                current_state: {
+                    type: String,
+                    notify: true,
+                    value: "U"
+                },
+                reviewText: {
+                    type: String,
+                    notify: true,
+                    value: "Mark for Review & Next"
+                },
+                ReviewBoolean: {
+                    type: Boolean,
+                    notify: true,
+                    value: false
+                },
+                statusCheck: {
+                    type: Boolean,
+                    notify: true,
+                    value: false
+                }
+            },
+            ready: function() {},
+            loadTest: function(testId, testTitle) {
+                this.testId = testId;
+                this.testTitle = testTitle;
+                this.currentquestion = 0;
+                this.$.palette1.defaultScreen();
+                this.setResonseUpdateParams();
+                this.getDatafromServer();
+            },
+            toggle: function() {
+                var dialog = document.getElementById('helpinfo');
+                if (dialog) {
+                    dialog.open();
+                }
+            },
+            on_dialogopen: function(image_path) {
+                this.dialog_image = image_path;
+                var dialog = this.$.image_dialog;
+                if (dialog) {
+                    dialog.open();
+                }
+            },
+            _currentquestionChanged: function(newValue, oldValue) {
+                if (this.questions != null && this.questions.length > 0 && newValue != undefined && newValue > 0) {
+                    if (oldValue != undefined && oldValue != 0) {
+                        this.savecurrentResponse(oldValue - 1);
+                        if (!this.ReviewBoolean)
+                            this.changeState(oldValue - 1, "Normal");
+                        else
+                            this.changeState(oldValue - 1, "Review");
+                    }
+                    this.set_currentquestion(newValue - 1);
+
+                    this.ReviewBoolean = false;
+                    this.$.palette1._changeColor("current", newValue);
+                    this.$.palette1._scrollTo(newValue);
+                }
+
+                // for visiblity of next and previous buttons starts here
+                if (newValue == 1) {
+                    this.$.previousButton.style.visibility = "hidden";
+                } else
+                    this.$.previousButton.style.visibility = "visible";
+
+                if (this.questions != null && newValue == this.questions.length) {
+                    this.$.nextButton.style.visibility = "hidden";
+                } else
+                    this.$.nextButton.style.visibility = "visible";
+                // for visiblity of next and previous buttons ends here
+            },
+            set_currentquestion: function(currentquestion) {
+                this.questiontext = this.questions[currentquestion].question_title;
+                this.questionimage = this.questions[currentquestion].question_image;
+                this.typeselected = this.questions[currentquestion].question_type;
+                this.questionmarks = this.questions[currentquestion].question_marks;
+
+                if (this.responses[currentquestion].answer_state == "RU" || this.responses[currentquestion].answer_state == "RA") {
+                    if (currentquestion == parseInt(parseInt(this.questions.length) - 1)) {
+                        this.reviewText = "Unmark for Review";
+                    } else
+                        this.reviewText = "Unmark for Review & Next";
+                } else {
+                    if (currentquestion == parseInt(parseInt(this.questions.length) - 1)) {
+                        this.reviewText = "Mark for Review";
+                    } else
+                        this.reviewText = "Mark for Review & Next";
+                }
+
+                while (this.$.student_answerbox.firstChild) {
+                    this.$.student_answerbox.removeChild(this.$.student_answerbox.firstChild);
+                }
+                for (var i = 0; i < this.questions[currentquestion].answer_array.length; i++) {
+                    var student_answer = document.createElement("student-answer");
+                    student_answer.option_number = this.questions[currentquestion].answer_array[i].option_number;
+                    student_answer.answer_text = this.questions[currentquestion].answer_array[i].answer_title;
+                    student_answer.answer_image = this.questions[currentquestion].answer_array[i].answer_image;
+                    if (this.responses != null && this.responses[currentquestion] != null && this.responses[currentquestion].answer_array != null && this.responses[currentquestion].answer_array[i] != null)
+                        student_answer.marked_answer = this.responses[currentquestion].answer_array[i].answer_marked;
+
+                    if (student_answer.option_number % 2 == 0)
+                        student_answer.style.background = "white";
+                    else
+                        student_answer.style.background = "#e6f9ff";
+                    this.$.student_answerbox.appendChild(student_answer);
+                }
+            },
+            studentNext: function() {
+                if (this.currentquestion < this.questions.length) {
+                    this.currentquestion = this.currentquestion + 1;
+                }
+                app.$.toast.text = 'Response Saved';
+                app.$.toast.show();
+            },
+            studentPrevious: function() {
+                if (this.currentquestion > 1) {
+                    this.currentquestion = this.currentquestion - 1;
+                }
+                app.$.toast.text = 'Response Saved';
+                app.$.toast.show();
+            },
+            studentReview: function() {
+                this.ReviewBoolean = true;
+                if (this.currentquestion < this.questions.length) {
+                    if (this.responses[this.currentquestion - 1].answer_state == "A" || this.responses[this.currentquestion - 1].answer_state == "U") {
+                        app.$.toast.text = 'Marked For Review';
+                    } else {
+                        app.$.toast.text = 'Unmarked For Review';
+                    }
+                    this.currentquestion = this.currentquestion + 1;
+
+                } else {
+                    if (this.responses[this.currentquestion - 1].answer_state == "A" || this.responses[this.currentquestion - 1].answer_state == "U") {
+                        app.$.toast.text = 'Marked For Review';
+                        this.reviewText = "Unmark for Review";
+                    } else {
+                        app.$.toast.text = 'Unmarked For Review';
+                        this.reviewText = "Mark for Review";
+                    }
+                    this.savecurrentResponse(this.currentquestion - 1);
+
+                    if (!this.ReviewBoolean)
+                        this.changeState(this.currentquestion - 1, "Normal");
+                    else
+                        this.changeState(this.currentquestion - 1, "Review");
+
+                    this.ReviewBoolean = false;
+                    this.$.palette1._changeColor("current", this.currentquestion);
+
+                }
+                app.$.toast.show();
+            },
+            savecurrentResponse: function(quesno) {
+                var answer_array = [];
+                var answer_key = "";
+                this.numberOfoptions = this.$.student_answerbox.getElementsByTagName('student-answer').length;
+                for (var i = 0; i < this.numberOfoptions; i++) {
+                    var answer = {
+                        answer_marked: this.$.student_answerbox.childNodes[i].marked_answer
+                    };
+                    answer_array.push(answer);
+                    if (this.$.student_answerbox.childNodes[i].marked_answer) {
+                        answer_key = answer_key + "T";
+                    } else {
+                        answer_key = answer_key + "F";
+                    }
+                }
+                var new_response = {
+                    answer_array: answer_array,
+                    answer_key: answer_key,
+                    answer_state: this.responses[quesno].answer_state
+                };
+                this.responses[quesno] = new_response;
+                this._savelocalanswerChanged();
+            },
+            _savelocalanswerChanged: function() {
+                if (JSON.stringify(this.responses) != this.tempresponses) {
+                    this.tempresponses = JSON.stringify(this.responses);
+                    localStorage.testresponse = JSON.stringify(this.responses);
+                    localStorage.testid = this.testId;
+                    this._saveserverquestionChanged();
+                } else {
+                    this._saveservertimeChanged();
+                }
+            },
+            _saveserverquestionChanged: function() {
+                this.responseupdate_body = {
+                    testresponse: this.responses,
+                    remaining_time: this.remainingTime,
+                    current_question: this.currentquestion,
+                    attempted_questions: this.attemptedQuestions
+                };
+                this.setResonseUpdateParams();
+                this.updateResponse();
+            },
+            _saveservertimeChanged: function() {
+                this.responseupdate_body = {
+                    remaining_time: this.remainingTime,
+                };
+                this.setResonseUpdateParams();
+                this.updateResponse();
+            },
+            _saveserverSubmitTest: function() {
+                app.waitDialogMessage = "Please wait submitting test";
+                app.$.commonWaitDialog.open();
+                var total = 0,
+                    correct = 0,
+                    wrong = 0,
+                    unattempted = 0,
+                    totalNo = 0;
+                for (var i = 0; i < this.questions.length; i++) {
+                    if (this.responses[i].answer_key.indexOf("T") > -1) {
+                        if (this.questions[i].answer_key == this.responses[i].answer_key) {
+                            this.responses[i].answer_state = "correct";
+                            total = parseInt(parseInt(total) + parseInt(this.questions[i].question_marks));
+                            correct++;
+                        } else {
+                            wrong++;
+                            this.responses[i].answer_state = "wrong";
+                        }
+                    } else {
+                        this.responses[i].answer_state = "unattempted";
+                    }
+                }
+                totalNo = this.questions.length;
+                this.responseupdate_body = {
+                    testresponse: this.responses,
+                    remaining_time: "0",
+                    current_question: this.currentquestion,
+                    attempted_questions: this.attemptedQuestions,
+                    score: total,
+                    status: "submitted",
+                    correct_questions: correct,
+                    wrong_questions: wrong,
+                    total_questions: totalNo
+                };
+                this.setResonseUpdateParams();
+                this.$.responsesubmit_ironajax.generateRequest();
+            },
+            responsesubmitonResponse: function() {
+                if (app.$.commonWaitDialog) {
+                    app.$.commonWaitDialog.close();
+                }
+                page("/");
+                app.dialogText = "Test submitted successfully.";
+                app.$.commonPaperDialog.open();
+            },
+            responsesubmitonError: function() {},
+            // update response to server starts here
+            setResonseUpdateParams: function() {
+                var selObj = JSON.stringify({
+                    test_id: this.testId,
+                    student_id: localStorage.loginid
+                });
+                var retObj = {
+                    where: selObj
+                };
+                this.responseupdate_params = retObj;
+            },
+            updateResponse: function() {
+                this.$.responseupdate_ironajax.generateRequest();
+            },
+            responseupdateonResponse: function() {},
+            responseupdateonError: function() {},
+            // update response to server ends here
+
+            // create response starts here function to create empty responses for all the questions 
+            _createResponse: function() {
+                app.waitDialogMessage = "Please wait generating test";
+                app.$.commonWaitDialog.open();
+                this.responses = [];
+                for (var i = 0; i < this.questions.length; i++) {
+                    var new_response = {
+                        answer_state: "U",
+                        answer_array: [],
+                        answer_key: []
+                    };
+                    this.responses.push(new_response);
+                }
+                this.attemptedQuestions = 0;
+                this.currentquestion = 1;
+                this.remainingTime = this.duration;
+
+                this.createresponse_postbody = JSON.stringify({
+                    current_question: 1,
+                    remaining_time: this.remainingTime,
+                    test_id: this.testId,
+                    student_id: localStorage.loginid,
+                    student_name: localStorage.username,
+                    testresponse: this.responses,
+                    attempted_questions: 0,
+                    status: "notsubmitted"
+                });
+                this.$.createresponse_ironajax.generateRequest();
+            },
+            _createresponseonResponse: function() {
+                app.$.commonWaitDialog.close();
+            },
+            _createresponseonError: function() {
+                app.$.commonWaitDialog.close();
+                alert("Something went wrong please try again");
+            },
+            // create response ends here
+
+            // get test from server starts here
+            getDatafromServer: function() {
+                this.testgetSetparams();
+                app.waitDialogMessage = "Please wait generating test";
+                app.$.commonWaitDialog.open();
+                this.$.student_testget_ironajax.generateRequest();
+            },
+            testgetSetparams: function() {
+                var selObj = JSON.stringify({
+                    "where": {
+                        test_id: this.testId
+                    }
+                });
+                var retObj = {
+                    filter: selObj
+                };
+                this.testget_Params = retObj;
+            },
+            testgetonResponse: function() {
+                app.$.commonWaitDialog.close();
+                if (this.$.student_testget_ironajax.lastResponse != null) {
+                    var tempResponse = this.$.student_testget_ironajax.lastResponse[0];
+                    this.duration = tempResponse.duration_seconds;
+                    this.questions = tempResponse.questions;
+                    this.totalQuestions = tempResponse.questions.length;
+                    this.$.palette1.setScreen(this.totalQuestions);
+                    this.getResponse();
+                }
+            },
+            onError: function() {
+                alert("Something went wrong please try again");
+                app.$.commonWaitDialog.close();
+            },
+            // get test from server ends here
+
+            // get response from server starts here
+            getResponse: function() {
+                this.responsegetSetparams();
+                app.waitDialogMessage = "Please wait generating test";
+                app.$.commonWaitDialog.open();
+                this.$.responseget_ironajax.generateRequest();
+            },
+            responsegetSetparams: function() {
+                var selObj = JSON.stringify({
+                    "where": {
+                        test_id: this.testId,
+                        student_id: localStorage.loginid
+                    }
+                });
+                var retObj = {
+                    filter: selObj
+                };
+                this.responseget_Params = retObj;
+            },
+            responsegetonResponse: function() {
+                app.$.commonWaitDialog.close();
+                if (this.$.responseget_ironajax.lastResponse != null && this.$.responseget_ironajax.lastResponse.length > 0) {
+                    var tempResponse = this.$.responseget_ironajax.lastResponse[0];
+                    if (tempResponse.testresponse.length > 0) {
+                        this.responses = tempResponse.testresponse;
+                        this.attemptedQuestions = tempResponse.attempted_questions;
+                        this.currentquestion = tempResponse.current_question;
+                        this.remainingTime = tempResponse.remaining_time;
+                        for (var i = 0; i < this.responses.length; i++) {
+                            this.changeState(i, "Normal");
+                        }
+                    }
+                } else {
+                    this._createResponse();
+                    for (var i = 0; i < this.responses.length; i++) {
+                        this.changeState(i, "Normal");
+                    }
+                    this.currentquestion = 1;
+                }
+
+                this.async(this.handleClock, 1000);
+                this.$.palette1._changeColor("current", this.currentquestion);
+            },
+            // get response from server ends here
+
+            // function to format time starts here
+            formatTime: function(time) {
+                var h = 0,
+                    m = 0,
+                    s = 0;
+                var newTime = '';
+                if (time > 0) {
+                    h = Math.floor(time / (60 * 60));
+                    time = time % (60 * 60);
+                    m = Math.floor(time / (60));
+                    time = time % (60);
+                    s = time;
+                    if (h < 10) {
+                        h = "0" + h;
+                    }
+                    if (m < 10) {
+                        m = "0" + m;
+                    }
+                    if (s < 10) {
+                        s = "0" + s;
+                    }
+                    newTime = h + ":" + m + ":" + s;
+                } else
+                    newTime = "Time Up";
+                return newTime;
+            },
+            // function to format time ends here
+
+            // function to handle clock starts here
+            handleClock: function() {
+                if (window.location.href.indexOf("studenttaketest") > 0 && this.remainingTime > 0) {
+                    this.remainingTime--;
+                    this.async(this.handleClock, 1000);
+                } else if (window.location.href.indexOf("studenttaketest") > 0 && this.remainingTime == 0) {
+                    this.submitTest();
+                }
+
+            },
+            // function to handle clock ends here
+
+            // function to submit test starts here
+            showSubmitDialog: function() {
+                this.$.submitTestWarning.open();
+            },
+            submitTest: function() {
+                this.savecurrentResponse(this.currentquestion - 1);
+                this._saveserverSubmitTest();
+            },
+            // function to submit test ends here
+
+            // function to change state of button and calculate attempted in question pallete starts here
+            changeState: function(no, type) {
+                this.calculateAttempted(no);
+                if (this.responses[no].answer_state != null && this.responses[no].answer_state != "" && this.responses[no].answer_state != "RA" && this.responses[no].answer_state != "RU") {
+                    if (this.responses[no].answer_key.indexOf("T") > -1 && type == "Normal") {
+                        this.responses[no].answer_state = "A";
+                    } else if (this.responses[no].answer_key.indexOf("T") > -1 && type == "Review") {
+                        this.responses[no].answer_state = "RA";
+                    } else if (this.responses[no].answer_key.indexOf("T") == -1 && type == "Normal") {
+                        this.responses[no].answer_state = "U";
+                    } else if (this.responses[no].answer_key.indexOf("T") == -1 && type == "Review") {
+                        this.responses[no].answer_state = "RU";
+                    }
+                } else {
+                    if (this.responses[no].answer_key.indexOf("T") > -1 && type == "Normal") {
+                        this.responses[no].answer_state = "RA";
+                    } else if (this.responses[no].answer_key.indexOf("T") > -1 && type == "Review") {
+                        this.responses[no].answer_state = "A";
+                    } else if (this.responses[no].answer_key.indexOf("T") == -1 && type == "Normal") {
+                        this.responses[no].answer_state = "RU";
+                    } else if (this.responses[no].answer_key.indexOf("T") == -1 && type == "Review") {
+                        this.responses[no].answer_state = "U";
+                    }
+                }
+
+                this.$.palette1._changeColor(this.responses[no].answer_state, parseInt(no + 1));
+            },
+            // function to change state of button and calculate attempted in question pallete ends here
+
+            // function to calculate attempted starts here
+            calculateAttempted: function(no) {
+                if (this.responses[no].answer_key.indexOf("T") > -1) {
+                    if (this.responses[no].answer_state == null || this.responses[no].answer_state == "" || this.responses[no].answer_state == "U" || this.responses[no].answer_state == "RU")
+                        this.attemptedQuestions++;
+                } else {
+                    if (this.responses[no].answer_state == "A" || this.responses[no].answer_state == "RA")
+                        this.attemptedQuestions--;
+                }
+            },
+            // function to calculate attempted ends here
+
+            // function to view instructions starts here
+            openInstructions: function() {
+                    app.$.instructions.open();
+                }
+                // function to view instructions ends here

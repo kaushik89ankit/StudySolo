@@ -1,0 +1,400 @@
+<link rel="import" href="../../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-styles/color.html">
+<link rel="import" href="../../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../common/data-table-column-filter.html">
+<link rel="import" href="../common/data-table-cell.html">
+<link rel="import" href="../common/data-table-column.html">
+<link rel="import" href="../common/data-table-checkbox.html">
+<dom-module id="teacher-previoustests">
+    <template>
+        <style>
+        :host {
+            height: 100%;
+            background: #f2f2f2;
+        }
+        
+        iron-list {
+            width: 100%;
+            height: 100%;
+            right: 0;
+            top: 0;
+            @apply(--layout-flex);
+            --iron-list-items-container: {
+                border-bottom: 1px solid #ddd; 
+                overflow: hidden;
+            }
+            ;
+        }
+        
+        .item {
+            @apply(--layout-horizontal);
+            padding: 20px;
+            background-color: white;
+            cursor: pointer;
+            margin-bottom: 10px;
+            padding: 5px;
+            border-top: 1px solid #f2f2f2;
+        }
+        
+        .item:hover {
+            color: var(--default-primary-color, );
+            border: 1px solid #cccccc;
+        }
+        
+        .avatar {
+            height: 40px;
+            width: 40px;
+            border-radius: 20px;
+            box-sizing: border-box;
+            background-color: #DDD;
+        }
+        
+        .listContainer {
+            height: 99%;
+            width: 99%;
+            margin: 5px;
+        }
+        
+        .containerheader {
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+            text-align: center;
+            background: white;
+            height: 50px;
+        }
+        
+        .containerheaderitem {
+            text-align: center;
+            margin: 5px;
+            color: black;
+        }
+        
+        .item:focus {
+            outline: 0;
+            border-color: #333;
+        }
+        
+        .item .shortversion {
+            @apply(--layout-horizontal);
+            border-radius: 8px;
+            width: 100%;
+            margin: 5px;
+            color: #59595A;
+        }
+        
+        .shortversion .ellitext {
+            list-style-position: inside;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+            margin-left: 10px;
+        }
+        
+        .item-expanded .longversion {
+            display: block;
+            @apply(--layout-horizontal);
+            @apply(--flex);
+            padding: 5px;
+            border-radius: 8px;
+            height: 200px;
+        }
+        
+        .longversion .ellitext {
+            color: black;
+            white-space: normal;
+            padding-left: 10px;
+        }
+        
+        .item .longversion {
+            display: none;
+        }
+        
+        .item-expanded .shortversion {
+            display: none;
+        }
+        
+        .item p {
+            width: 20%;
+        }
+        
+        paper-button.indigo {
+            background-color: #3f51b5;
+            color: white;
+            --paper-button-raised-keyboard-focus: {
+                color: white !important;
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+        }
+        
+        paper-button.indigo:hover {
+            background: #354497;
+        }
+        </style>
+        <paper-card style="background:#f2f2f2;" elevation="2" class="listContainer">
+            <div class="containerheader">
+                <paper-input label="TestId" value="{{inputtestid}}" class="containerheaderitem" style="width:10%;" no-label-float></paper-input>
+                <paper-input label="TestTitle" value="{{inputtitle}}" class="containerheaderitem" style="width:20%;" no-label-float></paper-input>
+                <h4 class="containerheaderitem" style="width:20%;">Topics</h4>
+                <h4 class="containerheaderitem" style="width:20%;">Description</h4>
+            </div>
+            <iron-list id="previoustests_list" items="[[items]]" selection-enabled="true" as="item" on-mouseover="onMouseOverItem">
+                <template>
+                    <div class$="[[getClassForItem(item, selected)]]" selected$="[[selected]]">
+                        <div class="shortversion">
+                            <p class="ellitext" style="width:10%;">[[item.test_id]]</p>
+                            <p class="ellitext" style="width:20%;">[[item.title]]</p>
+                            <p class="ellitext" style="width:20%;">[[item.topics]]</p>
+                            <p class="ellitext" style="width:20%;">[[item.description]]</p>
+                            <div style="width: 25vw;margin-left: 10vw;" class="horizontal center-justified layout">
+                                <paper-button class="indigo" style="height: 6vh;margin-top: 3px;" on-click='idClicked'>View Test</paper-button>
+                                <paper-button class="indigo" style="height: 6vh;margin-top: 3px;" on-click='_resultClicked'>View Result</paper-button>
+                            </div>
+
+                        </div>
+                        <div class="longversion">
+                            <div style="width: 40%;">
+                                <div class="horizontal layout">
+                                    <p class="ellitext">Test ID : </p>
+                                    <p class="ellitext">[[item.test_id]]</p>
+                                </div>
+                                <div class="horizontal layout">
+                                    <p class="ellitext">Test Title : </p>
+                                    <p class="ellitext">[[item.title]]</p>
+                                </div>
+                                <div class="horizontal layout">
+                                    <p class="ellitext">Topics : </p>
+                                    <p class="ellitext">[[item.topics]]</p>
+                                </div>
+                                <div class="horizontal layout">
+                                    <p class="ellitext">Duration : </p>
+                                    <p class="ellitext">[[item.duration]]</p>
+                                </div>
+                            </div>
+                            <div style="width:40%;">
+                                <div class="horizontal layout">
+                                    <p class="ellitext">Start Date : </p>
+                                    <p class="ellitext">[[item.starttime]]</p>
+                                </div>
+                                <div class="horizontal layout">
+                                    <p class="ellitext">End Date : </p>
+                                    <p class="ellitext">[[item.endtime]]</p>
+                                </div>
+                                <div class="horizontal layout">
+                                    <p class="ellitext">Status : </p>
+                                    <p class="ellitext">[[item.status]]</p>
+                                </div>
+                                <!-- <div class="horizontal layout">
+                                    <p class="ellitext">[[item.status]]</p>
+                                    <p class="ellitext">[[item.description]]</p>
+                                </div> -->
+                            </div>
+                            <div style="margin-left: 5%;margin-top: 5%;">
+                                <paper-button class="indigo" on-click='idClicked' style="height: 20%;">View Test</paper-button>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </iron-list>
+        </paper-card>
+        <iron-ajax id="get_previoustests" url="/api/testdata" params="{{testget_Params}}" method="GET" on-response="gettest_onresponse" on-error="gettest_onerror"></iron-ajax>
+    </template>
+    <script>
+    (function() {
+        'use strict';
+        Polymer
+            ({
+                is: 'teacher-previoustests',
+                properties: {
+                    testget_Params: {
+                        type: String,
+                        notify: true
+                    },
+                    inputtestid: {
+                        type: String,
+                        notify: true,
+                        observer: '_inputtestidChanged'
+                    },
+                    inputtitle: {
+                        type: String,
+                        notify: true,
+                        observer: '_inputtitleChanged'
+                    },
+                    hidden: {
+                        type: Boolean,
+                        notify: true
+                    },
+                    initialitems: {
+                        type: Array,
+                        notify: true
+                    },
+                    items: {
+                        type: Array,
+                        notify: true
+                    }
+                },
+                // Element Lifecycle
+                ready: function() {},
+                attached: function() {},
+                detached: function() {},
+                // Element Behavior
+                autoReload: function() {
+                    this.set_getParams();
+                    this.getList();
+                },
+                set_getParams: function() {
+                    var selObj = JSON.stringify({
+                        "where": {
+                            coaching_id: localStorage.coachingid,
+                            teacher_id: localStorage.loginid,
+                            status: "submitted"
+                        },
+                        "order": "date_updated DESC"
+                    });
+                    var tempVar = {
+                        filter: selObj
+                    };
+                    this.testget_Params = tempVar;
+                },
+                getList: function() {
+                    this.$.get_previoustests.generateRequest();
+                },
+                gettest_onresponse: function() {
+                    this.initialitems=[];
+                    this.items = this.$.get_previoustests.lastResponse;
+                    if (this.$.get_previoustests.lastResponse != null && this.$.get_previoustests.lastResponse != "") {
+                        for (var i = 0; i < this.$.get_previoustests.lastResponse.length; i++) {
+                            var tempValue = this.$.get_previoustests.lastResponse[i];
+                            var tempDateStart = new Date(tempValue.window_start);
+                            var tempDateEnd = new Date(tempValue.window_stop);
+                            var formatedStartDate = this.convertDate(tempDateStart);
+                            var formatedEndDate = this.convertDate(tempDateEnd);
+                            tempValue.starttime = formatedStartDate;
+                            tempValue.endtime = formatedEndDate;
+                            tempValue.duration = this.convertTime(tempValue.duration_seconds);
+                            this.initialitems.push(tempValue);
+                        }
+
+                    }
+                    this.$.previoustests_list.notifyResize();
+                },
+                gettest_onerror: function() {},
+                getClassForItem: function(item, selected) {
+                    return selected ? 'item-expanded' : 'item';
+                },
+                _inputtestidChanged: function() {
+
+                    if (this.inputtestid == "" && this.items != null && this.inputtestid != null) {
+                        this.items = JSON.parse(JSON.stringify(this.initialitems));
+                    }
+                    if (this.items != null && this.inputtestid != null) {
+                        //this.items = [];
+                        var tempArray = [];
+                        for (var x in this.initialitems) {
+                            var comp = this.initialitems[x].test_id.toString().toUpperCase();
+                            var result = comp.indexOf(this.inputtestid.toString().toUpperCase());
+                            var result2 = 0;
+                            if (this.initialitems[x].title != null && this.initialitems[x].title != undefined)
+                                var comp2 = this.initialitems[x].title.toString().toUpperCase();
+
+                            if (this.inputtitle != "" && this.inputtitle != null) {
+                                result2 = comp2.indexOf(this.inputtitle.toString().toUpperCase());
+                            }
+                            if (result != -1 && result2 != -1) {
+                                //return value;
+                                tempArray.push(this.initialitems[x]);
+                            }
+                        }
+                        this.items = JSON.parse(JSON.stringify(tempArray));
+                    }
+                },
+                _inputtitleChanged: function() {
+                    if (this.inputtitle == "" && this.inputtitle != null && this.items != null) {
+                        this.items = JSON.parse(JSON.stringify(this.initialitems));
+                    }
+
+                    if (this.inputtitle != null) {
+                        var tempArray = [];
+                        for (var x in this.initialitems) {
+                            if (this.initialitems[x].title != null && this.initialitems[x].title != undefined)
+                                var comp = this.initialitems[x].title.toString().toUpperCase();
+                            var comp2 = this.initialitems[x].test_id.toString().toUpperCase();
+                            var result2 = 0;
+                            if (this.inputtestid != "" && this.inputtestid != null) {
+                                result2 = comp2.indexOf(this.inputtestid.toString().toUpperCase());
+
+                            }
+
+                            var result = comp.indexOf(this.inputtitle.toString().toUpperCase());
+                            if (result != -1 && result2 != -1) {
+                                //return value;
+                                tempArray.push(this.initialitems[x]);
+                            }
+                        }
+                        this.items = JSON.parse(JSON.stringify(tempArray));
+                    }
+                },
+                onMouseOverItem: function(e) {
+                    this.$.previoustests_list.notifyResize();
+                },
+                idClicked: function(e) {
+                    page("/teacherviewtest/" + e.model.item.test_id + "/" + e.model.item.title);
+                },
+                convertDate: function(datetoFormat) {
+                    var tempMonth = 0;
+                    var tempHours = 0;
+                    var tempMins = 0;
+                    var tempType = "A.M";
+                    if (parseInt(datetoFormat.getMonth() + 1) < 10) {
+                        tempMonth = "0" + parseInt(datetoFormat.getMonth() + 1);
+                    } else
+                        tempMonth = parseInt(datetoFormat.getMonth() + 1);
+
+                    if (parseInt(datetoFormat.getHours()) > 12) {
+                        tempType = "P.M";
+                        tempHours = parseInt(datetoFormat.getHours()) - 12;
+                    } else if (parseInt(datetoFormat.getHours()) < 10)
+                        tempHours = "0" + parseInt(datetoFormat.getHours());
+                    else if (parseInt(datetoFormat.getHours()) == 12) {
+                        tempType = "P.M";
+                        tempHours = parseInt(datetoFormat.getHours());
+                    } else
+                        tempHours = parseInt(datetoFormat.getHours())
+
+                    if (parseInt(datetoFormat.getMinutes()) < 10) {
+                        tempMins = "0" + parseInt(datetoFormat.getMinutes());
+                    } else
+                        tempMins = parseInt(datetoFormat.getMinutes());
+
+                    var final_date = datetoFormat.getDate() + "/" + tempMonth + "/" + datetoFormat.getFullYear();
+
+                    return final_date;
+                },
+                convertTime: function(time) {
+                    var h = 0,
+                        m = 0;
+                    var newTime = '';
+                    if (time > 0) {
+                        h = Math.floor(time / 3600);
+                        m = parseInt((time % (3600)) / 60);
+                        newTime = " " + h + " Hour & " + m + " Minutes";
+                    } else
+                        newTime = "Time Up";
+                    return newTime;
+
+                },
+                _resultClicked: function(e) {
+                    page("/teachertestresult/" + e.model.item.test_id + "/" + e.model.item.title);
+                }
+
+            });
+    })();
+    </script>
+</dom-module>

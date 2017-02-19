@@ -1,0 +1,340 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-date-picker/paper-date-picker.html">
+<dom-module id="my-profedit">
+    <template>
+        <style>
+        :host {
+            display: block;
+            overflow-y: hidden;
+        }
+        
+        .proedit {
+            margin-left: 5px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            padding: 1%;
+            background-color: #FFFFFF;
+            width: 80%;
+            height: auto;
+        }
+        
+        .prohead {
+            margin: -5px 0px 0px 20px;
+            padding: 0px;
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+        }
+        
+        .address,
+        .personal,
+        .school,
+        .aboutme {
+            margin-left: 2%;
+        }
+        
+        .name,
+        .userdetails1,
+        .userdetails2,
+        .userdetails3 {
+            margin-left: 50%;
+            margin-top: -3%;
+            @apply(--layout-horizontal);
+        }
+        
+        .name #name {
+            width: 29%;
+            padding: 5px;
+            margin: 5px;
+        }
+        /*.userdetails1 #class{
+          width: 30%;
+          padding: 5px;
+          margin: 5px;
+        }
+
+        .userdetails1 #email{
+          width: 63%;
+          padding: 5px;
+          margin: 5px;
+        }
+
+        .userdetails2 #mobile, #landline{
+          width: 30%;
+          padding: 5px;
+          margin: 5px;
+        }*/
+        
+        .userdetails3 #gender,
+        #dob {
+            width: 29%;
+            padding: 5px;
+            margin: 5px;
+        }
+        /**********************************************************************************/
+        
+        .address #detail1 {
+            width: 28%;
+            padding: 5px;
+            margin-left: 17%;
+            margin-top: -3%;
+        }
+        
+        .address #detail2 {
+            width: 30%;
+            padding: 5px;
+            margin-left: 5%;
+            margin-top: -3%;
+        }
+        
+        .address #email {
+            width: 27%;
+            padding: 5px;
+            margin-left: 5%;
+            margin-top: -3%;
+        }
+        
+        .details2in1,
+        .school_about {
+            @apply(--layout-horizontal);
+        }
+        /**********************************************************************************/
+        
+        .school_about #school {
+            width: 28%;
+            padding: 5px;
+            margin-left: 17%;
+            margin-top: -3%;
+            margin-bottom: 1%;
+        }
+        
+        .school_about #class {
+            width: 30%;
+            padding: 5px;
+            margin-left: 5%;
+            margin-top: -3%;
+            margin-bottom: 1%;
+        }
+        /**********************************************************************************/
+        
+        .aboutme #aboutme {
+            width: 65%;
+            padding: 5px;
+            margin-left: 17%;
+            margin-top: -4%;
+        }
+        
+        paper-button.indigo {
+            background-color: var(--paper-indigo-500);
+            color: white;
+            margin-top: 10px;
+            --paper-button-raised-keyboard-focus: {
+                color: white !important;
+                margin-left: 10px;
+            }
+            ;
+        }
+        
+        paper-button.indigo:hover {
+            background-color: var(--paper-indigo-100);
+        }
+        </style>
+        <paper-material class="proedit" elevation="1">
+            <div class="prohead">
+                <h2>Edit Profile</h2>
+                <a href="" style="text-transform: capitalize;text-decoration:none;margin-left:2px;">[View My Profile]</a>
+            </div>
+            <hr>
+            <div class="personal">
+                <h3>Personal Details:</h3>
+                <div class="name">
+                    <paper-input id="name" label="First Name" value={{FirstName}}></paper-input>
+                    <paper-input id="name" label="Middle Name"></paper-input>
+                    <paper-input id="name" label="Last Name"></paper-input>
+                </div>
+            </div>
+            <div class="userdetails3">
+                <paper-dropdown-menu label="Gender" id="gender">
+                    <paper-listbox class="dropdown-content">
+                        <paper-item>Male</paper-item>
+                        <paper-item>Female</paper-item>
+                    </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-input id="dob" label="Date of Birth" value="[[dynamicDate]]"></paper-input>
+                <iron-icon style="margin: 40px 0px 0px -5px;" icon="perm-contact-calendar" on-click="openfromdialog"></iron-icon>
+                <paper-dialog id="pickDOB" class="layout vertical" with-backdrop>
+                    <div class="layout horizontal">
+                        <paper-date-picker id="endingpicker" date="{{newendingdate}}" min-date="{{tomindate}}"></paper-date-picker>
+                    </div>
+                    <div class="buttons">
+                        <paper-button class="indigo" dialog-dismiss>Cancel</paper-button>
+                        <paper-button class="indigo" dialog-confirm on-click="todatetime">OK</paper-button>
+                    </div>
+                </paper-dialog>
+            </div>
+            <br>
+            <hr>
+            <!-- ****************************************************************************************************************************** -->
+            <div class="address">
+                <h3>Contact Info:</h3>
+                <div class="details2in1">
+                    <paper-input id="detail1" label="Address Line 1"></paper-input>
+                    <paper-input id="detail2" label="Address Line 2"></paper-input>
+                </div>
+                <div class="details2in1">
+                    <paper-input id="detail1" label="City"></paper-input>
+                    <paper-input id="detail2" label="District"></paper-input>
+                </div>
+                <div class="details2in1">
+                    <paper-input id="detail1" label="State"></paper-input>
+                    <paper-input id="detail2" label="Country"></paper-input>
+                </div>
+                <div class="details2in1">
+                    <paper-input id="detail1" label="Pincode" char-counter maxlength="6" auto-validate allowed-pattern="[0-9]"></paper-input>
+                    <paper-input id="email" label="Email ID">
+                        <iron-icon icon="mail" prefix></iron-icon>
+                    </paper-input>
+                </div>
+                <div class="details2in1">
+                    <paper-input id="detail1" label="Mobile" char-counter maxlength="10" auto-validate allowed-pattern="[0-9]"></paper-input>
+                    <paper-input id="detail2" label="Landline eg. 01204569294" char-counter maxlength="12" auto-validate allowed-pattern="[0-9]"></paper-input>
+                </div>
+            </div>
+            <br>
+            <hr>
+            <!-- ****************************************************************************************************************************** -->
+            <div class="school">
+                <h3>School:</h3>
+                <div class="school_about">
+                    <paper-input id="school" label="School Name"></paper-input>
+                    <paper-dropdown-menu id="class" label="Class">
+                        <paper-listbox class="dropdown-content">
+                            <paper-item>VIII</paper-item>
+                            <paper-item>IX</paper-item>
+                            <paper-item>X</paper-item>
+                            <paper-item>XI</paper-item>
+                            <paper-item>XII</paper-item>
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                </div>
+            </div>
+            <br>
+            <hr>
+            <!-- ****************************************************************************************************************************** -->
+            <div class="aboutme">
+                <h3>About Me:</h3>
+                <iron-autogrow-textarea id="aboutme" rows="6" placeholder="Write something about yourself..." </iron-autogrow-textarea>
+            </div>
+            <div class="horizontal end-justified layout">
+                <paper-button class="indigo" on-click="submitdetails">Save</paper-button>
+            </div>
+        </paper-material>
+    </template>
+    <script>
+    (function() {
+        'use strict';
+
+        Polymer({
+            is: 'my-profedit',
+
+            properties: {
+                foo: {
+                    type: String,
+                    value: 'teachersubmitdialog-element',
+                    notify: true
+                },
+                FirstName: {
+                    type: String,
+                    notify: true
+                },
+                MiddleName: {
+                    type: String,
+                    notify: true
+                },
+                LastName: {
+                    type: String,
+                    notify: true
+                },
+                Gender: {
+                    type: String,
+                    notify: true
+                },
+                DOB: {
+                    type: String,
+                    notify: true
+                },
+                AddressLine1: {
+                    type: String,
+                    notify: true
+                },
+                AddressLine2: {
+                    type: String,
+                    notify: true
+                },
+                City: {
+                    type: String,
+                    notify: true
+                },
+                District: {
+                    type: String,
+                    notify: true
+                },
+                State: {
+                    type: String,
+                    notify: true
+                },
+                Country: {
+                    type: String,
+                    notify: true
+                },
+                Pincode: {
+                    type: String,
+                    notify: true
+                },
+                EmailID: {
+                    type: String,
+                    notify: true
+                },
+                Mobile: {
+                    type: String,
+                    notify: true
+                },
+                Landline: {
+                    type: String,
+                    notify: true
+                },
+                SchoolName: {
+                    type: String,
+                    notify: true
+                },
+                CurrentClass: {
+                    type: String,
+                    notify: true
+                },
+                AboutMe: {
+                    type: String,
+                    notify: true
+                }
+            },
+            openfromdialog: function() {
+
+                var dialog = this.$.pickDOB;
+                if (dialog) {
+                    dialog.open();
+                }
+            },
+            submitdetails:function(){
+              console.log(this.FirstName);
+            }
+
+        });
+    })();
+    </script>
+</dom-module>

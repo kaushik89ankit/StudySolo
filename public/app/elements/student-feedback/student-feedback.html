@@ -1,0 +1,174 @@
+
+<dom-module id="student-feedback">
+    <template>
+        <style>
+        :host {
+            display: block;
+        }
+        
+        s .subject {
+            width: 98%;
+            font-size: 14px;
+            margin-top: 1%;
+            margin-left: 1%;
+            margin-right: 1%;
+        }
+        
+        .emailbody {
+            width: 98%;
+            height: 200px;
+            font-size: 14px;
+            margin-top: 1%;
+            margin-bottom: 1%;
+            margin-left: 1%;
+            margin-right: 1%;
+        }
+        
+        .buttons {
+            @apply(--layout-horizontal);
+            @apply(--layout-around-justified);
+        }
+        
+        .okButton {
+            background-color: var(--button-normal);
+            color: var(--color-white);
+        }
+        
+        .okButton:hover {
+            background-color: var(--button-hover);
+            font-weight: bold;
+        }
+        </style>
+        <paper-card style="height:100%%;width:70%">
+            <h2 style="color:#3F51B5;">Feedback Form</h2>
+            <div class="layout vertical">
+                <paper-item>From :
+                    <div style="margin-left:5px;">{{student_name}}</div>
+                </paper-item>
+                <paper-item>To :
+                    <div style="margin-left:5px;">{{studysolo_email}}</div>
+                </paper-item>
+            </div>
+            <div style="margin-top:-30px;">
+                <paper-input class="subject" label="Subject" value='{{feedbackSubject}}'></paper-input>
+            </div>
+            <iron-autogrow-textarea class="emailbody" placeholder="Write your message here..." value='{{feedbackMessage}}'></iron-autogrow-textarea>
+            <div class="layout horizontal" style="float:right">
+                <paper-button raised class="okButton" style="width:10%;" on-click='send_student_feedback'>Send</paper-button>
+            </div>
+        </paper-card>
+        <!-- Ajax call to send student Feedback  -->
+        <iron-ajax id="ajax_call_send_student_feedback" url="/studentfeedback/submit" method="POST" handle-as="json" content-type="application/JSON" body="{{student_feedback_body}}" on-response="ajax_response_student_feedback" on-error="ajax_error_student-feedback"></iron-ajax>
+        <!-- call ends -->
+
+        <!-- Paper spinner for loading  -->
+        <paper-spinner id="LoadingSpinner"></paper-spinner>
+    </template>
+    <script>
+    (function() {
+        'use strict';
+
+        Polymer({
+            is: 'student-feedback',
+            properties: {
+                feedbackSubject: {
+                    type: String,
+                    notify: true
+                },
+                feedbackMessage: {
+                    type: String,
+                    notify: true
+                },
+                student_name: {
+                    type: String,
+                    notify: true
+                },
+                studysolo_email: {
+                    type: String,
+                    notify: true,
+                    value: "info@studysolo.com"
+                },
+                student_feedback_body: {
+                    type: String,
+                    notify: true
+                }
+            },
+            ready: function() {
+                this.student_name = JSON.parse(localStorage.getItem('student_data')).student.student_loginID;
+            },
+            send_student_feedback: function() {
+
+                //storing feedback as JS object
+                var student_object = {
+
+                    student_loginID: JSON.parse(localStorage.getItem('student_data')).student.student_loginID,
+                    student_feedback_subject: this.feedbackSubject,
+                    student_feedback_message: this.feedbackMessage
+                };
+
+
+                //converting feedback object to JSON string
+                this.student_feedback_body = JSON.stringify(student_object);
+                           
+                // ajax call to POST student feedback
+                this.$.ajax_call_send_student_feedback.generateRequest();
+                this.$.LoadingSpinner.active = true;
+
+
+            },
+            ajax_response_student_feedback: function() {
+
+                // setting the fields empty & stopping spinner
+                this.feedbackSubject = "";
+                this.feedbackMessage = "";
+                this.$.LoadingSpinner.active = false;
+
+
+                
+            },
+            ajax_error_student_feedback: function() {
+                
+                this.$.LoadingSpinner.active = false;
+                console.error("There is some problem in posting feedback");
+            }
+        });
+    })();
+    </script>
+</dom-module>
+<!-- 
+            postFeedback: function() {
+                if (this.feedbackSubject != null && this.feedbackSubject != "" && this.feedbackMessage != null && this.feedbackMessage != "") {
+                    this.setFeedbackPostBody();
+                    this.callAjax();
+                    app.waitDialogMessage = "Please wait...";
+                } else {
+                    app.errorDialogMessage = "Subject and Message can't be left empty";
+                    app.$.commonErrorDialog.open();
+                }
+
+            },
+            createFeedbackOnResponse: function() {
+                app.$.commonWaitDialog.close();
+                app.$.emailstudysolo.close();
+                this.feedbackSubject = "";
+                this.feedbackMessage = "";
+                app.$.toast.text = "Feedback submitted successfully.";
+                app.$.toast.show();
+            },
+            createFeedbackOnError: function() {
+                app.$.commonWaitDialog.close();
+                alert("Something went wrong please try again");
+            },
+            setFeedbackPostBody: function() {
+                this.feedback_postbody = {
+                    userId: localStorage.loginid,
+                    subject: this.feedbackSubject,
+                    message: this.feedbackMessage
+                };
+            },
+            callAjax: function() {
+                app.waitDialogMessage = "Please wait..";
+                app.$.commonWaitDialog.open();
+                this.$.createfeedback_ironajax.generateRequest();
+            }
+ -->

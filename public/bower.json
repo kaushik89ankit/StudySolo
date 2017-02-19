@@ -1,0 +1,23 @@
+{
+  "name": "polymer-starter-kit",
+  "private": true,
+  "dependencies": {
+    "iron-elements": "PolymerElements/iron-elements#^1.0.0",
+    "neon-elements": "PolymerElements/neon-elements#^1.0.0",
+    "page": "visionmedia/page.js#~1.6.4",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.1",
+    "platinum-elements": "PolymerElements/platinum-elements#^1.1.0",
+    "polymer": "Polymer/polymer#^1.2.0",
+    "pushstate-anchor": "~0.3.2",
+    "paper-select": "~0.2.1",
+    "sc-resize": "*",
+    "paper-date-picker": "polymer-paper-datepicker#^1.1.2",
+    "paper-time-picker": "^1.1.2",
+    "polymer-tinymce": "*",
+    "vaadin-upload": "^1.0.0",
+    "paper-toast": "PolymerElements/paper-toast#^1.3.0"
+  },
+  "devDependencies": {
+    "web-component-tester": "*"
+  }
+}

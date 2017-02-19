@@ -1,0 +1,41 @@
+{
+  "name": "sc-resize",
+  "description": "Polymer 1.0 element for resizing images",
+  "authors": [
+    "Safety Changer"
+  ],
+  "keywords": [
+    "web-components",
+    "web-component",
+    "polymer",
+    "image",
+    "resize",
+    "rotate",
+    "scale",
+    "resize"
+  ],
+  "main": "sc-resize.html",
+  "ignore": {},
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/safetychanger/sc-resize"
+  },
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/safetychanger/sc-resize",
+  "dependencies": {
+    "polymer": "latest",
+    "blueimp-load-image": "latest",
+    "blueimp-canvas-to-blob": "latest"
+  },
+  "_release": "7edeeba593",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "7edeeba593cfd760a969e2ce9299c44794003820"
+  },
+  "_source": "git://github.com/safetychanger/sc-resize.git",
+  "_target": "*",
+  "_originalSource": "sc-resize",
+  "_direct": true
+}

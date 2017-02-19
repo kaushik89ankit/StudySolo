@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="Study Solo" content="Study Solo (Ask Question, Seek Answers)">
+    <meta name="description" content="At StudySolo our vision is to take traditional classroom experience online by enabling teachers to create content and connect with their students on our platform">
+    <meta name="keywords" content="study solo, studysolo, coaching, teacher, help, online, portal, test portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Solo</title>
+    <!-- Place favicon.ico in the `app/` directory -->
+    <!-- Chrome for Android theme color -->
+    <meta name="theme-color" content="#2E3AA1">
+    <!-- Web Application Manifest -->
+    <link rel="app/manifest" href="manifest.json">
+    <!-- Tile color for Win8 -->
+    <meta name="msapplication-TileColor" content="#3372DF">
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="STUDYSOLO">
+    <link rel="icon" sizes="192x192" href="/app/images/touch/studysolo_icon_chrometouch.png">
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="StudySolo">
+    <link rel="apple-touch-icon" href="/app/images/touch/studysolo_icon_apple_touch.png">
+    <!-- Tile icon for Win8 (144x144) -->
+    <meta name="msapplication-TileImage" content="/app/images/touch/studysolo_icon_144.png">
+    <!-- build:css styles/main.css -->
+    <link rel="import" href="/app/styles/studysolo_theme.html">
+    <!-- endbuild-->
+    <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
+    <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <!-- endbuild -->
+    <!-- will be replaced with elements/elements.vulcanized.html -->
+    <link rel="import" href="/app/elements/studentElements.html">
+    <!-- endreplace-->
+    <link rel="import" href="/app/routing/student_routing.html">
+</head>
+
+<body class="fullbleed">
+    <template is="dom-bind" id="app">
+        <paper-drawer-panel id="paperDrawerPanel" drawer-width="17%">
+            <!-- Drawer Scroll Header Panel -->
+            <paper-header-panel drawer fixed id="drawerlist" mode="waterfall">
+                <!-- Drawer Toolbar -->
+                <paper-toolbar id="drawerToolbar" style="color:black;background-color:#ffffff;">
+                    <iron-image style="width:40px; height:40px;" sizing="cover" src="../../app/images/touch/studysolo_icon_128.png"></iron-image>
+                    <span class="heading" style="font-size:125%; text-transform: initial; font-style: italic;">StudySolo</span>
+                </paper-toolbar>
+                <!-- Drawer Content -->
+                <div class="horizontal-section">
+                    <paper-menu id="drawerlist" class="app-menu" attr-for-selected="data-route" selected="[[route]]" label="menu">
+                        <a class="menuList" data-route="upcomingtests" href="student/upcomingtests" style="text-decoration: none;">
+                            <paper-item class="hoveronmenu">
+                                <iron-icon icon="maps:local-library"></iron-icon>
+                                <span class="heading">Upcoming Tests</span>
+                            </paper-item>
+                        </a>
+                        <a class="menuList" data-route="pasttests" href="student/pasttests" style="text-decoration: none;">
+                            <paper-item class="hoveronmenu">
+                                <iron-icon icon="icons:update"></iron-icon>
+                                <span class="heading">Past Tests</span>
+                            </paper-item>
+                        </a>
+                        <a class="menuList" data-route="contactus" href="student/contactus" style="text-decoration: none;">
+                            <paper-item class="hoveronmenu">
+                                <iron-icon icon="mail"></iron-icon>
+                                <span class="heading">Contact Us</span>
+                            </paper-item>
+                        </a>
+                        <a class="menuList" data-route="student_feedback" href="student/feedback" style="text-decoration: none;pointer-events:auto;">
+                            <paper-item class="hoveronmenu">
+                                <iron-icon icon="icons:feedback"></iron-icon>
+                                <span class="heading">Write a Review</span>
+                            </paper-item>
+                        </a>
+                    </paper-menu>
+                </div>
+            </paper-header-panel>
+            <!-- Main Area -->
+            <paper-header-panel main id="headerPanelMain" condenses keep-condensed-header mode="waterfall" style="background-color:#f2f2f2;height:100%;">
+                <!-- Main Toolbar -->
+                <paper-toolbar id="mainToolbar">
+                    <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+                    <span class="flex"></span>
+                    <!-- Toolbar icons -->
+                    <paper-button on-click="expandFunction" class="profileButton" style="text-transform: initial;">
+                        <iron-image src='{{userimage}}' style="border-radius: 100%; height:35px;width:35px; " sizing="contain"></iron-image>
+                        <div class="layout horizontal center" style="padding-left:5px;">Welcome,<span style="padding-left:5px;">{{username}}</span>
+                            <iron-icon id="openBox" icon="icons:expand-more" style="padding-left:5px;"></iron-icon>
+                            <iron-icon id="closeBox" icon="icons:expand-less" style="padding-left:5px; display:none;"></iron-icon>
+                        </div>
+                    </paper-button>
+                    <!-- Application name -->
+                    <!-- Application sub title -->
+                    <div class="bottom bottom-container center horizontal layout">
+                        <div class="bottom-title paper-font-subhead">Ask Question.Seek Answers</div>
+                    </div>
+                </paper-toolbar>
+                <!-- Main Content -->
+                <div class="maincontent" id="mainCo">
+                    <iron-pages attr-for-selected="data-route" selected="{{route}}" style="height:100%;background-color:#f2f2f2;">
+                        <section data-route="contactus">
+                            <student-contactus id="contactus"></student-contactus>
+                        </section>
+                        <section data-route="upcomingtests">
+                            <student-upcomingtests id="upcomingtests"></student-upcomingtests>
+                        </section>
+                        <section data-route="pasttests">
+                            <p>Past Tests</p>
+                            <!-- <student-pasttests id="pasttests"></student-pasttests> -->
+                        </section>
+                        <section data-route="student_feedback">
+                            <student-feedback id="studentFeedback"></student-feedback>
+                        </section>
+                        <section data-route="studenttaketest">
+                             <student-taketest id="student_take_test"></student-taketest>
+                        </section>
+                        <!-- <section data-route="studentviewtest">
+                            <student-viewtest id="studentviewtest"></student-viewtest>
+                        </section>
+                        <section data-route="viewprofile">
+                            <student-viewprofile id="viewprofile"></student-viewprofile>
+                        </section>
+                        <section data-route="editprofile">
+                            <student-editprofile id="editprofile"></student-editprofile>
+                        </section>
+                        <section data-route="student-scorecard">
+                            <student-scorecard id="student-scorecard"></student-scorecard>
+                        </section>
+                        <section data-route="studentviewrank">
+                            <student-viewrank id="studentviewrank"></student-viewrank>
+                        </section> -->
+                    </iron-pages>
+                </div>
+            </paper-header-panel>
+        </paper-drawer-panel>
+        <paper-toast id="toast" style="min-width:200px; ">
+            <!-- <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span> -->
+        </paper-toast>
+        <paper-dialog id="commonPaperDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <p>{{dialogText}}</p>
+            <div class="centercontainer">
+                <paper-button class="okButton" dialog-dismiss>OK</paper-button>
+            </div>
+        </paper-dialog>
+        <paper-dialog id="commonErrorDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <h2 class="error">Error</h2>
+            <p>{{errorDialogMessage}}</p>
+            <div class="centercontainer">
+                <paper-button class="okButton" dialog-dismiss>OK</paper-button>
+            </div>
+        </paper-dialog>
+        <paper-dialog id="commonWaitDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop modal>
+            <div class="centerfield">
+                <paper-spinner id="loadingspinner" active></paper-spinner>
+                <span style="margin-left:10px;">{{waitDialogMessage}}</span>
+            </div>
+        </paper-dialog>
+        <paper-dialog style="border: 3px solid #3F51B5;" id="instructions" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <paper-dialog-scrollable style="margin-top: 0;">
+                <student-instructions></student-instructions>
+            </paper-dialog-scrollable>
+            <div class="buttons">
+                <paper-button dialog-confirm autofocus class="okButton" style="margin-right: 20px;">CLOSE</paper-button>
+            </div>
+        </paper-dialog>
+        <paper-dialog id="profileMenu" class="size-position" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+            <paper-menu style="padding:0px; margin:0px;">
+                <a class="menuList" data-route="viewprofile" href="#!/viewprofile" onclick="app.dialogClosed()" style="text-decoration: none;">
+                    <paper-item class="hoveronmenu">
+                        <iron-icon icon="icons:account-circle"></iron-icon>
+                        <span class="heading">View Profile</span>
+                    </paper-item>
+                </a>
+                <a class="menuList" data-route="editprofile" href="#!/editprofile" onclick="app.dialogClosed()" style="text-decoration: none;">
+                    <paper-item class="hoveronmenu">
+                        <iron-icon icon="icons:create"></iron-icon>
+                        <span class="heading">Edit Profile</span>
+                    </paper-item>
+                </a>
+                <a class="menuList" href="/signin" onclick="app.logoutFunction()" style="text-decoration: none;">
+                    <paper-item class="hoveronmenu">
+                        <iron-icon icon="icons:exit-to-app"></iron-icon>
+                        <span class="heading">Logout</span>
+                    </paper-item>
+                </a>
+            </paper-menu>
+        </paper-dialog>
+    </template>
+    <!-- build:js scripts/app.js -->
+    <script src="/app/scripts/app.js"></script>
+    <!-- endbuild
+</body>
+
+</html>

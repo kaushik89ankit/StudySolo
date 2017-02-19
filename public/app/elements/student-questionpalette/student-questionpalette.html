@@ -1,0 +1,142 @@
+<dom-module id="student-questionpalette">
+    <template>
+        <style>
+        :host {
+            display: block;
+        }
+        
+        paper-fab.label {
+            font-size: 50px;
+            height: 50px;
+            width: 50px;
+            color: black;
+        }
+        
+        paper-fab {
+            color: black;
+            background: white;
+        }
+        
+         paper-button.indigo {
+            background-color: #3f51b5;
+            color: white;
+            --paper-button-raised-keyboard-focus: {
+                color: white !important;
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+        }
+        
+        paper-button.indigo:hover {
+            background: #354497;
+        }
+        
+        </style>
+        <div id="student_questions" class="horizontal layout start wrap">
+        </div>
+    </template>
+    <script>
+    (function() {
+        'use strict';
+        Polymer({
+            is: 'student-questionpalette',
+            properties: {
+                total_number_of_questions: {
+                    type: Number,
+                    notify: true
+                },
+                current_number_of_question: {
+                    type: Number,
+                    notify: true
+                },
+                dyel: {
+                    type: Array,
+                    value: []
+                }
+            },
+            load_question_palette: function(){
+
+                    while (this.$.student_questions.hasChildNodes()) {
+                this.$.student_questions.removeChild(this.$.student_questions.firstChild);
+                }
+
+                     for (var i=1; i <= this.total_number_of_questions; i++) {
+                        
+                        var customElement = document.createElement("paper-fab");
+                        customElement.label = i;
+                        customElement.style.background = "white";
+                        customElement.mini = true;
+                        customElement.style.margin = "1px";
+                        customElement.addEventListener('tap', this._listner_for_tapping_paper_fab);
+                        this.$.student_questions.appendChild(customElement);
+                }
+
+            },
+            _listner_for_tapping_paper_fab: function(e,detail) {
+                var target = e.target || window.event.srcElement;
+                if (target.parentNode["label"] != undefined) {
+                  
+                   // Fire event to be listened by Parent 
+                   this.fire('icon_question_palette_tapped',{
+                        question_number_to: target.parentNode["label"]
+                   });
+                }
+            }
+
+
+            
+        });
+    })();
+    </script>
+</dom-module>
+
+
+
+
+
+attached: function() {},
+            defaultScreen: function() {
+                this.totalquestions = 0;
+                this.dyel = [];
+                while (this.$.student_questions.hasChildNodes()) {
+                    this.$.student_questions.removeChild(this.$.student_questions.firstChild);
+                }
+            },
+            setScreen: function(nQuestions) {
+                for (var i = 0; i < nQuestions; i++) {
+                    this.addnewbutton();
+                }
+            },
+            addnewbutton: function() {
+                this.totalquestions = this.totalquestions + 1;
+                this.dyel[this.totalquestions] = document.createElement("paper-fab");
+                this.dyel[this.totalquestions].mini = true;
+                this.dyel[this.totalquestions].label = this.totalquestions;
+                this.dyel[this.totalquestions].style.background = "white";
+                this.dyel[this.totalquestions].style.margin= "1px";
+                this.dyel[this.totalquestions].addEventListener('tap', this._handleonclick);
+                this.$.student_questions.appendChild(this.dyel[this.totalquestions]);
+            },
+            ,
+            _changeColor: function(button_state, no) {
+                if (button_state == "A") {
+                    this.dyel[no].style.background = "#b3c6ff";
+                } else if (button_state == "RA" || button_state == "RU") {
+                    this.dyel[no].style.background = "#ecb3ff";
+                } else if (button_state == "U") {
+                    this.dyel[no].style.background = "white";
+                } 
+            },
+            _changeColorView: function(button_state, no) {
+                if (button_state == "correct") {
+                    this.dyel[no].style.background = "#c2f0c2";
+                } else if (button_state == "wrong") {
+                    this.dyel[no].style.background = "#ff8566";
+                } else {
+                    this.dyel[no].style.background = "white";
+                } 
+            },
+            _scrollTo:function(no){
+                var el = this.dyel[no];
+                el.focus();
+            }

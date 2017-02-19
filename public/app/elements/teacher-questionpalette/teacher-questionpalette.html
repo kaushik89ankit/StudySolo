@@ -1,0 +1,100 @@
+<dom-module id="teacher-questionpalette">
+    <template>
+        <style>
+            :host {
+            display: block;
+        }
+        
+        paper-fab.label {
+            font-size: 50px;
+            height: 50px;
+            width: 50px;
+            color:black;
+        }
+        
+        paper-fab {
+            --paper-fab-background: #b3c6ff;
+            color: black;
+            margin: 2px;
+            padding: -10px;
+        }
+        
+        paper-button {
+            background-color: var(--paper-indigo-500);
+            color: white;
+            width: 10%;
+            height: 43px;
+            --paper-button-raised-keyboard-focus: {
+                color: white !important;
+            }
+            #teacher_questionicons {
+                border-radius: 2px;
+                margin: auto;
+                padding: 20px;
+            }
+        </style>
+        <paper-material id="teacher_questionicons" >
+            <div id="teacher_questions" class="horizontal layout start wrap"></div>
+        </paper-material>
+    </template>
+    <script>
+    (function() {
+        'use strict';
+        
+
+        Polymer({
+            is: 'teacher-questionpalette',
+
+            properties: {
+                totalquestions: {
+                    type: String,
+                    value: 0,
+                    notify: true
+                },
+                currentQuestion: {
+                    type: Number,
+                    notify: true
+                },
+                dyel: {
+                    type:Array,
+                    value:[]
+                }
+            },
+            attached: function() {
+            },
+            defaultScreen:function(){
+                this.totalquestions=0;
+                this.dyel = [];
+                while (this.$.teacher_questions.hasChildNodes()) {
+                    this.$.teacher_questions.removeChild(this.$.teacher_questions.firstChild);
+                }
+            },
+            setScreen:function(nQuestions){
+                for(var i=0;i<nQuestions;i++){
+                    this.addnewbutton();
+                }
+            },
+            addnewbutton: function() {
+                this.totalquestions = this.totalquestions + 1;
+                this.dyel[this.totalquestions] = document.createElement("paper-fab");
+                this.dyel[this.totalquestions].mini = true;
+                this.dyel[this.totalquestions].label = this.totalquestions;
+                this.$.teacher_questions.appendChild(this.dyel[this.totalquestions]);
+                this.dyel[this.totalquestions].style.background = "white";
+                this.dyel[this.totalquestions].addEventListener('tap', this._handleonclick);
+               
+            },
+            removeButton:function(){
+                this.dyel.pop();
+                this.$.teacher_questions.removeChild(this.$.teacher_questions.lastElementChild);
+            },
+            _handleonclick: function(e) {
+                var target = e.target || window.event.srcElement;
+                if (target.parentNode["label"] != undefined) {
+                    this.domHost.currentQuestion = target.parentNode["label"];
+                }
+            }
+        });
+    })();
+    </script>
+</dom-module>

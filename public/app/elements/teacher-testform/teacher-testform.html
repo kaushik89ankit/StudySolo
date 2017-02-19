@@ -1,0 +1,408 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../../bower_components/paper-select/paper-select.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../../bower_components/iron-validator-behavior/iron-validator-behavior.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input-container.html">
+<link rel="import" href="../../../bower_components/iron-input/iron-input.html">
+<link rel="import" href="ssn-input.html">
+<link rel="import" href="min-input.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input-error.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../ss-paperchip/ss-paperchip.html">
+
+<dom-module id="teacher-testform">
+    <link rel="import" href="min-input.html">
+    <template>
+        <style>
+        :host {
+            display: block;
+            height: 100%;
+        }
+        
+        .testform_container {
+            background: white;
+            width: 60%;
+            border-radius: 2px;
+            @apply(--layout-self-center);
+            @apply(--layout-vertical);
+            padding: 10px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 40px;
+        }
+        
+        .input_class {
+            --paper-input-container-color: grey;
+            --paper-input-container-focus-color: blue;
+            --paper-input-container-invalid-color: green;
+            --paper-input-container-input-color: black;
+        }
+        
+        #teachertestform_div1 {
+            @apply(--layout-vertical);
+            background: white;
+            width: 30%;
+            padding: 10px;
+            padding-left: 10%;
+            padding-top: 20px;
+        }
+        
+        #teachertestform_div2 {
+            @apply(--layout-vertical);
+            background: orange;
+            width: 70%;
+            padding: 10px;
+        }
+        
+        #testform_div5 {
+            @apply(--layout-horizontal-reverse);
+            margin-top: 6%;
+            padding-right: 10px;
+        }
+        
+        paper-button.indigo {
+            background-color: #3f51b5;
+            color: white;
+            --paper-button-raised-keyboard-focus: {
+                color: white !important;
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+        }
+        
+        paper-button.indigo:hover {
+            background: #354497;
+        }
+        
+        .dropdownClass {
+            --paper-menu: {
+                background: #E9EAED;
+            }
+        }
+
+        #forBatch {
+            width: 75%;
+            max-height: 100px;
+            overflow-y: auto;
+            margin-top: 17px;
+        }
+        
+        .batchCheck {
+            width: 22%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 2px;
+            padding: 4px;
+            font-family: 'Roboto', 'Noto', sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+        }
+        
+        paper-checkbox {
+            --paper-checkbox-unchecked-color: grey;
+            --paper-checkbox-checked-color: #3f51b5;
+            --paper-checkbox-label-color: #f2f2f2;
+            --paper-checkbox-checked-background-color: grey;
+        }
+        </style>
+        <paper-card class="testform_container" elevation="2">
+            <div class="layout horizontal center-justified">
+                <h3>Test Details</h3>
+            </div>
+            <div class="layout horizontal">
+                <h4 style="margin-left:10px;width:25%">Test Title  :</h4>
+                <paper-input class="input_class" style="width:70%;padding: 0px;margin: 0px;" no-label-float label="e.g. Rotational Mechanics 101" value="{{createtest_testtitle}}"></paper-input>
+            </div>
+            <div class="layout horizontal">
+                <h4 style="margin-left:10px;width:25%">Topics Covered :</h4>
+                <!-- <paper-select class="dropdownClass" id="input1" no-label-float multiple unique nonmatching select-on-blur label="e.g Torque , Moment of Inertia etc." label-field="name" bind-value="{{selectedtopics}}" style="width:70%;">
+                </paper-select> -->
+                <ss-paperchip style="width:70%;margin-top:20px;" items={{objectselectedtopics}}></ss-paperchip>
+            </div>
+            <div class="layout horizontal">
+                <h4 style="margin-left:10px;width:25%">Description :</h4>
+                <paper-textarea class="input_class" style="width:70%;" no-label-float label="e.g Class 11, Crash course, Test#8" value="{{createtest_testdescription}}"></paper-textarea>
+            </div>
+            <div class="layout horizontal">
+                <h4 style="margin-left:10px;width:25%">For Batches :</h4>
+                <div id="forBatch"></div>
+            </div>
+            <div class="layout horizontal">
+                <h4 style="margin-left:10px;width:25%">Test Duration :</h4>
+                <!-- <paper-input-container auto-validate attr-for-value="value" style="width:9%">
+                    <ssn-input id="hrs_input1" class="paper-input-input" value="{{createtest_testhours}}" label-field="e.g 1,2"></ssn-input>
+                    <paper-input-error style="color:red;">(0-9)</paper-input-error>
+                </paper-input-container> -->
+                <paper-dropdown-menu label="Hours" style="width: 100px;" id="hrs_input1" value="{{createtest_testhours}}">
+                    <paper-listbox class="dropdown-content">
+                        <paper-item>00</paper-item>
+                        <paper-item>01</paper-item>
+                        <paper-item>02</paper-item>
+                        <paper-item>03</paper-item>
+                        <paper-item>04</paper-item>
+                        <paper-item>05</paper-item>
+                        <paper-item>06</paper-item>
+                    </paper-listbox>
+                </paper-dropdown-menu>
+                <!--  <h4 style="margin-left:20px;margin-right:10px;width:5%;">HH</h4> -->
+                <paper-dropdown-menu label="Minutes" style="width: 100px;margin-left: 10px;" id="min_input1" value="{{createtest_testmins}}">
+                    <paper-listbox class="dropdown-content">
+                        <paper-item>00</paper-item>
+                        <paper-item>10</paper-item>
+                        <paper-item>20</paper-item>
+                        <paper-item>30</paper-item>
+                        <paper-item>40</paper-item>
+                        <paper-item>50</paper-item>
+                    </paper-listbox>
+                </paper-dropdown-menu>
+                <!-- <paper-input-container auto-validate attr-for-value="value1" style="width:10%;">
+                    <min-input id="min_input1" class="paper-input-input" value1="{{createtest_testmins}}" label="e.g 1,2"></min-input>
+                    <paper-input-error style="color:red;">(00-59) </paper-input-error>
+                </paper-input-container> -->
+                <!--  <h4 style="margin-left:15px; margin-bottom:0px;">MM</h4> -->
+            </div>
+            <div id="testform_div5">
+                <paper-button class="indigo" on-click="_createtest">NEXT</paper-button>
+            </div>
+        </paper-card>
+        <!-- Dialog Boxes -->
+        <paper-dialog id="createtest_waitDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop modal>
+            <div class="centerfield">
+                <paper-spinner id="loadingspinner" active></paper-spinner>
+                Please wait ...
+            </div>
+        </paper-dialog>
+        <!-- Dialog Boxes Ends Here-->
+        <!-- ajax requests starts here -->
+        <!-- For posting the create test starts here -->
+        <iron-ajax id="createtest_ironajax" url="{{createtest_posturl}}" handle-as="json" content-type='application/json' method="POST" body="{{createtest_postbody}}" on-response="_createtestonResponse" on-error="_createtestonError"></iron-ajax>
+        <!-- For posting the create test ends here -->
+        <!-- ajax call to check login starts here-->
+        <iron-ajax id="posttopics_ajaxCall" method="POST" url="/api/topics" handle-as="json" content-type='application/json' body="{{posttopics_body}}" on-response="posttopicsonResponse" on-error="posttopicsonError"></iron-ajax>
+        <!-- ajax call to check login ends here -->
+        <!-- ajax requests ends here -->
+    </template>
+    <script>
+    'use strict';
+
+    (function() {
+        'use strict';
+        Polymer({
+            is: 'teacher-testform',
+
+            properties: {
+                createtest_testdescription: {
+                    type: String,
+                    notify: true,
+                    value: ""
+                },
+                createtest_testtitle: {
+                    type: String,
+                    notify: true,
+                    value: ""
+                },
+                createtest_testhours: {
+                    type: Number,
+                    notify: true
+
+                },
+                createtest_testmins: {
+                    type: Number,
+                    notify: true
+                },
+                availablebatches: {
+                    type: Array,
+                    value: [],
+                    notify: true
+                },
+                selectedavailablebatches: {
+                    type: Array,
+                    notify: true,
+                    value: []
+                },
+                selectedtopics: {
+                    type: Array,
+                    notify: true,
+                    value: []
+
+                },
+                createtest_posturl: {
+                    type: String,
+                    value: "/api/testdata"
+                },
+                createtest_postbody: {
+                    type: Object,
+                    notify: true
+                },
+                posttopics_body: {
+                    type: Object,
+                    notify: true
+                }
+            },
+            attached: function() {
+                this.availablebatches = [];
+                var tempVar = JSON.parse(localStorage.batches);
+                for (var i in tempVar) {
+                    this.availablebatches.push(tempVar[i].name);
+                }
+                this.addbatch = [];
+                for (var l = 0; l < this.availablebatches.length; l++) {
+                    var temp = document.createElement('paper-checkbox');
+                    var batchName = document.createTextNode(this.availablebatches[l]);
+                    temp.appendChild(batchName);
+                    temp.className = "batchCheck";
+                    Polymer.dom(this.$.forBatch).appendChild(temp);
+                    this.addbatch.push(temp);
+                }
+
+            },
+            setDefaultscreen: function() {
+                this.createtest_testdescription = "";
+                this.createtest_testtitle = "";
+                this.$.hrs_input1._ssn1 = "";
+                this.createtest_testhours = "";
+                this.$.min_input1.minutes = "";
+                this.createtest_testmins = "";
+                this.selectedtopics = null;
+                this.selectedavailablebatches = null;
+            },
+            inputChanged: function(e, d) {
+                var input = (e.detail.value || '').trim().toLowerCase();
+                if (input)
+                    e.target.options = this.availablebatches.filter(function(item) {
+                        return item.toLowerCase().indexOf(input) === 0;
+                    });
+                else
+                    e.target.options = [];
+
+            },
+            checkValidity: function() {
+                if (this.createtest_testdescription == "" || this.createtest_testtitle == "" || this.selectedtopics == null || this.selectedavailablebatches == null || this.selectedtopics.length < 1 || this.selectedavailablebatches.length < 1 || this.createtest_testhours == "" || this.createtest_testmins == "") {
+                    alert("No fields can be left empty");
+                    return false;
+                } else if (isNaN(this.createtest_testhours) || isNaN(this.createtest_testmins)) {
+                    alert("Invalid Time");
+                    return false;
+                }
+                return true;
+
+            },
+            // For post request of create test starts here
+            computebody_postcreatetest: function(selavailablebatches, topics, testdescription, testtitle, testhours, testmins) {
+                var totalSecs = parseInt(parseInt(parseInt(this.createtest_testhours * 60) + parseInt(this.createtest_testmins)) * 60);
+                var tempVar = JSON.parse(localStorage.batches);
+                var tempSelBatches = [];
+                if (this.selectedavailablebatches != null) {
+                    for (var i = 0; i < this.selectedavailablebatches.length; i++) {
+                        for (var j in tempVar) {
+                            if (tempVar[j].name == this.selectedavailablebatches[i])
+                                tempSelBatches.push(tempVar[j].batch_id);
+                        }
+                    }
+                }
+                var topost = JSON.stringify({
+                    title: this.createtest_testtitle,
+                    duration_seconds: totalSecs,
+                    description: this.createtest_testdescription,
+                    status: "draft",
+                    coaching_id: localStorage.coachingid,
+                    batches: tempSelBatches,
+                    topics: this.selectedtopics,
+                    teacher_id: localStorage.loginid
+                });
+                return topost;
+            },
+            // _createtest: function() {
+            //     this.isCheckBox();
+
+            //     if (this.checkValidity()) {
+            //         this.openwaitDialog();
+            //         this.createtest_postbody = this.computebody_postcreatetest(this.selectedavailablebatches, this.selectedtopics, this.createtest_testdescription, this.createtest_testtitle, this.createtest_testhours, this.createtest_testmins)
+            //         this._posttopics();
+            //         this.$.createtest_ironajax.generateRequest();
+            //     }
+            // },
+
+            _createtest: function() {
+                this.isCheckBox();
+
+                for (var i = 0, len = this.objectselectedtopics.length; i < len; i++) {
+                    this.selectedtopics[i] = this.objectselectedtopics[i].name;
+                }
+                if (this.checkValidity()) {
+                    this.openwaitDialog();
+                    this.createtest_postbody = this.computebody_postcreatetest(this.selectedavailablebatches, this.selectedtopics, this.createtest_testdescription, this.createtest_testtitle, this.createtest_testhours, this.createtest_testmins)
+                    this._posttopics();
+                    this.$.createtest_ironajax.generateRequest();
+                }
+                console.log(this.testmins + "And Hours" + this.testhours);
+                this.objectselectedtopics = [];
+                this.selectedavailablebatches = [];
+            },
+
+            isCheckBox: function() {
+                this.selectedavailablebatches = [];
+                for (var i = 0; i < this.addbatch.length; i++)
+                    if (this.addbatch[i].checked == true) {
+                        this.selectedavailablebatches.push(this.addbatch[i].innerText);
+                    }
+            },
+
+            _createtestonResponse: function() {
+                this.closeDialog();
+                var responseValue = this.$.createtest_ironajax.lastResponse;
+                if (responseValue != null) {
+                    var tempElement = document.getElementById("maintestelement");
+                    tempElement.pageFunction = "createnewtest";
+                    page("/testquestions/" + responseValue.test_id + "-" + responseValue.title);
+                    this.setDefaultscreen();
+                    app.$.toast.text = 'Test created successfully.';
+                    app.$.toast.show();
+                } else {
+                    alert("Something went wrong please try again.");
+                }
+            },
+            _createtestonError: function() {
+                this.closeDialog();
+                alert("Something went wrong please try again.")
+            },
+            // For post request of create test ends here
+            // For posting topics starts here
+            _posttopics: function() {
+                for (var i in this.selectedtopics) {
+                    var temppostbody = JSON.stringify({
+                        "name": this.selectedtopics[i]
+                    });
+                    this.posttopics_body = temppostbody;
+                    this.$.posttopics_ajaxCall.generateRequest();
+                }
+
+            },
+            posttopicsonResponse: function() {
+
+            },
+            posttopicsonError: function() {
+                console.log("This is error");
+            },
+            // For posting topics ends here
+
+            // Different Dailogs functions start here
+            openwaitDialog: function() {
+                this.dialog = document.getElementById("createtest_waitDialog");
+                if (this.dialog) {
+                    this.dialog.open();
+                }
+            },
+            closeDialog: function() {
+                    if (this.dialog) {
+                        this.dialog.close();
+                    }
+                }
+                // Different dialogs functions ends here
+
+        });
+    })();
+    </script>
+</dom-module>

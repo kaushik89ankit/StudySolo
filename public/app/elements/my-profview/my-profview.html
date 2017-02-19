@@ -1,0 +1,220 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/jv-datepicker/jv-datepicker-dialog.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+
+<dom-module id="my-profview">
+    <template>
+        <style>
+        :host {
+            display: block;
+        }
+        
+        .proedit {
+            margin: 1% 15%;
+            padding: 1%;
+            background-color: #FFFFFF;
+            width: 900px;
+            height: auto;
+            border: 1px solid black;
+        }
+        
+        .prohead {
+            margin: -5px 0px 0px 20px;
+            padding: 0px;
+            @apply(--layout-horizontal);
+        }
+        
+        .address,
+        .personal,
+        .school,
+        .aboutme {
+            margin-left: 2%;
+        }
+        
+        .userdetails {
+            margin-left: 50%;
+            margin-top: -3%;
+            @apply(--layout-horizontal);
+        }
+        
+        .userdetails #persinfo {
+            height: 25px;
+            line-height: 25px;
+        }
+        
+        .userdetails #name,
+        #gender,
+        #dob {
+            width: 30%;
+            padding: 2%;
+            margin-top: 0.5%;
+        }
+        /**********************************************************************************/
+        
+        .address #add {
+            width: 80%;
+            padding: 5px;
+            margin-left: 1%;
+            margin-top: 0.7%;
+        }
+        
+        .detailsin1 h4 {
+            margin-left: 15%;
+            margin-top: 2.9%;
+        }
+        
+        .detailsin1 #info {
+            height: 26px;
+            line-height: 26px;
+            margin-left: 1%;
+            margin-top: 2.5%;
+        }
+        
+        .detailsin1 #info1 {
+            height: 26px;
+            line-height: 26px;
+            margin-left: 1.5%;
+            margin-top: 2.5%;
+        }
+        
+        .detailsin1 #add1 {
+            width: 20%;
+            height: 16px;
+            padding: 5px;
+            margin-top: 2.5%;
+            margin-bottom: 2.5%;
+            min-height: 16px;
+        }
+        
+        .detailsin1 #country {
+            width: 17.5%;
+            padding: 5px;
+            margin-top: 0%;
+            min-height: 16px;
+            height: 16px;
+            margin-top: 2.5%;
+            margin-bottom: 2.5%;
+        }
+        
+        .detailsin1 #email {
+            width: 48%;
+            padding: 5px;
+            margin-top: 0.5%;
+            min-height: 16px;
+            height: 16px;
+            margin-top: 2.5%;
+            margin-bottom: 2.5%;
+        }
+        
+        .detailsin1,
+        .details {
+            @apply(--layout-horizontal);
+            margin-bottom: 0%;
+        }
+        </style>
+        <paper-material class="proedit" elevation="1">
+            <div class="prohead">
+                <h2>View Profile</h2>
+                <paper-button style="text-transform: capitalize; margin-top: 15px;">[Edit My Profile]</paper-button>
+            </div>
+            <hr>
+            <div class="personal">
+                <h3>Personal Details:</h3>
+                <div class="userdetails">
+                    <h4 id="persinfo">Name: </h4>
+                    <paper-item disabled id="name">John Smith</paper-item>
+                </div>
+                <div class="userdetails">
+                    <h4 id="persinfo">Gender: </h4>
+                    <paper-item id="gender">Male</paper-item>
+                </div>
+                <div class="userdetails">
+                    <h4 id="persinfo">Date of Birth: </h4>
+                    <paper-item id="dob">2001-06-29</paper-item>
+                </div>
+            </div>
+            <br>
+            <hr>
+            <!-- ****************************************************************************************************************************** -->
+            <div class="address">
+                <h3>Contact Info:</h3>
+                <div class="detailsin1">
+                    <h4>Address: </h4>
+                    <paper-item id="add">Street-1</paper-item>
+                </div>
+                <paper-item style="margin-left: 22%; margin-top: -2.5%; margin-bottom: 0%">Manhattan Street</paper-item>
+                <div class="detailsin1">
+                    <h4>City: </h4>
+                    <paper-item id="add1">New York City</paper-item>
+                    <h4 id="info1">District: </h4>
+                    <paper-item id="add1">Manhattan</paper-item>
+                    <h4 id="info1">State: </h4>
+                    <paper-item id="add1">New York</paper-item>
+                </div>
+                <div class="detailsin1">
+                    <h4>Country: </h4>
+                    <paper-item id="country">U.S.A.</paper-item>
+                    <h4 id="info">Pincode: </h4>
+                    <paper-item id="add1">589632</paper-item>
+                    <h4 id="info">Mobile: </h4>
+                    <paper-item id="add1">0123456789</paper-item>
+                </div>
+                <div class="detailsin1">
+                    <h4>Email: </h4>
+                    <paper-item id="email">example@examplddddddddddddddddde.com</paper-item>
+                    <h4 id="info1">Landline: </h4>
+                    <paper-item id="add1">015234249785</paper-item>
+                </div>
+            </div>
+            <br>
+            <hr>
+            <!-- ****************************************************************************************************************************** -->
+            <div class="school">
+                <h3>School:</h3>
+                <div class="detailsin1">
+                    <h4>School: </h4>
+                    <paper-item id="add1">New York State School</paper-item>
+                    <h4 id="info1">Class: </h4>
+                    <paper-item id="add1">VIII</paper-item>
+                </div>
+            </div>
+            <br>
+            <hr>
+            <!-- ****************************************************************************************************************************** -->
+            <div class="aboutme">
+                <div class="detailsin1">
+                    <h3 style="width: 35%;">About Me:</h3>
+                    <paper-item style="padding: 5px; margin-left: 3%; margin-top: 1.5%">Hello, I'm xyz and I'm from New York. I bisvdv js djvu w dsu duhvuvdvauvwuv u vduw uvw w du wuvw wd wiuwv w iwbdibwidbdwibwdib widiwbibwd wid kjbbi vwdvwvd wvwivduywv uviwdviwd iwdbiwdbid ibwibwib idbod0wwocn ob ib ibiwbcwbcw c cciwbciwbc ccwibcwobcc iwb like playing soccer and love to listen to music mainly electronic and rap.</paper-item>
+                </div>
+            </div>
+        </paper-material>
+    </template>
+    <script>
+    (function() {
+        'use strict';
+
+        Polymer({
+            is: 'my-profview',
+
+            properties: {},
+        });
+    })();
+    </script>
+</dom-module>

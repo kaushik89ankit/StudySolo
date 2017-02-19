@@ -1,0 +1,29 @@
+{
+  "name": "version3",
+  "version": "1.0.0",
+  "description": "Online platform connecting students",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "\"Ankit Kaushik\"",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^0.8.7",
+    "body-parser": "^1.15.2",
+    "cookie-parser": "^1.4.3",
+    "crypto-js": "^3.1.5",
+    "express": "^4.14.0",
+    "express-session": "^1.14.0",
+    "jsonwebtoken": "^5.0.5",
+    "pg": "^6.1.0",
+    "pg-hstore": "^2.3.2",
+    "pgtools": "^0.2.0",
+    "sequelize": "^3.23.6",
+    "underscore": "^1.8.3"
+  },
+  "engines": {
+    "node": "4.1.1"
+  }
+}

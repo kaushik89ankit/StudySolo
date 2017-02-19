@@ -1,0 +1,229 @@
+<link rel="import" href="../../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-styles/color.html">
+<link rel="import" href="../../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../common/data-table-column-filter.html">
+<link rel="import" href="../common/data-table-cell.html">
+<link rel="import" href="../common/data-table-column.html">
+<link rel="import" href="../common/data-table-checkbox.html">
+<dom-module id="teacher-testresult">
+    <template>
+        <style>
+        table,
+        td,
+        th,
+        tr {
+            border: 1px solid black;
+            text-align: center;
+        }
+        
+        .tableClass {
+            margin: 1vw;
+        }
+        
+        .top_container {
+            @apply(--layout-vertical);
+            margin: 5px;
+            margin-left: 3vw;
+            margin-right: 3vw;
+        }
+        </style>
+        <paper-card style="background:white; margin:5px;" elevation="2">
+            <paper-button style="width:10vw; height:6vh;margin-top:1vh; margin-left:10px;" class="okButton" on-click="_goback"> Go Back</paper-button>
+            <h2 style="width:100%; text-align:center;"><u>Rank Card</u></h2>
+            <div class="top_container">
+                <div class="horizontal layout"><b>Test ID :</b> <span style="padding-left:5px;text-transform: uppercase;">{{testId}}</span></div>
+                <div class="horizontal layout" style="margin-top:5px;">
+                    <div><b>Test Title :</b> </div>
+                    <div style="padding-left:5px; text-transform: uppercase;  word-wrap: break-word;">{{testTitle}}</div>
+                </div>
+            </div>
+            <table id="myTable" border="1" class="tableClass">
+                <tr>
+                    <th style="width:10vw; background-color: #E9EAED;">Rank</th>
+                    <th style="width:10vw; background-color: #E9EAED;">Score</th>
+                    <th style="width:80vw; background-color: #E9EAED;">Name</th>
+                </tr>
+            </table>
+        </paper-card>
+        <iron-ajax id="get_testresults" url="/api/rankdata" params="{{resultget_Params}}" method="GET" on-response="getResult_onresponse" on-error="getResult_onerror"></iron-ajax>
+        <iron-ajax id="generate_testresults" url="/api/testresponses" params="{{generateresultget_Params}}" method="GET" on-response="generateResult_onresponse" on-error="generateResult_onerror"></iron-ajax>
+        <iron-ajax id="post_testrank" url="/api/rankdata" handle-as="json" content-type='application/json' method="POST" body="{{ranksubmit_body}}" on-response="ranksubmit_onresponse" on-error="ranksubmit_onerror"></iron-ajax>
+    </template>
+    <script>
+    (function() {
+        'use strict';
+        Polymer
+            ({
+                is: 'teacher-testresult',
+
+                properties: {
+                    testId: {
+                        type: String,
+                        notify: true
+                    },
+                    testTitle: {
+                        type: String,
+                        notify: true
+                    },
+                    resultget_Params: {
+                        type: String,
+                        notify: true
+                    },
+                    generateresultget_Params: {
+                        type: String,
+                        notify: true
+                    },
+                    postrank_Params: {
+                        type: String,
+                        notify: true
+                    },
+                    ranksubmit_body: {
+                        type: String,
+                        notify: true
+                    },
+                    rankdata: {
+                        notify: true
+                    },
+                    initialitems: {
+                        type: Array,
+                        notify: true
+                    },
+                    items: {
+                        type: Array,
+                        notify: true
+                    }
+                },
+                // Element Lifecycle
+                ready: function() {},
+                attached: function() {},
+                detached: function() {},
+                // Element Behavior
+                loadResult: function(test_id, test_title) {
+                    this.testId = test_id;
+                    this.testTitle = test_title;
+                    this.items = [];
+                    this.initialitems = [];
+                    this.deleteTable();
+                    this.set_getParams();
+                    this.getResult();
+                },
+                set_getParams: function() {
+                    var selObj = JSON.stringify({
+                        "where": {
+                            testid: this.testId
+                        }
+                    });
+                    var tempVar = {
+                        filter: selObj
+                    };
+                    this.resultget_Params = tempVar;
+                },
+                getResult: function() {
+                    this.$.get_testresults.generateRequest();
+                },
+                getResult_onresponse: function() {
+                    var tempResponse = this.$.get_testresults.lastResponse;
+                    if (tempResponse != undefined && tempResponse != null && tempResponse.length > 0) {
+                        this.setList(tempResponse[0].testdata);
+                    } else {
+                        this.generateResult();
+                    }
+                },
+                getResult_onerror: function() {},
+                generateResult: function() {
+                    this.generateResult_setparams();
+                    this.$.generate_testresults.generateRequest();
+                },
+                generateResult_setparams: function() {
+                    var selObj = JSON.stringify({
+                        "where": {
+                            test_id: this.testId,
+                            status: "submitted"
+                        },
+                        "fields": {
+                            student_name: true,
+                            score: true,
+                            student_id: true
+                        },
+                        "order": "score DESC"
+                    });
+                    var tempVar = {
+                        filter: selObj
+                    };
+                    this.generateresultget_Params = tempVar;
+                },
+                generateResult_onresponse: function() {
+                    var tempResponse = this.$.generate_testresults.lastResponse;
+                    if (tempResponse != null) {
+                        tempResponse.sort(function(a, b) {
+                            var tempA = a.score;
+                            var tempB = b.score;
+
+                            if (tempA > tempB) {
+                                return -1;
+                            }
+                            if (tempA < tempB) {
+                                return 1;
+                            }
+                            return 0;
+                        });
+                    }
+
+                    for (var i = 0; i < tempResponse.length; i++) {
+                        tempResponse[i].rank = i + 1;
+                    }
+                    this.rankdata = tempResponse;
+                    this.submit_rank();
+                },
+                generateResult_onerror: function() {},
+                submit_rank: function() {
+                    this.submitrank_setbody();
+                    this.$.post_testrank.generateRequest();
+                },
+                submitrank_setbody: function() {
+                    this.ranksubmit_body = {
+                        testid: this.testId,
+                        testdata: this.rankdata
+                    };
+                },
+                ranksubmit_onresponse: function() {
+                    var tempResponse = this.$.post_testrank.lastResponse;
+                    console.log(tempResponse);
+                },
+                ranksubmit_onerror: function() {
+
+                },
+                setList: function(listData) {
+                    var table = this.$.myTable;
+                    for (var i = 0; i < listData.length; i++) {
+                        var rowCount = table.rows.length;
+                        var row = table.insertRow(rowCount);
+                        var cell1 = row.insertCell(0);
+                        var cell2 = row.insertCell(1);
+                        var cell3 = row.insertCell(2);
+                        cell1.innerHTML = listData[i].rank;
+                        cell2.innerHTML = listData[i].score;
+                        cell3.innerHTML = listData[i].student_name;
+                    }
+                },
+                deleteTable: function() {
+                    var table = this.$.myTable;
+                    for (var i = 1; i < table.rows.length;) {
+                        table.deleteRow(i);
+                    }
+                },
+                _goback: function() {
+                    window.history.back();
+                }
+
+
+            });
+    })();
+    </script>
+</dom-module>

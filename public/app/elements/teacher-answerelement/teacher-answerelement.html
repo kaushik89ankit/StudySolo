@@ -1,0 +1,94 @@
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../bower_components/iron-form/iron-form.html">
+<!-- <link rel="import" href="../../../bower_components/polymer-tinymce/polymer-tinymce.html"> -->
+<link rel="import" href="../file-upload/file-upload.html">
+<dom-module id="teacher-answerelement">
+    <template>
+        <style>
+        :host {
+            display: block;
+            padding: 10px;
+        }
+        
+        paper-button.indigo {
+            background-color: var(--paper-indigo-500);
+            color: white;
+            margin-top: 10px;
+            --paper-button-raised-keyboard-focus: {
+                color: white !important;
+                margin-left: 10px;
+            }
+            ;
+        }
+        
+        paper-button.indigo:hover {
+            background-color: var(--paper-indigo-100);
+        }
+        </style>
+        <paper-checkbox id="teacher_answercheckbox" style="float:right; margin-top:0;">Mark as correct Answer</paper-checkbox>
+        Option<span>{{option_number}}</span> :
+        <!-- <iron-autogrow-textarea rows="4" placeholder="Type your answer here and add image by clicking on add image button" style="width:98%;margin-left:auto;margin-right:auto;margin-top:5px;" bind-value={{answer_text}}>
+        </iron-autogrow-textarea> -->
+        <div on-mouseout="changeText">
+        <polymer-tinymce id="answerEditor"
+        tinytoolbar="undo redo | styleselect | fontsizeselect | bold italic superscript subscript | bullist numlist | charmap image | myImageButton imageCompressor | physicsEditor chemEditor eqneditor | searchreplace table"
+        tinyplugins='["eqneditor image charmap anchor","searchreplace","table"]'>
+        </polymer-tinymce>
+        </div>
+        <image-upload id="imageupload_answer" image-url="{{answer_image}}" targeturl=""></image-upload>
+    </template>
+    <script>
+    (function() {
+        'use strict';
+
+        Polymer({
+            is: 'teacher-answerelement',
+
+            properties: {
+                answer_text: {
+                    type: String,
+                    notify: true
+                },
+                answer_image: {
+                    type: String,
+                    notify: true
+
+                },
+                marked_answer: {
+                    type: Boolean,
+                    value: false,
+                    notify: true,
+                    observer: '_markedChanged'
+                },
+                option_number: {
+                    type: String,
+                    notify: true
+
+                }
+            },
+
+            listeners: {
+                'change': '_markasanswer'
+            },
+
+            _markasanswer: function() {
+                this.marked_answer = this.$.teacher_answercheckbox.checked;
+
+            },
+            _markedChanged: function() {
+                this.$.teacher_answercheckbox.checked = this.marked_answer;
+
+            },
+            changeText: function(e) {
+                this.answer_text = this.$.answerEditor.getContent();
+            },
+            setAnswer: function(answerValue) {
+                this.answer_text=answerValue;
+                this.$.answerEditor.setContent(answerValue);
+            }
+        });
+    })();
+    </script>
+</dom-module>

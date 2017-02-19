@@ -1,0 +1,225 @@
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<dom-module id="student-instructions">
+    <template>
+        <style>
+        :host {}
+        
+        .instruction {
+            background-color: #fbfcff;
+        }
+        
+        .inshead {
+            @apply(--layout-vertical);
+            /*background-color: purple;*/
+        }
+        
+        .insbody {
+            display: inline-block;
+            /*background-color: blue;*/
+            width: auto;
+        }
+        
+        .insbodyhead {
+            font-size: 16px;
+            /*background-color: pink;*/
+        }
+        
+        .insitems {
+            /*background-color: red;*/
+            @apply(--layout-horizontal);
+            padding: 0px;
+            margin: -10px;
+        }
+        
+        .insitems #number {
+            font-size: 13px;
+            /*background-color: orange;*/
+            display: inline-block;
+        }
+        
+        .insitems #insitem {
+            font-size: 13px;
+            /*background-color: yellow;*/
+            display: inline-block;
+            padding-left: 0px;
+        }
+        
+        .insitems #number1 {
+            font-size: 13px;
+            /*background-color: orange;*/
+            display: inline-block;
+            margin-bottom: 25px;
+        }
+        
+        .insitems #insitem1 {
+            font-size: 13px;
+            /*background-color: yellow;*/
+            display: inline-block;
+            padding-left: 0px;
+            margin-bottom: 25px;
+        }
+        
+        .options {
+            /*background-color: blue;*/
+            display: inline-block;
+            margin-left: 50px;
+            margin-top: -20px;
+        }
+        
+        .option {
+            /*background-color: orange;*/
+            display: block;
+            margin: -1px;
+            /*padding: 0px;*/
+            font-size: 13px;
+            @apply(--layout-horizontal);
+        }
+        
+        .legendButton {
+            height: 20px;
+            width: 20px;
+            margin-top: 1%;
+            margin-right: 1%;
+        }
+        
+        #option2 {
+            height: 15px;
+            width: 15px;
+            border-radius: 100%;
+            border: 1px solid black;
+            background-color: green;
+            margin-left: 15px;
+            margin-right: 5px;
+            display: inline-block;
+        }
+        
+        #option3 {
+            height: 15px;
+            width: 15px;
+            border-radius: 100%;
+            border: 1px solid black;
+            background-color: whitex;
+            margin-left: 15px;
+            margin-right: 5px;
+            display: inline-block;
+        }
+        
+        .insitems #insitemrev {
+            font-size: 13px;
+            /*background-color: yellow;*/
+            display: inline-block;
+            padding-left: 0px;
+            margin: 5px 45px 20px 45px;
+        }
+        
+        .insitem_5 {
+            /*background-color: red;*/
+            @apply(--layout-horizontal);
+            margin: -20px 25px;
+        }
+        
+        .insitem_5 #number {
+            font-size: 12px;
+            /*background-color: orange;*/
+            display: inline-block;
+        }
+        
+        .insitem_5 #insitem {
+            font-size: 12px;
+            /*background-color: yellow;*/
+            display: inline-block;
+            padding-left: 0px;
+            margin-left: -10px;
+        }
+        
+        paper-button.indigo {
+            background-color: #3f51b5;
+            color: white;
+            --paper-button-raised-keyboard-focus: {
+                color: white !important;
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+        }
+        
+        paper-button.indigo:hover {
+            background: #354497;
+        }
+        
+        </style>
+        <h4 style="text-align: center;">Please read the following instructions carefully</h4>
+        <div class="layout horizontal" style="margin-top: 10px;">
+            <b>1.</b>
+            <div style="margin-left: 5px;">The countdown timer is present at the top right corner of screen, displaying the remaining time available to complete the exam. When the time gets over, your answers will be automatically submitted. You can access them again in <b>Past Tests</b>.
+            </div>
+        </div>
+        <div class="layout horizontal" style="margin-top: 10px;">
+            <b>2.</b>
+            <div style="margin-left: 5px;">You can maximize any image by clicking on it.
+            </div>
+        </div>
+        <div style="margin-top: 5px;">
+            <div class="layout horizontal">
+                <b>3.</b>
+                <div style="margin-left: 5px;">Question pallete displayed on the right side will show the status of a question as following :</div>
+            </div>
+            <div style="padding-left: 4%;">
+                <div class="layout horizontal" style="margin-bottom:4px;">
+                    <paper-fab mini class="legendButton" style="background:#b3c6ff"></paper-fab>
+                    <div style="margin-bottom: 0%; margin-top:auto;">You have answered the question.You can change your answer before the time gets over.</div>
+                </div>
+                <div class="layout horizontal" style="margin-bottom:4px;">
+                    <paper-fab mini class="legendButton" style="background:#ecb3ff"></paper-fab>
+                    <div style="margin-bottom: 0%; margin-top:auto;">You have marked the question for review.If you have selected any option/s , that option/s will be submitted as your final choice after test gets over. If you have not selected any option/s , it will be considered unattempted.</div>
+                </div>
+                <div class="layout horizontal" style="margin-bottom:4px;">
+                    <paper-fab mini class="legendButton" style="background:white; margin-bottom: 0%; margin-top:0;"></paper-fab>
+                    <div style="margin-bottom: 0%; margin-top:0;">You have not attempted/answered this question.It will not be included to calculate your score.</div>
+                </div>
+            </div>
+        </div>
+        <div class="layout horizontal">
+            <b>4.</b>
+            <div style="margin-left: 5px;">Question number, Question type (Single/Multiple choice) and Question marks for a particular question is  displayed just above the question.</div>
+        </div>
+        <!--  <div class="layout horizontal">
+            <b>5.</b>
+            <div style="margin-left: 5px;">If you want to give your test offline(for slow internet connection) , disconnect your internet wire as soon as you start taking test.To submit,restore your internet connection and press submit button on the screen.</div>
+        </div> -->
+        <h4>Key Info :</h4>
+        <div class="layout horizontal" style="margin-left: 15px;">
+            <div class="layout vertical">
+                <paper-button raised class="custom indigo" id="previousButton" on-click="studentPrevious" style="margin-bottom: 10px;">Previous</paper-button>
+                <paper-button raised class="custom indigo" on-click="studentReview" style="margin-bottom: 10px;">Mark for Review & Next</paper-button>
+                <paper-button id="nextButton" on-click="studentNext" raised class="custom indigo" style="margin-bottom: 6px;">Next</paper-button>
+            </div>
+            <div style="margin-left: 2%;">
+                <p style="margin-bottom: 28px;">Save my answer and go to previous question.</p>
+                <p style="margin-bottom: 28px;">Mark the question for review and show next question.</p>
+                <p style="margin-bottom: 28px;">Save my answer and show next question.</p>
+            </div>
+        </div>
+    </template>
+    <script>
+    (function() {
+        'use strict';
+
+        Polymer({
+            is: 'student-instructions',
+
+            properties: {
+                foo: {
+                    type: String,
+                    value: 'student-instructions',
+                    notify: true
+                }
+            }
+        });
+    })();
+    </script>
+</dom-module>

@@ -1,0 +1,214 @@
+<style is="custom-style">
+:root {
+    --darkcolor-main: #3F51B5;
+    --darkcolor-second: #E9EAED;
+    --lightcolor-main: #4E7AC7;
+    --color-white: white;
+    --color-black: black;
+    font-family: 'Bodoni MT', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+body {
+    background: #fafafa;
+    font-family: 'Bodoni MT', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: black;
+}
+
+paper-header-panel {
+    @apply(--shadow-elevation-2dp);
+}
+
+.error {
+    color: red;
+}
+
+.centercontainer {
+    @apply(--layout-horizontal);
+    @apply(--layout-center-justified);
+}
+
+paper-dialog {
+    border: 2px solid;
+    border-color: var(--paper-green-500);
+    background-color: var(--paper-light-green-50);
+    color: black;
+    padding: -10px;
+}
+
+.horizontal-section {
+    padding: 0 !important;
+}
+
+.avatar {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #ccc;
+}
+
+paper-menu iron-icon,
+paper-menu span {
+    pointer-events: none;
+}
+
+paper-item {
+    width:100%;
+    --paper-item: {
+        cursor: pointer;
+    }
+    ;
+
+}
+
+.sublist {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.sublist paper-item {
+    padding-left: 30px;
+}
+
+.sublist2 paper-item {
+    padding-left: 50px;
+}
+
+.maincontent {
+    overflow: auto;
+    height: 100%;
+}
+
+.hoveronmenu:hover {
+    background-color: #f2f2f2;
+}
+
+paper-dialog {
+    border: 2px solid #f2f2f2;
+    color: black;
+}
+
+paper-dialog.size-position {
+    color: black;
+    padding: -10px;
+    position: fixed;
+    top: 40px;
+    right: -10px;
+    width: 200px;
+    border: none;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background-color: var(--color-white);
+}
+
+.heading {
+    font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: .875rem;
+    text-transform: inherit;
+    line-height: 1;
+    font-weight: bold;
+    padding-left: 10px;
+    font-size: 75%;
+}
+
+a.menuList {
+    color: #59595A;
+}
+
+a.menuList:hover {
+    color: black;
+}
+
+.profileButton {
+    @apply(--layout-horizontal);
+}
+
+.menuList:hover {
+    background-color: #f2f2f2;
+}
+
+.list {
+    font-style: bold;
+    --paper-menu-selected-item {
+        background-color: #b3b3b3;
+    }
+    ;
+}
+
+#drawerToolbar {
+    background-color: white;
+    font-family: 'Bodoni  MT', 'Arial';
+    font-size: 20px;
+    color: grey;
+}
+
+#drawerlist {
+    background-color: white;
+}
+
+paper-scroll-header-panel {
+    height: 100%;
+    font-family: 'Bodoni  MT', 'Arial';
+}
+
+paper-material {
+    border-radius: 2px;
+    height: 100%;
+    padding: 16px 0 16px 0;
+    width: calc(98.66% - 16px);
+    margin: 16px auto;
+    background: white;
+}
+
+paper-menu iron-icon {
+    margin-right: 5%;
+    font-family: 'Bodoni  MT', 'Arial';
+    color: #535998;
+}
+
+paper-menu a {
+    @apply(--layout-horizontal);
+    @apply(--layout-center);
+    text-decoration: none;
+    color: var(--menu-link-color);
+    font-family: 'Roboto', 'Noto', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 24px;
+    min-height: 48px;
+    padding: 0 16px;
+}
+
+paper-toolbar.tall .app-name {
+    font-size: 40px;
+    font-weight: 300;
+    /* Required for main area's paper-scroll-header-panel custom condensing transformation */
+    -webkit-transform-origin: left center;
+    transform-origin: left center;
+}
+
+#mainToolbar .middle-container {
+    height: 100%;
+    margin-left: 48px;
+}
+
+#mainToolbar:not(.tall) .middle {
+    font-size: 18px;
+    padding-bottom: 0;
+}
+
+#mainToolbar .bottom {
+    margin-left: 48px;
+    /* Required for main area's paper-scroll-header-panel custom condensing transformation */
+    -webkit-transform-origin: left center;
+    transform-origin: left center;
+}
+
+#toast .toast-hide-button {
+    color: #eeff41;
+    margin: 10px;
+}
+</style>

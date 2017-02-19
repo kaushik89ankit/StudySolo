@@ -1,0 +1,234 @@
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../../bower_components/sc-resize/sc-resize.html" />
+<dom-module id="image-upload">
+    <style>
+    .content {
+        @apply(--layout-vertical);
+        @apply(--layout-center-justified);
+        margin-left: -5px;
+    }
+    
+    .horizontalfield {
+        @apply(--layout-horizontal);
+        @apply(--layout-center-justified);
+        @apply(--layout-wrap);
+        margin-top: 2px;
+        background: blue;
+        color: white;
+        font-size: 10px;
+    }
+    
+    paper-fab.red {
+        --paper-fab-background: var(--paper-red-500);
+        --paper-fab-keyboard-focus-background: var(--paper-red-900);
+        height: 3px;
+        width: 3px;
+    }
+    
+    #upload_button {
+        margin-bottom: 20px;
+        @apply(--file-upload-button);
+        background-color: var(--paper-indigo-500);
+        color: white;
+        margin-top: 10px;
+        width: 99%;
+        margin-left: auto;
+        margin-right: auto;
+        --paper-button-raised-keyboard-focus: {
+            color: white !important;
+            margin-left: 3px;
+        }
+        ;
+    }
+    
+    #upload_button:hover {
+        background-color: var(--paper-indigo-100);
+        opacity: .7;
+    }
+    </style>
+    <template>
+        <div class="content">
+            <paper-button id="upload_button" on-click="_fileClick">Add IMAGE</paper-button>
+            <div id="deletesign">
+                <div class="layout horizontal">
+                    <div style="padding-top:1%;">{{imageUrlslice}}</div>
+                    <paper-fab class="red" icon="clear" on-click="_imagedefault"></paper-fab>
+                </div>
+            </div>
+            <div id="uploading_text">
+                <paper-item> Uploading... </paper-item>
+            </div>
+        </div>
+        <input type="file" id="fileInput" on-change="_fileChange" path="/chat" hidden>
+        <sc-resize id="resize" on-resize="resized" max-height=1000 max-width=1000 on-error="error"></sc-resize>
+        <!-- For deleting the image starts here -->
+        <iron-ajax id="deleteimage_ironajax" url="{{image_deleteUrl}}" handle-as="json" content-type='application/json' method="DELETE"  on-response="deleteResponse" on-error="errorOccured"></iron-ajax>
+        <!-- For deleting the image ends here -->
+    </template>
+    <script>
+    var dialog;
+
+    Polymer({
+        is: 'image-upload',
+        properties: {
+            imageUrl: {
+                type: String,
+                value: '',
+                notify: true,
+                observer: '_questionimageChanged'
+            },
+            imageUrlslice: {
+                type: String,
+                value: '',
+                notify: true
+            },
+            targeturl: {
+                type: String,
+                value: '',
+                notify: true
+            },
+            method: {
+                type: String,
+                value: "POST"
+            },
+            file: {
+                type: Object,
+                notify: true,
+                value: {}
+            },
+            image_deleteUrl: {
+                type: String,
+                value: '',
+                notify: true
+            },
+            filename: {
+                type: String,
+                notify: true
+            },
+            imagedelete_Params: {
+                notify: true
+            }
+
+        },
+
+        ready: function() {
+            this.targeturl = "/api/containers/studysolobucket/upload";
+            this._questionimageChanged();
+        },
+        _fileClick: function() {
+            var elem = this.$.fileInput;
+            if (elem && document.createEvent) { // sanity check
+                var evt = document.createEvent("MouseEvents");
+                evt.initEvent("click", true, false);
+                elem.dispatchEvent(evt);
+            }
+        },
+        _fileChange: function(e) {
+            if (e.target.files != null) {
+                var length = e.target.files.length;
+                var imagefile = e.target.files[0];
+                if (imagefile != null) {
+                    //this.resize(imagefile);
+                    this.uploadFile(imagefile);
+                }
+            }
+        },
+        _imagedefault: function(e) {
+            e.target.files = null;
+            this.deleteStart();
+            this.imageUrl = "";
+            this.$.deletesign.style.display = 'none';
+            this.$.upload_button.style.display = 'block';
+            this.filename = null;
+        },
+        uploadStart: function() {
+            this.$.deletesign.style.display = 'none';
+            this.$.uploading_text.style.display = 'block';
+            this.$.upload_button.style.display = 'none';
+        },
+        uploadSuccessfull: function() {
+            this.$.deletesign.style.display = 'block';
+            this.$.upload_button.style.display = 'none';
+            this.$.uploading_text.style.display = 'none';
+            this.imageUrl = "https://s3-ap-southeast-1.amazonaws.com/studysolobucket/" + this.filename;
+            var tempArr = this.imageUrl.split("_-_-_");
+            this.imageUrlslice = tempArr[1];
+        },
+        deleteStart: function() {
+            this.image_deleteUrl = "/api/containers/studysolobucket/files/"+this.filename;
+            this.$.deleteimage_ironajax.generateRequest();
+        },
+        deleteResponse: function() {
+
+        },
+        errorOccured: function() {
+            alert("Something went wrong please retry");
+
+        },
+        uploadFile: function(file) {
+            if (!file) {
+                alert("Please upload image only");
+                return;
+            }
+            var self = this;
+            this.filename = localStorage.loginid + "_" + new Date().getTime() + "_-_-_" + file.name.replace(/ /g, "");
+            self.uploadStart();
+
+            var formData = new FormData();
+            formData.append("file", file, this.filename);
+            var xhr = file.xhr = new XMLHttpRequest();
+            xhr.upload.onprogress = function(e) {
+                var done = e.loaded,
+                    total = e.total;
+                self.set(".progress", Math.floor((done / total) * 1000) / 10);
+                console.log("Progress is" + Math.floor((done / total) * 1000) / 10);
+            };
+            var url = this.targeturl.replace("<name>", file.name);
+            xhr.open(this.method, url, true);
+
+            xhr.onload = function(e, file) {
+                if (xhr.status === 200) {
+                    self.uploadSuccessfull();
+                } else {
+                    self.errorOccured();
+                }
+            };
+
+            xhr.send(formData);
+
+        },
+        _questionimageChanged: function() {
+            if (this.imageUrl != null && this.imageUrl != "") {
+                var tempArr = this.imageUrl.split("_-_-_");
+                this.imageUrlslice = tempArr[1];
+                this.$.deletesign.style.display = 'block';
+                this.$.upload_button.style.display = 'none';
+                this.$.uploading_text.style.display = 'none';
+
+            } else {
+                this.$.deletesign.style.display = 'none';
+                this.$.uploading_text.style.display = 'none';
+                this.$.upload_button.style.display = 'block';
+            }
+
+        },
+        // Resize image code starts here
+        resize: function(file) {
+            this.$.resize.set('file', file);
+        },
+        resized: function(e) {
+            this.uploadFile(e.detail);
+        },
+        upload_error: function() {
+                this.$.uploading_text.style.display = 'none';
+                this.$.upload_button.style.display = 'block';
+                console.log("error occureded");
+            }
+            // Resize image code ends here
+
+    });
+    </script>
+</dom-module>

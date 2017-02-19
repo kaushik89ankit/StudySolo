@@ -1,0 +1,151 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
+<link rel="import" href="../paper-input/paper-input-behavior.html">
+<link rel="import" href="../paper-input/paper-input-container.html">
+<link rel="import" href="../paper-input/paper-input-error.html">
+<link rel="import" href="../iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="../paper-menu/paper-menu.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-ripple/paper-ripple.html">
+
+<!--
+A proper select input for the Polymer world.
+
+Example:
+
+    <paper-select id="select-input-1" 
+      multiple 
+      label-field="name"
+      bind-value="{{value}}"
+      on-input-changed="inputChanged"
+      nonmatching on-adding-item="addItem" select-on-blur 
+      label="Select your favorite programming language"
+    >
+    </paper-select>
+
+    <script>
+    template.inputChanged = function(e) {
+      var input = (e.detail.value || '').trim().toLowerCase();
+      if (input)
+        e.target.options = data.filter(function(item) {
+          return item.name.toLowerCase().indexOf(input) === 0;
+        });
+      else
+        e.target.options = [];
+    };
+    
+    template.addItem = function(e) {
+      var input = (e.detail.value || '').trim()
+      e.detail.value = {
+        name: input
+      };
+    };
+    </script>
+
+@group Paper Select
+@element paper-select
+@demo demo/index.html
+-->
+<dom-module id="paper-select">
+
+  <link rel="import" type="css" href="./paper-select.css">
+
+  <template>
+
+    <paper-input-container id="inputContainer" 
+      no-label-float="[[noLabelFloat]]" 
+      always-float-label="[[alwaysFloatLabel]]" 
+      auto-validate$="[[autoValidate]]"
+      disabled$="[[disabled]]" 
+      invalid="[[invalid]]" 
+      _input-selector="#input"
+    >
+
+      <label hidden$="[[!label]]">[[label]]</label>
+
+      <div id="selectedContainer" on-tap="_elementTapped">
+
+        <template is="dom-if" if="{{bindValue}}">
+
+          <template is="dom-if" if="{{multiple}}">
+            <template is="dom-repeat" items="{{bindValue}}">
+              <div class="selected-item">
+                <span>{{_labelOf(item)}}</span>
+                <a on-tap="_removeSelectedItemTapped" hidden$="[[readonly]]"></a>
+              </div>
+            </template>
+          </template>
+
+          <template is="dom-if" if="{{!multiple}}">
+            <div class="selected-item">
+              <span>{{_labelOf(bindValue)}}</span>
+              <a on-tap="_removeSelectedItemTapped" hidden$="[[readonly]]"></a>
+            </div>
+          </template>
+
+        </template>
+
+        <input id="input" is="iron-input" 
+          type="text" 
+          hidden$="{{!_showInput}}" 
+          tabindex="0" 
+          class="paper-input-input" 
+          value="{{input::input}}" 
+          aria-labelledby$="[[_ariaLabelledBy]]" 
+          aria-describedby$="[[_ariaDescribedBy]]" 
+          disabled$="[[disabled]]" 
+          i-invalid="{{invalid}}" 
+          i-validator="[[validator]]" 
+          i-required$="[[required]]" 
+          autofocus$="[[autofocus]]" 
+          i-readonly$="[[readonly]]" 
+          on-keydown="_onInputKeyDown" 
+          on-keyup="_onInputKeyÛp"
+        >
+
+        <a id="clearButton" hidden$="{{!input}}" on-tap="clear" hidden$="[[readonly]]"></a>
+
+      </div>
+
+      <content select="paper-progress"></content>
+
+      <paper-menu id="optionsMenu" hidden$="{{!_showOptions}}" i-tabindex="0">
+        <template id="optionsRepeat" is="dom-repeat" items="{{options}}">
+          <paper-item on-tap="_optionItemTapped" on-keydown="_optionItemKeyUp" tabindex="0">
+            <span>[[_labelOf(item)]]</span>
+            <paper-ripple></paper-ripple>
+          </paper-item>
+        </template>
+        <content select="paper-item">
+          <paper-item class="add-action" on-tap="_addItem" on-keydown="_addItemOnEnter" hidden$="{{!_showAddAction}}" disabled$="{{!_showAddAction}}">
+            <span>Add</span>&nbsp;<strong>{{input}}</strong>
+            <paper-ripple></paper-ripple>
+          </paper-item>
+        </content>
+      </paper-menu>
+
+      <template is="dom-if" if="[[errorMessage]]">
+        <paper-input-error>[[errorMessage]]</paper-input-error>
+      </template>
+
+      <template is="dom-if" if="[[charCounter]]">
+        <paper-input-char-counter></paper-input-char-counter>
+      </template>
+
+      <iron-a11y-keys target="[[_self]]" keys="up down" on-keys-pressed="_cancelKeyboardEventScroll"></iron-a11y-keys>
+
+      <iron-a11y-keys target="[[_input]]" keys="down" on-keys-pressed="_focusOnOptionsPressed"></iron-a11y-keys>
+
+      <!-- <iron-a11y-keys target="[[_input]]" keys="esc" on-keys-pressed="clear"></iron-a11y-keys> -->
+
+      <!-- <iron-a11y-keys target="[[_input]]" keys="enter comma U+00BC +188" on-keys-pressed="_addItemPressed"></iron-a11y-keys> -->
+
+      <!-- <iron-a11y-keys target="[[_input]]" keys="del backspace U+0008 +8" on-keys-pressed="_removeSelectedItemPressed"></iron-a11y-keys> -->
+
+    </paper-input-container>
+
+  </template>
+
+</dom-module>
+
+<script src="paper-select.js"></script>

@@ -1,0 +1,199 @@
+<link rel="import" href="../../../bower_components/paper-date-picker/paper-date-picker.html">
+<link rel="import" href="../../../bower_components/paper-time-picker/paper-time-picker.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/moment-element/moment-with-locales-import.html">
+<dom-module id="teacher-submitdialog">
+  <template>
+    <style>
+    :host {
+      display: block;
+    }
+    centerHeading{
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+    }
+    .containerButton {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-justified);
+    }
+    paper-button.indigo {
+      background-color: var(--paper-indigo-500);
+      color: white;
+      margin-top: 10px;
+      --paper-button-raised-keyboard-focus: {
+        color: white !important;
+        margin-left: 10px;
+      }
+      ;
+    }
+    
+    paper-button.indigo:hover {
+      background-color: var(--paper-indigo-100);
+    }
+    
+    paper-material {
+      background: white;
+      margin:-10px;
+      padding:10px;
+    }
+    
+    .datecontainer {
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+      width: 75%;
+    }
+    </style>
+    <paper-material elevation="1">
+      <h1 style="text-align:center">Test Window</h1>
+      <p>(Test window is the 'Starting Date' and 'Starting Time' from which students will be able to take this test till the 'End Date' and 'End Time')</p>
+      <div class="layout horizontal" style="margin-bottom:10px;margin-top:15px;">
+        <h4 style="width:30%;">Starting Date and Time (From) :</h4>
+        <div class="datecontainer">
+          <iron-icon icon=today style="margin-left:5px;margin-right:5px;" on-click="openfromdialog"></iron-icon>
+          <p style="width:15%;">{{startingdate}}</p>
+          <iron-icon icon=query-builder style="margin-left:5px;margin-right:5px;" on-click="openfromdialog"></iron-icon>
+          <p style="width:15%;">{{startingtime}}</p>
+          <paper-button class="indigo" style="width:35%" data-dialog="modal" on-click="openfromdialog">Change Date/Time</paper-button>
+        </div>
+      </div>
+      <div class="layout horizontal">
+        <h4 style="width:30%;">Ending Date and Time (To) :</h4>
+        <div class="datecontainer">
+          <iron-icon on-click="opentodialog" icon=today style="margin-left:5px;margin-right:5px;"></iron-icon>
+          <p style="width:15%;">{{endingdate}}</p>
+          <iron-icon icon=query-builder style="margin-left:5px;margin-right:5px;" on-click="opentodialog"></iron-icon>
+          <p style="width:15%;">{{endingtime}}</p>
+          <paper-button class="indigo" style="width:35%" data-dialog="modal" on-click="opentodialog">Change Date/Time</paper-button>
+        </div>
+      </div>
+      <paper-dialog id="frompicker" class="layout vertical" with-backdrop>
+        <div class="layout horizontal">
+          <paper-date-picker id="startingpicker" date="{{newstartingdate}}" min-date="{{frommindate}}"></paper-date-picker>
+          <paper-time-picker id="startingtimePicker" time="{{startingtime}}"></paper-time-picker>
+        </div>
+        <div class="buttons">
+          <paper-button class="indigo" dialog-dismiss>Cancel</paper-button>
+          <paper-button class="indigo" dialog-confirm on-click="fromdatetime">OK</paper-button>
+        </div>
+      </paper-dialog>
+      <paper-dialog id="topicker" class="layout vertical" with-backdrop>
+        <div class="layout horizontal">
+          <paper-date-picker id="endingpicker" date="{{newendingdate}}" min-date="{{tomindate}}"></paper-date-picker>
+          <paper-time-picker id="endingtimePicker" time="{{endingtime}}"></paper-time-picker>
+        </div>
+        <div class="buttons">
+          <paper-button class="indigo" dialog-dismiss>Cancel</paper-button>
+          <paper-button class="indigo" dialog-confirm on-click="todatetime">OK</paper-button>
+        </div>
+      </paper-dialog>
+      <div class="containerButton" style="margin-top:10px;">
+        <paper-button class="indigo" on-click="submittestdetails" style="width:30%;">Submit</paper-button>
+        <paper-button class="indigo" dialog-dismiss style="width:30%;">Cancel</paper-button>
+      </div>
+    </paper-material>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'teacher-submitdialog',
+      properties: {
+        newstartingdate: {
+          type: String,
+          notify: true,
+          observer: '_startingdatechanged'
+        },
+        startingdate: {
+          type: String,
+          notify: true,
+          observer: '_startingdatechanged'
+        },
+        frommindate: {
+          notify: true,
+        },
+        startingtime: {
+          type: String,
+          notify: true
+        },
+        endingdate: {
+          type: String,
+          notify: true,
+          observer: '_endingdatechanged'
+        },
+        endingtime: {
+          type: String,
+          notify: true
+        },
+        newendingdate: {
+          type: String,
+          notify: true,
+          observer: '_endingdatechanged'
+        },
+        tomindate: {
+          notify: true
+        }
+
+      },
+      submittestdetails: function() {
+        var finalstartingnumber = Date.parse(this.startingdate) + this.getTimeMilliseconds(this.startingtime);
+        var finalendingnumber = Date.parse(this.endingdate) + this.getTimeMilliseconds(this.endingtime);
+        if (finalstartingnumber >= finalendingnumber) {
+          alert("Ending Time must be greater than Starting Time.");
+        }
+        else
+        {
+          this.domHost.testStarttime = finalstartingnumber;
+          this.domHost.testEndtime = finalendingnumber;
+          this.domHost.submitFunction();
+        }
+      },
+      ready: function() {
+        this.startingdate = this.$.startingpicker.dateFormat(this.$.startingpicker.date, 'll');
+        this.frommindate = this.newstartingdate;
+      },
+      _startingdatechanged: function() {
+        this.startingdate = this.$.startingpicker.dateFormat(this.$.startingpicker.date, 'll');
+        this.tomindate = this.$.startingpicker.date;
+        if (this.newendingdate < this.$.startingpicker.date) {
+          this.newendingdate = this.$.startingpicker.date;
+        }
+      },
+      _endingdatechanged: function() {
+        this.endingdate = this.$.endingpicker.dateFormat(this.$.endingpicker.date, 'll');
+        //this.tomindate = this.$.endingpicker.date;
+      },
+
+      openfromdialog: function() {
+        var dialog = this.$.frompicker;
+        if (dialog) {
+          dialog.open();
+        }
+      },
+      opentodialog: function() {
+        var dialog = document.getElementById("topicker");
+        if (dialog) {
+          dialog.open();
+        }
+      },
+      fromdatetime: function() {
+        this.startingdate = this.$.startingpicker.date;
+        this.startingtime = this.$.startingtimePicker.time;
+      },
+      todatetime: function() {
+        this.endingdate = this.$.endingpicker.date;
+        this.endingtime = this.$.endingtimePicker.time;
+      },
+      getTimeMilliseconds: function(timeString) {
+        var t = timeString.match(/(\d{1,2}):(\d{2}) ([AP]M)/),
+          h = parseInt(t[1], 10),
+          isAm = t[3] === 'AM',
+          isMidnight = h === 12 && isAm,
+          isNoon = h === 12 && !isAm;
+        return (isMidnight ? 0 : h + (isAm || isNoon ? 0 : 12)) * 3600000 + parseInt(t[2], 10) * 60000;
+      }
+    });
+  })();
+  </script>
+</dom-module>
+

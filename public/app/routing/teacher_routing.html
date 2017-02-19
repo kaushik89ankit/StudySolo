@@ -1,0 +1,107 @@
+<script src="../../bower_components/page/page.js"></script>
+<script>
+window.addEventListener('WebComponentsReady', function() {
+
+    // We use Page.js for routing. This is a Micro
+    // client-side router inspired by the Express router
+    // More info: https://visionmedia.github.io/page.js/
+
+    // Removes end / from app.baseUrl which page.base requires for production
+
+    if (window.location.port === '') { // if production
+        page.base(app.baseUrl.replace(/\/$/, ''));
+    }
+
+    page.base('/app/dashboard/teacher/');
+    // Middleware
+    function scrollToTop(ctx, next) {
+        app.scrollPageToTop();
+        next();
+    }
+
+    function closeDrawer(ctx, next) {
+        app.closeDrawer();
+        next();
+    }
+
+    // Routes
+    page('*', scrollToTop, closeDrawer, function(ctx, next) {
+        next();
+    });
+
+    page('/', function() {
+        app.route = 'createtest';
+    });
+
+    page('/createtest', function() {
+        app.route = 'createtest';
+    });
+
+    page('/settings', function() {
+        app.route = 'settings';
+    });
+
+    page('/users/:name', function(data) {
+        app.route = 'user-info';
+        app.params = data.params;
+    });
+
+    page('/contactus', function() {
+        app.route = 'contactus';
+    });
+    page('/profile', function() {
+        app.route = 'profile';
+    });
+    page('/previoustests', function() {
+        app.route = 'previoustests';
+        var tempElement = document.getElementById("previoustests");
+        tempElement.autoReload();
+    });
+     page('/viewresult', function() {
+        app.route = 'viewresult';
+        var tempElement = document.getElementById("viewresult");
+        //tempElement.autoReload();
+    });
+    page('/saveddrafts', function() {
+        app.route = 'saveddrafts';
+        var tempElement = document.getElementById("saveddrafts");
+        tempElement.autoReload();
+    });
+    page('/submittedtests', function() {
+        app.route = 'submittedtests';
+    });
+    page('/notification', function() {
+        app.route = 'notification';
+    });
+    page('/testquestions/:testdetails', function(data) {
+        app.route = 'testquestions';
+        app.params = data.params;
+        var tempElement = document.getElementById("maintestelement");
+        tempElement.loadOldTest();
+    });
+    page('/teacherviewtest/:test_id/:test_title', function(data) {
+        app.route = 'teacherviewtest';
+        app.params = data.params;
+        var tempElement = document.getElementById("teacherviewtest");
+        tempElement.loadTest(data.params.test_id, data.params.test_title);
+    });
+    page('/teachertestresult/:test_id/:test_title', function(data) {
+        app.route = 'teachertestresult';
+        app.params = data.params;
+        var tempElement = document.getElementById("teachertestresult");
+        tempElement.loadResult(data.params.test_id,data.params.test_title);
+    });
+    // 404
+    page('*', function() {
+        app.$.toast.text = 'Can\'t find: ' + window.location.href + '. Redirected you to create test page';
+        app.$.toast.show();
+        page.redirect('/createtest');
+    });
+
+    // add #! before urls
+    page({
+        hashbang: true
+    });
+
+});
+</script>

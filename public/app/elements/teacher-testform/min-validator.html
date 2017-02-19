@@ -1,0 +1,19 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-validator-behavior/iron-validator-behavior.html">
+
+<script>
+  Polymer({
+    is: 'min-validator',
+    behaviors: [
+      Polymer.IronValidatorBehavior
+    ],
+    validate: function(value) {
+      // this regex validates incomplete ssn's (by design)
+      if(parseInt(value)<60)
+      return !value || value.match(/^[0-9]{1,2}$/);
+      else
+        return !value;
+      
+    }
+  });
+</script>

@@ -1,0 +1,301 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../import-tinymce/import-tinymce.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../../app/elements/image-upload/image-upload.html">
+<link rel="import" href="../../app/elements/image-resize/image-resize.html">
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <polymer-tinymce></polymer-tinymce>
+
+@group Seed Elements
+@element polymer-tinymce
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="polymer-tinymce">
+    <template>
+        <style>
+        :host {
+            display: block;
+            width: 100%;
+        }
+        
+        #imageDialog,
+        #chemDialog {
+            @apply(--layout-vertical);
+            @apply(--layout-center-justified);
+        }
+        
+        #imageDialogHeading {
+            background-color: #3f51b5;
+            color: white;
+            font-family: 'Bodoni MT', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            width: 320px;
+            margin-top: 0px;
+            font-size: 26px;
+        }
+        
+        #DialogHeading {
+            background-color: #3f51b5;
+            color: white;
+            font-family: 'Bodoni MT', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin-top: 0px;
+            font-size: 22px;
+        }
+        
+        #frame {
+            width: 1250px;
+            height: 550px;
+        }
+        
+        #image_resize {
+            @apply(--layout-horizontal);
+            /*@apply(--layout-center-justified);*/
+            width: 800px;
+            height: 600px;
+        }
+        
+        #imageupload_question {
+            width: 40%;
+            margin-top: 8px;
+        }
+        </style>
+        <textarea id="[[textareaId]]" name="content" style="width:100%" class="te"></textarea>
+        <paper-dialog modal id="imageDialog">
+            <paper-item disabled id="imageDialogHeading">Insert Image </paper-item>
+            <hr style="margin-top: -1%; width: 300px">
+            <div class="horizontal layout">
+                <paper-item disabled style="color: black; margin-left: -15px;">Click to add: </paper-item>
+                <image-upload id="imageupload_question" image-url="{{questionImagepath}}" targeturl=""></image-upload>
+            </div>
+            <div class="buttons">
+                <paper-button dialog-confirm>Okay</paper-button>
+                <paper-button dialog-dismiss>Cancel</paper-button>
+            </div>
+        </paper-dialog>
+        <paper-dialog modal id="chemDialog">
+            <paper-item disabled id="DialogHeading">Chemistry Equation Editor</paper-item>
+            <hr style="margin-top: -1%; width: 300px">
+            <div class="horizontal layout">
+                <iframe id="frame" src="https://molview.org"></iframe>
+            </div>
+            <div class="buttons">
+                <!-- <paper-button dialog-confirm>Okay</paper-button> -->
+                <paper-button dialog-dismiss>Close</paper-button>
+            </div>
+        </paper-dialog>
+        <paper-dialog modal id="image_compress">
+            <paper-item disabled id="DialogHeading">Image Compressor</paper-item>
+            <hr style="margin-top: -1%; width: 300px">
+            <div id="image_resize">
+                <image-resize></image-resize>
+            </div>
+            <div class="buttons">
+                <paper-button dialog-confirm>Okay</paper-button>
+                <!-- <paper-button dialog-dismiss>Cancel</paper-button> -->
+            </div>
+        </paper-dialog>
+        <paper-dialog modal id="physicsDialog">
+            <paper-item disabled id="DialogHeading">Physics Editor</paper-item>
+            <hr style="margin-top: -1%; width: 300px">
+            <div class="horizontal layout">
+                <iframe id="frame" src="https://www.draw.io/"></iframe>
+            </div>
+            <div class="buttons">
+                <!-- <paper-button dialog-confirm>Okay</paper-button> -->
+                <paper-button dialog-dismiss>Close</paper-button>
+            </div>
+        </paper-dialog>
+    </template>
+</dom-module>
+<script>
+Polymer({
+
+    is: 'polymer-tinymce',
+
+    properties: {
+
+        inputValue: {
+            type: String
+        },
+
+        // "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+
+        tinytoolbar: {
+            type: String,
+            value: "undo | bullist"
+        },
+
+        questionImagepath: {
+            type: String,
+            notify: true,
+            observer: '_questionimagepathChanged'
+        },
+
+        // ["advlist autolink lists link image charmap print preview anchor","searchreplace visualblocks code fullscreen","insertdatetime media table contextmenu paste"]
+
+        tinyplugins: {
+            type: Array,
+            value: ["advlist autolink lists link image eqneditor charmap preview anchor fullscreen"]
+        },
+
+        /* Html or an url that can be loaded from the editor. */
+        // [{title: 'Some title 1', description: 'Some desc 1', content: 'My content'}, 
+        // {title: 'Some title 2', description: 'Some desc 2', url: 'development.html'}]
+        templates: {
+            type: Array,
+            value: function() {
+                return []
+            }
+        },
+
+        height: {
+            type: Number,
+            value: 168
+        },
+
+        baseUrl: {
+            type: String,
+            value: ''
+        },
+
+        textareaId: {
+            type: String,
+            value: ''
+        }
+
+    },
+
+    _questionimagepathChanged: function() {
+
+    },
+
+    attached: function() {
+        this.prepareInitEditor();
+        this.textareaId = this.guidGenerator();
+        //     console.log("Text Detect");
+        //     document.getElementById(this.textareaId).addEventListener('mouseout', function(e) {
+        //         console.log("text detected");
+        //     });
+    },
+
+    prepareInitEditor: function() {
+        this.async(function() {
+            this.initEditor();
+        }.bind(this), 100);
+    },
+
+    initEditor: function() {
+
+        if (this.baseUrl !== '') {
+            tinymce.baseURL = this.baseUrl;
+        }
+
+        tinymce.init({
+            force_br_newlines: true,
+            force_p_newlines: false,
+            forced_root_block: '',
+            selector: '#' + this.textareaId,
+            menubar: 'false',
+
+            toolbar1: 'undo redo | styleselect | fontsizeselect | bold italic superscript subscript | bullist numlist | charmap image | searchreplace table',
+            toolbar2: 'myImageButton imageCompressor | physicsEditor chemEditor eqneditor',
+            
+            //toolbar: 'myImageButton',
+            plugins: 'eqneditor',
+            toolbar: 'eqneditor',
+            resize: 'false',
+            templates: this.templates,
+            plugins: this.tinyplugins,
+            toolbar: this.tinytoolbar,
+            height: this.height,
+            setup: function(ed) {
+                ed.addButton('myImageButton', {
+                    type: 'button',
+                    text: 'Image',
+                    // icon: 'file',
+                    tooltip: 'Insert image from computer',
+                    onclick: function() {
+                        document.getElementById("imageDialog").toggle();
+                    }
+                });
+
+                ed.addButton('chemEditor', {
+                    type: 'button',
+                    text: 'Chem EQ',
+                    // icon: '/file.png',
+                    tooltip: 'Insert Chemistry Equation',
+                    onclick: function() {
+                        document.getElementById("chemDialog").toggle();
+                    }
+                });
+
+                ed.addButton('physicsEditor', {
+                    type: 'button',
+                    text: 'Draw',
+                    // icon: '/file.png',
+                    tooltip: 'Draw Diagrams',
+                    onclick: function() {
+                        document.getElementById("physicsDialog").toggle();
+                    }
+                });
+
+                ed.addButton('imageCompressor', {
+                    type: 'button',
+                    text: 'Add Image',
+                    tooltip: 'Upload Compressed Image',
+                    onclick: function() {
+                        document.getElementById
+                        document.getElementById("image_compress").toggle();
+                    }
+                });
+
+
+                ed.on('init', function(args) {
+
+                    this.fire('tiny-init');
+
+                });
+
+                ed.on('focus', function(e) {
+
+                    this.fire('tiny-focus');
+
+                });
+
+                ed.on('NodeChange', function(e) {
+                    this.fire('tiny-node');
+
+                });
+            }
+        });
+    },
+
+    execCommand: function(command) {
+        tinyMCE.activeEditor.execCommand(command);
+        tinymce.activeEditor.insertContent(command);
+    },
+
+    getContent: function() {
+        return tinyMCE.get(this.textareaId).getContent();
+    },
+
+    setContent: function(content) {
+        if (tinyMCE && tinyMCE.get(this.textareaId)) {
+            tinyMCE.get(this.textareaId).setContent(content);
+        }
+
+    },
+
+    guidGenerator: function() {
+        var S4 = function() {
+            return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+        };
+        return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+    },
+
+});
+</script>

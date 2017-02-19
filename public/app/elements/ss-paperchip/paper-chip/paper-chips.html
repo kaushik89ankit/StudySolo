@@ -1,0 +1,145 @@
+<link rel='import' href='../../../../bower_components/polymer/polymer.html'>
+<link rel='import' href='../../../../bower_components/iron-icon/iron-icon.html'>
+<link rel='import' href='../../../../bower_components/iron-icons/iron-icons.html'>
+<link rel='import' href='../../../../bower_components/paper-styles/paper-styles.html'>
+<link rel='import' href='paper-chip.html'>
+
+<!--
+A list of chips that an be dynamically added/removed. This element can be used
+to let users enter a list of topics or names.
+
+### Example
+
+```html
+<paper-chips items=[[array]]></paper-chips>
+```
+
+@demo demo/chips.html
+-->
+<dom-module id="paper-chips">
+
+	<template>
+
+		<style>
+			.chip {
+				margin-right: 5px;
+				padding-right: 6px;
+				@apply(layout-horizontal);
+			}
+
+			.delete {
+				--iron-icon-height: 20px;
+				--iron-icon-width: 20px;
+				color: var(--disabled-text-color);
+			}
+
+			.chip:hover .delete {
+				color: white;
+			}
+				
+		</style>
+
+		<template is='dom-repeat' items=[[items]]>
+			<paper-chip class='chip' selectable>[[item.name]] <iron-icon icon='icons:cancel' class='delete' on-tap='_delete'></iron-icon></paper-chip>
+		</template>
+	</template>
+
+</dom-module>
+
+<script>
+
+(function() {
+
+	Polymer({
+		is: 'paper-chips',
+		properties: {
+			/**
+	         * Fired when the user deletes an item
+	         *
+	         * @event delete-item
+	         */
+
+			/**
+			 * Array of chips, e.g. [
+			 *  { id: 'apples', name: 'Apples'},
+			 *  { id: 'pears', name: 'Pears'}
+			 * ]
+			 */
+			items: {
+				type: Array,
+				notify: true,
+				value: [],
+				observer: '_calcEmpty'
+			},
+			
+
+			/**
+			 * True if no items are currently known
+			 */
+			empty: {
+				type: Boolean,
+				notify: true
+			}
+		},
+
+		/**
+		 * Adds a chip
+		 */
+		add: function(item) {
+			// Only chips with a visible name
+			if (typeof item.name === 'undefined' || item.name === '')  {
+				return;
+			}
+
+			// Needs to use Polymer push to trigger data binding
+			this.push('items', item);
+
+			this._calcEmpty();
+		},
+
+		/**
+		 * Removes a chip
+		 */
+		remove: function(itemIndex) {
+			// Needs to use Polymer splice to trigger data binding
+			this.splice('items', itemIndex, 1);
+
+			this._calcEmpty();
+
+			this.fire('delete-item');
+		},
+
+		/**
+		 * Removes the last chip
+		 */
+		removeLast: function() {
+			// Ignore if there are no chips left
+			if (this.items.length == 0) {
+				return;
+			}
+
+			this.remove(this.items.length - 1);
+		},
+
+		/**
+		 * Handles clicks on the delete icon
+		 */
+		_delete: function(e) {
+			var itemIndex = this.items.indexOf(e.model.item);
+			if (itemIndex > -1) {
+				this.remove(itemIndex);
+			}
+		},
+		/**
+		 * Calculates the value for empty. This can't be a simple computed function
+		 * because Polymer doesn't trigger it based on changes to the `items` array.
+		 */
+		_calcEmpty: function() {
+			this.empty = this.items.length === 0;
+
+		}
+	});
+
+})();
+
+</script>

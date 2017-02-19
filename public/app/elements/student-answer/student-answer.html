@@ -1,0 +1,93 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
+<dom-module id="student-answer">
+    <template>
+        <style>
+        :host {
+            display: block;
+        }
+        
+        .answer {
+            @apply(--layout-vertical);
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            position: relative;
+        }
+        
+        #answer_checkbox {
+            font-family: 'Helvetica', 'Arial';
+            margin-bottom: 10px;
+            margin-right: 0.1em;
+            width: 8vw;
+        }
+        </style>
+        <div class="answer">
+            <div class="horizontal layout">
+                <div>
+                    <paper-checkbox id="answer_checkbox"><b>Option 
+                   <span>{{option_number}}</span>:</b>
+                    </paper-checkbox>
+                </div>
+                <div id="answerDiv" style="word-wrap: break-word; margin-left:5px;"></div>
+            </div>
+            <paper-button id="ans_image_buttton" on-click="_lightboxshow" style=" margin-right:auto;margin-left:auto; padding:0; margin-top:5px;">
+                <iron-image style="height:150px;width:150px;" src={{answer_image}} sizing="contain">
+                </iron-image>
+            </paper-button>
+        </div>
+    </template>
+    <script>
+    (function() {
+        'use strict';
+        Polymer({
+            is: 'student-answer',
+            properties: {
+                answer_text: {
+                    notify: true,
+                    observer: '_answerTextChanged'
+                },
+                answer_image: {
+                    notify: true,
+                    observer: "_imagechanged"
+                },
+                option_number: {
+                    type: Number,
+                    Notify: true
+                },
+                marked_answer: {
+                    type: Boolean,
+                    value: false,
+                    notify: true,
+                    observer: '_option_checked_status_changed'
+                }
+            },
+            listeners: {
+                'change':'_option_checked_status_changed'
+            },
+
+            _lightboxshow: function() {
+                this.domHost.on_dialogopen(this.answer_image);
+            },
+            _lightboxhide: function() {
+                this.$.viewbox.style.display = 'none';
+            },
+            _imagechanged: function() {
+                if (this.answer_image != null && this.answer_image != "") {
+                    this.$.ans_image_buttton.style.display = 'block';
+                } else {
+                    this.$.ans_image_buttton.style.display = 'none';
+                }
+            },
+            _option_checked_status_changed: function() {
+
+                this.marked_answer = this.$.answer_checkbox.checked;
+            },
+            _answerTextChanged: function() {
+                this.$.answerDiv.innerHTML = this.answer_text;
+            }
+        });
+    })();
+    </script>
+</dom-module>

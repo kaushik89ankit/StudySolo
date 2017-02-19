@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="Study Solo" content="Study Solo (Ask Question, Seek Answers)">
+    <meta name="description" content="At StudySolo our vision is to take traditional classroom experience online by enabling teachers to create content and connect with their students on our platform">
+    <meta name="keywords" content="study solo, studysolo, coaching, teacher, help, online, portal, test portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Solo</title>
+    <!-- Place favicon.ico in the `app/` directory -->
+    <!-- Chrome for Android theme color -->
+    <meta name="theme-color" content="#2E3AA1">
+    <!-- Web Application Manifest -->
+    <link rel="app/manifest" href="manifest.json">
+    <!-- Tile color for Win8 -->
+    <meta name="msapplication-TileColor" content="#3372DF">
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="STUDYSOLO">
+    <link rel="icon" sizes="192x192" href="/app/images/touch/studysolo_icon_chrometouch.png">
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="StudySolo">
+    <link rel="apple-touch-icon" href="/app/images/touch/studysolo_icon_apple_touch.png">
+    <!-- Tile icon for Win8 (144x144) -->
+    <meta name="msapplication-TileImage" content="/app/images/touch/studysolo_icon_144.png">
+    <!-- endbuild-->
+    <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
+    <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <!-- endbuild -->
+    <!-- will be replaced with elements/elements.vulcanized.html -->
+    <link rel="import" href="/app/elements/teacherElements.html">
+    <!-- endreplace-->
+    <link rel="import" href="/app/routing/teacher_routing.html">
+    <link rel="import" href="/app/styles/teacher_theme.html">
+</head>
+
+<body unresolved class="fullbleed layout vertical">
+    <template is="dom-bind" id="app">
+        <paper-drawer-panel id="paperDrawerPanel" drawer-width="17%">
+            <!-- Drawer Scroll Header Panel -->
+            <paper-header-panel drawer fixed id="drawerlist" mode="waterfall">
+                <!-- Drawer Toolbar -->
+                <paper-toolbar id="drawerToolbar" style="color:black;background-color:#ffffff;">
+                    <iron-image style="width:40px; height:40px;" sizing="cover" src="/app/images/touch/studysolo_icon_128.png"></iron-image>
+                    <span class="heading" style="font-size:100%; text-transform: initial; font-style: italic;">StudySolo</span>
+                </paper-toolbar>
+                <!-- Drawer Content -->
+                <div class="horizontal-section">
+                    <paper-menu id="drawerlist" class="list" attr-for-selected="data-route" selected="[[route]]" label="menu">
+                        <paper-item class="hoveronmenu">
+                            <a data-route="createtest" href="#!/createtest" style="width: 100%;">
+                                <iron-icon icon="home"></iron-icon>
+                                <p style="color: #225378;font-family:'Bodini MT';">Create New Test</p>
+                            </a>
+                        </paper-item>
+                        <paper-item class="hoveronmenu">
+                            <a data-route="previoustests" href="#!/previoustests" style="width: 100%;">
+                                <iron-icon icon="info"></iron-icon>
+                                <p style="color: #225378;font-family:'Bodini MT';">Previous Tests</p>
+                            </a>
+                        </paper-item>
+                        <!-- <paper-item class="hoveronmenu">
+                            <a data-route="viewresult" href="#!/viewresult" style="width: 100%;">
+                                <iron-icon icon="info"></iron-icon>
+                                <p style="color: #225378;font-family:'Bodini MT';">View Result</p>
+                            </a>
+                        </paper-item> -->
+                        <paper-item class="hoveronmenu">
+                            <a data-route="saveddrafts" href="#!/saveddrafts" style="width: 100%;">
+                                <iron-icon icon="info"></iron-icon>
+                                <p style="color: #225378;font-family:'Bodini MT';">Saved Drafts</p>
+                            </a>
+                        </paper-item>
+                        <!-- <paper-menu class="menu-content sublist2">
+                                <a data-route="createtest" href="#!/createtest">
+                                    <iron-icon icon="home"></iron-icon>
+                                    <span>Create New Test</span>
+                                </a>
+                                <a data-route="previoustests" href="#!/previoustests">
+                                    <iron-icon icon="info"></iron-icon>
+                                    <span>Previous Tests</span>
+                                </a>
+                                <a data-route="saveddrafts" href="#!/saveddrafts">
+                                    <iron-icon icon="mail"></iron-icon>
+                                    <p style="color: #225378;font-family:'Bodini MT';">Saved Drafts</p>
+                                </a>
+                            </paper-menu> -->
+                        <!-- <paper-item class="hoveronmenu">
+                            <a data-route="notification" href="#!/notification" style="width: 100%;">
+                                <iron-icon icon="info"></iron-icon>
+                               <p style="color: #225378;font-family:'Bodini MT';">Send Notification</p>
+                            </a>
+                        </paper-item> -->
+                        <!-- <paper-item class="hoveronmenu">
+                            <a data-route="profile" href="#!/profile" style="width: 100%;">
+                                <iron-icon icon="info"></iron-icon>
+                                <p style="color: #225378;font-family:'Bodini MT';">Profile</p>
+                            </a>
+                        </paper-item> -->
+                        <!-- <paper-item class="hoveronmenu">
+                            <a data-route="settings" href="#!/settings" style="width: 100%;">
+                                <iron-icon icon="mail"></iron-icon>
+                                <p style="color: #225378;font-family:'Bodini MT';">Settings</p>
+                            </a>
+                        </paper-item> -->
+                        <paper-item class="hoveronmenu">
+                            <a data-route="contactus" href="#!/contactus" style="width: 100%;">
+                                <iron-icon icon="mail"></iron-icon>
+                                <p style="color: #225378;font-family:'Bodini MT';">Contact StudySolo</p>
+                            </a>
+                        </paper-item>
+                    </paper-menu>
+                </div>
+            </paper-header-panel>
+            <!-- Main Area -->
+            <paper-header-panel main id="headerPanelMain" condenses keep-condensed-header mode="waterfall" style="background-color:#f2f2f2;height:100%;">
+                <!-- Main Toolbar -->
+                <paper-toolbar id="mainToolbar">
+                    <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+                    <span class="flex"></span>
+                    <!-- Toolbar icons -->
+                    <paper-button on-click="expandFunction" class="profileButton" style="text-transform: initial;">
+                        <iron-image src='{{userimage}}' style="border-radius: 100%; height:35px;width:35px; " sizing="contain"></iron-image>
+                        <div class="layout horizontal center" style="padding-left:5px;">Welcome,<span style="padding-left:5px;">{{username}}</span>
+                            <iron-icon id="openBox" icon="icons:expand-more" style="padding-left:5px;"></iron-icon>
+                            <iron-icon id="closeBox" icon="icons:expand-less" style="padding-left:5px; display:none;"></iron-icon>
+                        </div>
+                    </paper-button>
+                    <!-- Application name -->
+                    <!-- Application sub title -->
+                    <div class="bottom bottom-container center horizontal layout">
+                        <div class="bottom-title paper-font-subhead">Ask Question.Seek Answers</div>
+                    </div>
+                </paper-toolbar>
+                <!-- Main Content -->
+                <div class="maincontent">
+                    <iron-pages attr-for-selected="data-route" selected="{{route}}">
+                        <section data-route="createtest">
+                            <teacher-testform id="teachertestform"></teacher-testform>
+                        </section>
+                        <section data-route="settings">
+                            settings
+                        </section>
+                        <section data-route="profile">
+                            <teacher-profileview></teacher-profileview>
+                        </section>
+                        <section data-route="teacherprofileEdit">
+                            <teacher-profileEdit></teacher-profileEdit>
+                        </section>
+                        <section data-route="contactus">
+                            <teacher-contactus></teacher-contactus>
+                        </section>
+                        <section data-route="testquestions">
+                            <teacher-testquestions id="maintestelement" test-details="{{params.testdetails}}"></teacher-testquestions>
+                        </section>
+                        <section data-route="teacherviewtest">
+                            <teacher-viewtest id="teacherviewtest" test-details="{{params.testdetails}}"></teacher-viewtest>
+                        </section>
+                        <section data-route="saveddrafts">
+                            <teacher-saveddrafts id="saveddrafts"></teacher-saveddrafts>
+                        </section>
+                        <section data-route="previoustests">
+                            <teacher-previoustests id="previoustests"></teacher-previoustests>
+                        </section>
+                        <section data-route="viewresult">
+                            <teacher-viewresult id="viewresult"></teacher-viewresult>
+                        </section>
+                        <section data-route="teachertestresult">
+                            <teacher-testresult id="teachertestresult"></teacher-testresult>
+                        </section>
+                        <section data-route="notification">
+                            <teacher-notificationselement></teacher-notificationselement>
+                        </section>
+                    </iron-pages>
+                </div>
+            </paper-header-panel>
+        </paper-drawer-panel>
+        <paper-toast id="toast" style="min-width:200px; ">
+            <!-- <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span> -->
+        </paper-toast>
+        <paper-dialog id="commonPaperDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <p>{{dialogText}}</p>
+            <div class="centercontainer">
+                <paper-button class="okButton" dialog-dismiss>OK</paper-button>
+            </div>
+        </paper-dialog>
+        <paper-dialog id="commonErrorDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <h2 class="error">Error</h2>
+            <p>{{errorDialogMessage}}</p>
+            <div class="centercontainer">
+                <paper-button class="okButton" dialog-dismiss>OK</paper-button>
+            </div>
+        </paper-dialog>
+        <paper-dialog id="commonWaitDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop modal>
+            <div class="centerfield">
+                <paper-spinner id="loadingspinner" active></paper-spinner>
+                <span style="margin-left:10px;">{{waitDialogMessage}}</span>
+            </div>
+        </paper-dialog>
+        <paper-dialog id="emailstudysolo" with-backdrop style="background-color: white; border: 2px solid #3F51B5; border-radius:1%; width:80%; height:65%;">
+            <feedback-element id="feedbackForm"></feedback-element>
+        </paper-dialog>
+        <paper-dialog id="profileMenu" class="size-position" entry-animation="fade-in-animation" exit-animation="fade-out-animation">
+            <paper-menu style="padding:0px; margin:0px;">
+                <a class="menuList" data-route="viewprofile" href="#!/viewprofile" onclick="app.dialogClosed()" style="text-decoration: none;">
+                    <paper-item>
+                        <iron-icon icon="icons:account-circle"></iron-icon>
+                        <span class="heading"> View Profile</span>
+                    </paper-item>
+                </a>
+                <a class="menuList" data-route="editprofile" href="#!/editprofile" onclick="app.dialogClosed()" style="text-decoration: none;">
+                    <paper-item>
+                        <iron-icon icon="icons:create"></iron-icon>
+                        <span class="heading">Edit Profile</span>
+                    </paper-item>
+                </a>
+                <a class="menuList" href="/app" onclick="app.logoutFunction()" style="text-decoration: none;">
+                    <paper-item>
+                        <iron-icon icon="icons:exit-to-app"></iron-icon>
+                        <span class="heading">Logout</span>
+                    </paper-item>
+                </a>
+            </paper-menu>
+        </paper-dialog>
+        <paper-toast id="toast">
+            <!--  <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span> -->
+        </paper-toast>
+    </template>
+    <!-- build:js scripts/app.js -->
+    <script src="/app/scripts/app.js"></script>
+    <!-- endbuild-->
+</body>
+
+</html>

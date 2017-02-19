@@ -1,0 +1,59 @@
+
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="paper-chip/paper-chip.html">
+<link rel="import" href="paper-chip/paper-chips.html">
+<link rel="import" href="paper-chip/paper-chips-search.html">
+<dom-module id="ss-paperchip">
+    <template>
+        <style>
+        :host {
+            display: block;
+        }
+        </style>
+        <iron-a11y-keys id="a11y" target="[[target]]" keys="enter" on-keys-pressed="onEnter"></iron-a11y-keys>
+        <paper-chips-search id="chips" items={{items}} search={{search}}></paper-chips-search>
+        <br>
+    </template>
+    <script>
+    (function() {
+            'use strict';
+
+            Polymer({
+                    is: 'ss-paperchip',
+                    properties: {
+                        foo: {
+                            type: String,
+                            value: 'ss-paperchip',
+                            notify: true
+                        },
+                        // target: {
+                        //     type: Object,
+                        //     value: function() {
+                        //         return this.$.chips;
+                        //     }
+                        // },
+                        search:{
+                            type:String,
+                            notify:true
+                        },
+                        items:{
+                            type:Array,
+                            notify:true
+                        },
+                        topicsfortest:{
+                            type:Array,
+                            notify:true,
+                            value:[]
+                        }
+                    },
+                    onEnter: function() {
+                        this.$.chips.add({
+                        name: this.search,
+                    });
+                        this.topicsfortest.push(this.search);
+                       
+                    }
+            });
+    })();
+    </script>
+</dom-module>

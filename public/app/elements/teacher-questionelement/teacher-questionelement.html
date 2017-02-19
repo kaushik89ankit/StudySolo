@@ -1,0 +1,113 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
+<!-- <link rel="import" href="../../../bower_components/polymer-tinymce/polymer-tinymce.html"> -->
+<dom-module id="teacher-questionelement">
+    <template>
+        <style>
+        :host {
+            display: block;
+            width: 100%;
+        }
+        
+        paper-dropdown-menu {
+            height: 10px;
+            margin-left: 2px;
+            margin-right: 2px;
+            margin-top: -7px;
+        }
+        </style>
+        <div class="layout horizontal justified">
+            <h4>Question : <span>{{questionNumber}}</span></h4>
+            <paper-input label="Enter question marks" value="{{questionMarks}}"></paper-input>
+            <paper-dropdown-menu label="Select question type">
+                <paper-listbox class="dropdown-content" id="select_questiontype" selected="{{typeSelected}}">
+                    <paper-item>Single-Choice</paper-item>
+                    <paper-item>Multiple-Choice</paper-item>
+                </paper-listbox>
+            </paper-dropdown-menu>
+        </div>
+        <!-- <iron-autogrow-textarea rows="4" placeholder="Type your question here and add image by clicking on add image button" style="width:98%;margin-left:auto;margin-right:auto;margin-top:10px;" bind-value="{{questionText}}">
+        </iron-autogrow-textarea> -->
+        <div on-mouseout="changeText">
+        <polymer-tinymce id="questionEditor"
+        tinytoolbar="undo redo | styleselect | fontsizeselect | bold italic superscript subscript | bullist numlist | charmap image | myImageButton imageCompressor | physicsEditor chemEditor eqneditor | searchreplace table"
+        tinyplugins='["eqneditor fullscreen image charmap anchor","searchreplace","table"]'>
+        </polymer-tinymce>
+        </div>
+        <image-upload id="imageupload_question" image-url="{{questionImagepath}}" targeturl=""></image-upload>
+        <vaadin-upload target="/api/containers/studysolobucket/upload"
+            method="POST"
+            timeout="15000"
+            headers="{'Accept': 'application/json'}"></vaadin-upload>
+    </template>
+    <script>
+    (function() {
+        'use strict';
+
+        Polymer({
+            is: 'teacher-questionelement',
+
+            properties: {
+
+                questionText: {
+                    type: String,
+                    notify: true
+                },
+                questionImagepath: {
+                    type: String,
+                    notify: true,
+                    observer: '_questionimagepathChanged'
+                },
+                questionNumber: {
+                    type: Number,
+                    notify: true
+                },
+                questionType: {
+                    type: String,
+                    value: 'Single-Choice',
+                    notify: true
+                },
+                questionMarks: {
+                    type: Number,
+                    notify: true
+                },
+                typeSelected: {
+                    type: Number,
+                    value: 0,
+                    notify: true
+                },
+                typeofquestion: {
+                    type: Array,
+                    notify: true,
+                    value: ['Single-Choice', 'Multiple-Choice']
+                }
+
+            },
+            listeners: {
+                'iron-select': 'questionType_select'
+
+            },
+            questionType_select: function(e) {
+                this.questionType = this.typeofquestion[this.typeSelected];
+
+            },
+            _questionimagepathChanged: function() {
+
+            },
+            changeText:function(e){
+                this.questionText = this.$.questionEditor.getContent();
+            },
+            setQuestion: function(questionValue) {
+                this.$.questionEditor.setContent(questionValue);
+            }
+
+        });
+    })();
+    </script>
+</dom-module>

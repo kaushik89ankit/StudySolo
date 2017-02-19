@@ -1,0 +1,29 @@
+{
+    "development": {
+        "username": "postgres",
+        "password": "5432",
+        "database": "postgres",
+        "host": "127.0.0.1",
+        "port": "5432",
+        "dialect": "postgres",
+        "pool": {
+            "max": 5,
+            "min": 0,
+            "idle": 10000 
+        }
+    },
+    "test": {
+        "username": "update me",
+        "password": "update me",
+        "database": "update_me",
+        "host": "update me",
+        "dialect": "update me"
+    },
+    "production": {
+        "username": "admin",
+        "password": "password",
+        "database": "update me",
+        "host": "update me",
+        "dialect": "postgres"
+    }
+}

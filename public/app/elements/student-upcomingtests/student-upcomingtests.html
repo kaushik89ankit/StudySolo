@@ -1,0 +1,460 @@
+<link rel="import" href="../../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-styles/color.html">
+<link rel="import" href="../../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../common/data-table-column-filter.html">
+<link rel="import" href="../common/data-table-cell.html">
+<link rel="import" href="../common/data-table-column.html">
+<link rel="import" href="../common/data-table-checkbox.html">
+<dom-module id="student-upcomingtests">
+    <template>
+        <style>
+        :host {
+            height: 100%;
+            background: #f2f2f2;
+        }
+        
+        #iron_list_student_upcomingtests {
+            width: 100%;
+            height: 100%;
+            right: 0;
+            top: 0;
+            @apply(--layout-flex);
+            --iron-list-items-container: {
+                border-bottom: 1px solid #ddd;
+                overflow: hidden;
+            }
+            ;
+        }  
+        .listContainer {
+            height: 99%;
+            width: 99%;
+            margin: 5px;
+        }
+        
+        .containerheader {
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+            text-align: center;
+            background: white;
+            height: 50px;
+        }
+        
+        .containerheaderitem {
+            text-align: center;
+            margin: 5px;
+            color: black;
+        }
+        
+        .okButton {
+            background-color: #001a4d;
+            color: white;
+            text-align: center;
+            width: 10%;
+            height: 70%;
+            margin-top,margin-bottom:auto; 
+        }
+
+        .shortversion{        
+            @apply(--layout-flex);
+            @apply(--layout-horizontal);    
+            border: 1px solid grey;
+            text-align: center;
+        }
+        </style>
+        <paper-card style="background:#f2f2f2;" elevation="1" class="listContainer">
+            <div class="containerheader">
+                <paper-input label="Search by Test ID" value="{{search_test_ID}}" class="containerheaderitem" style="width:10%;" no-label-float></paper-input>
+                <paper-input label="Search by Test Title" value="{{search_test_title}}" class="containerheaderitem" style="width:20%;" no-label-float></paper-input>
+                <h4 class="containerheaderitem" style="width:20%; ">StartTime</h4>
+                <h4 class="containerheaderitem" style="width:20%; ">EndTime</h4>
+                <h4 class="containerheaderitem" style="width:15%; ">Status</h4>
+            </div> 
+        <iron-list id="iron_list_student_upcomingtests" items="{{testdetail}}">
+            <template>
+                <div class="shortversion">
+                    <p style="width:10%;">[[item.test_ID]]</p>
+                    <p style="width:20%;"">[[item.test_title]]</p>
+                    <p style="width:25%;">[[item.test_window_duration_start]]</p>
+                    <p style="width:25%;"">[[item.test_window_duration_end]]</p>
+                    <p style="width:10%;">[[item.test_status]]</p>
+                    <paper-button class="okButton" on-click="instructions_before_starting_test">Take Test</paper-button>
+                </div> 
+            </template>
+            </iron-list>
+        </paper-card>
+        <paper-dialog style="border: 3px solid #3F51B5;" id="instructions_before_starting_tests" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <paper-dialog-scrollable style="margin-top: 0;">
+                <student-instructions></student-instructions>
+            </paper-dialog-scrollable>
+            <div class="buttons">
+                <paper-button on-click="student_OK_with_instructions_before_test" autofocus class="okButton" style="margin-right:auto; margin-left:auto;">Start Test</paper-button>
+            </div>
+        </paper-dialog>
+        <iron-ajax id="ajax_call_get_upcoming_tests" url="/studentget/upcomingtests" method="GET" on-response="ajax_response_student_upcomingtests" on-error="ajax_error_student_upcomingtests"></iron-ajax>
+    </template>
+    <script>
+    (function() {
+        'use strict';
+
+        Polymer({
+            is: 'student-upcomingtests',
+            properties: {
+
+                search_test_ID: {
+                    type: String,
+                    notify: true,
+                    observer: '_search_by_test_ID_changed'
+                },
+                search_test_title: {
+                    type: String,
+                    notify: true,
+                    observer: '_search_by_test_title_changed'
+                },
+                testdetail:{
+                    type:Object,
+                    notify:true
+                },
+                take_test_of_test_ID:{
+                    type:String,
+                    notify:true
+                }
+
+            },
+            ready: function() {
+
+                this.$.ajax_call_get_upcoming_tests.generateRequest();
+            },
+            attached: function() {
+
+            },
+            ajax_response_student_upcomingtests: function(testdetails) {
+
+                // Converts JS object into JSON string and then into JSON object
+                this.testdetail = JSON.parse(JSON.stringify(testdetails.detail.response));
+            },
+            ajax_error_student_upcomingtests: function() {
+
+            },
+            _search_by_test_ID_changed: function() {
+                console.log("Yet to be implemented");
+            },
+            _search_by_test_title_changed: function() {
+                console.log("Yet to be implemented");
+            },
+            instructions_before_starting_test: function(e) {
+                
+                // Getting event e of which item is pressed in Iron list
+                this.$.instructions_before_starting_tests.open();
+                this.take_test_of_test_ID = e.model.item.test_ID;                
+            },
+            student_OK_with_instructions_before_test:function(test_ID){
+                this.$.instructions_before_starting_tests.close();
+                // Using pageJS to navigate from one page to another
+                page('/student/test/' + this.take_test_of_test_ID);
+            }
+
+        })
+
+    })();
+    </script>
+</dom-module>
+
+
+Polymer
+            ({
+                is: 'student-upcomingtests',
+                properties: {
+                    testget_Params: {
+                        type: String,
+                        notify: true
+                    },
+                    responseget_Params: {
+                        type: String,
+                        notify: true
+                    },
+                    inputtestid: {
+                        type: String,
+                        notify: true,
+                        observer: '_inputtestidChanged'
+                    },
+                    inputtitle: {
+                        type: String,
+                        notify: true,
+                        observer: '_inputtitleChanged'
+                    },
+                    hidden: {
+                        type: Boolean,
+                        notify: true
+                    },
+                    initialitems: {
+                        type: Array,
+                        notify: true
+                    },
+                    items: {
+                        type: Array,
+                        notify: true
+                    },
+                    updateList: {
+                        type: Array,
+                        notify: true,
+                        value: []
+                    },
+                    updateListLive: {
+                        type: Array,
+                        notify: true,
+                        value: []
+                    },
+                    updateListScheduled: {
+                        type: Array,
+                        notify: true,
+                        value: []
+                    },
+                    redirectUrl: {
+                        type: String,
+                        notify: true
+                    }
+
+                },
+                // Element Lifecycle
+                ready: function() {},
+                attached: function() {},
+                detached: function() {},
+                // Element Behavior
+                autoReload: function() {
+                    this.updateList = [];
+                    this.updateListLive = [];
+                    this.updateListScheduled = [];
+                    this.set_getParams();
+                    this.getList();
+                },
+                set_getParams: function() {
+                    var selObj = JSON.stringify({
+                        "where": {
+                            coaching_id: localStorage.coachingid,
+                            batches: localStorage.batchid,
+                            status: "submitted",
+                            window_stop: {
+                                gt: Date.now()
+                            }
+                        },
+                        "fields": {
+                            test_id: true,
+                            title: true,
+                            duration_seconds: true,
+                            topics: true,
+                            window_start: true,
+                            window_stop: true,
+                            total_marks: true
+                        },
+                        "order": "date_updated DESC"
+                    });
+                    var tempVar = {
+                        filter: selObj
+                    };
+                    this.testget_Params = tempVar;
+                },
+                getList: function() {
+                    app.waitDialogMessage = "Please wait ..";
+                    app.$.commonWaitDialog.open();
+                    this.$.get_previoustests.generateRequest();
+                },
+                gettest_onresponse: function() {
+                    var currentTime = new Date();
+                    if (this.$.get_previoustests.lastResponse != null && this.$.get_previoustests.lastResponse != "") {
+                        for (var i = 0; i < this.$.get_previoustests.lastResponse.length; i++) {
+                            var tempValue = this.$.get_previoustests.lastResponse[i];
+                            var tempDateStart = new Date(tempValue.window_start);
+                            var tempDateEnd = new Date(tempValue.window_stop);
+                            var formatedStartDate = this.convertDate(tempDateStart);
+                            var formatedEndDate = this.convertDate(tempDateEnd);
+                            tempValue.starttime = formatedStartDate;
+                            tempValue.endtime = formatedEndDate;
+                            tempValue.duration = this.convertTime(tempValue.duration_seconds);
+                            if (currentTime < tempDateEnd && currentTime > tempDateStart) {
+                                tempValue.type = "Live";
+                                tempValue.show = false;
+                                this.updateListLive.push(tempValue);
+                            } else {
+                                tempValue.type = "Scheduled";
+                                tempValue.show = true;
+                                this.updateListScheduled.push(tempValue);
+                            }
+                        }
+                        this.updateList = this.updateListLive.concat(this.updateListScheduled);
+                    }
+                    app.$.commonWaitDialog.close();
+                    // function to generate request for getting response starts here
+
+                    if (this.updateList.length > 0) {
+                        var tempOrArray = [];
+                        for (var i = 0; i < this.updateList.length; i++) {
+                            var tempObj = {
+                                test_id: this.updateList[i].test_id
+                            };
+                            tempOrArray.push(tempObj);
+                        }
+                        var selObj = JSON.stringify({
+                            "where": {
+                                student_id: localStorage.loginid,
+                                "or": tempOrArray
+                            },
+                            "fields": {
+                                test_id: true,
+                                status: true
+                            },
+                            "order": "status DESC"
+                        });
+                        var tempVar = {
+                            filter: selObj
+                        };
+                        this.responseget_Params = tempVar;
+                        app.waitDialogMessage = "Please wait ..";
+                        app.$.commonWaitDialog.open();
+                        this.$.get_previousresponse.generateRequest();
+                    }
+                    // function to generate request for getting response ends here
+                },
+                gettest_onerror: function() {
+                    app.$.commonWaitDialog.close();
+                    alert("Something went wrong please try again");
+                },
+                getresponse_onresponse: function() {
+                    app.$.commonWaitDialog.close();
+                    var tempResponse = this.$.get_previousresponse.lastResponse;
+
+                    for (var i = 0; i < this.updateList.length; i++) {
+                        for (var j = 0; j < tempResponse.length; j++) {
+                            if (tempResponse[j].test_id == this.updateList[i].test_id && tempResponse[j].status == "submitted") {
+                                this.updateList[i].type = "Submitted";
+                                this.updateList[i].show = true;
+                                break;
+                            }
+                        }
+                    }
+                    this.items = this.updateList;
+                    this.initialitems = this.updateList;
+                    this.$.previoustests_list.notifyResize();
+                },
+                getresponse_onerror: function() {
+                    app.$.commonWaitDialog.close();
+                    alert("Something went wrong please try again");
+                },
+                getClassForItem: function(item, selected) {
+                    return selected ? 'item-expanded' : 'item';
+                },
+                _inputtestidChanged: function() {
+                    if (this.inputtestid == "" && this.items != null && this.inputtestid != null) {
+                        this.items = JSON.parse(JSON.stringify(this.initialitems));
+                    }
+                    if (this.items != null && this.inputtestid != null) {
+                        //this.items = [];
+                        var tempArray = [];
+                        for (var x in this.initialitems) {
+                            var comp = this.initialitems[x].test_id.toString().toUpperCase();
+                            var result = comp.indexOf(this.inputtestid.toString().toUpperCase());
+                            var result2 = 0;
+                            if (this.initialitems[x].title != null && this.initialitems[x].title != undefined)
+                                var comp2 = this.initialitems[x].title.toString().toUpperCase();
+
+                            if (this.inputtitle != "" && this.inputtitle != null) {
+                                result2 = comp2.indexOf(this.inputtitle.toString().toUpperCase());
+                            }
+                            if (result != -1 && result2 != -1) {
+                                //return value;
+                                tempArray.push(this.initialitems[x]);
+                            }
+                        }
+                        this.items = JSON.parse(JSON.stringify(tempArray));
+                    }
+                },
+                _inputtitleChanged: function() {
+                    if (this.inputtitle == "" && this.inputtitle != null && this.items != null) {
+                        this.items = JSON.parse(JSON.stringify(this.initialitems));
+                    }
+                    if (this.inputtitle != null) {
+                        var tempArray = [];
+                        for (var x in this.initialitems) {
+                            if (this.initialitems[x].title != null && this.initialitems[x].title != undefined)
+                                var comp = this.initialitems[x].title.toString().toUpperCase();
+                            var comp2 = this.initialitems[x].test_id.toString().toUpperCase();
+                            var result2 = 0;
+                            if (this.inputtestid != "" && this.inputtestid != null) {
+                                result2 = comp2.indexOf(this.inputtestid.toString().toUpperCase());
+
+                            }
+                            var result = comp.indexOf(this.inputtitle.toString().toUpperCase());
+                            if (result != -1 && result2 != -1) {
+                                //return value;
+                                tempArray.push(this.initialitems[x]);
+                            }
+                        }
+                        this.items = JSON.parse(JSON.stringify(tempArray));
+                    }
+                },
+                onMouseOverItem: function(e) {
+                    this.$.previoustests_list.notifyResize();
+                },
+                idClicked: function(e) {
+                    var tempElement = document.getElementById("maintestelement");
+                    tempElement.pageFunction = "loadfromserver";
+                    page("/testquestions/" + e.model.item.test_id + "-" + e.model.item.title);
+                },
+                convertDate: function(datetoFormat) {
+                    var tempMonth = 0;
+                    var tempHours = 0;
+                    var tempMins = 0;
+                    var tempType = "A.M";
+                    if (parseInt(datetoFormat.getMonth() + 1) < 10) {
+                        tempMonth = "0" + parseInt(datetoFormat.getMonth() + 1);
+                    } else
+                        tempMonth = parseInt(datetoFormat.getMonth() + 1);
+
+                    if (parseInt(datetoFormat.getHours()) > 12) {
+                        tempType = "P.M";
+                        tempHours = parseInt(datetoFormat.getHours()) - 12;
+                    } else if (parseInt(datetoFormat.getHours()) < 10)
+                        tempHours = "0" + parseInt(datetoFormat.getHours());
+                    else if (parseInt(datetoFormat.getHours()) == 12) {
+                        tempType = "P.M";
+                        tempHours = parseInt(datetoFormat.getHours());
+                    } else
+                        tempHours = parseInt(datetoFormat.getHours())
+
+                    if (parseInt(datetoFormat.getMinutes()) < 10) {
+                        tempMins = "0" + parseInt(datetoFormat.getMinutes());
+                    } else
+                        tempMins = parseInt(datetoFormat.getMinutes());
+
+                    var final_date = datetoFormat.getDate() + "/" + tempMonth + "/" + datetoFormat.getFullYear() + "(" + tempHours + ":" + tempMins + " " + tempType + ")";
+
+                    return final_date;
+                },
+                convertTime: function(time) {
+                    var h = 0,
+                        m = 0;
+                    var newTime = '';
+                    if (time > 0) {
+                        h = Math.floor(time / 3600);
+                        m = parseInt((time % (3600)) / 60);
+                        newTime = " " + h + " Hour & " + m + " Minutes";
+                    } else
+                        newTime = "Time Up";
+                    return newTime;
+
+                },
+                openInstructionsDialog: function(e) {
+                    this.redirectUrl = "/studenttaketest/" + e.model.item.test_id + "/" + e.model.item.title;
+                    this.$.instructions.open();
+                },
+                StarttestFunction: function(e) {
+                    this.$.instructions.close();
+                    page(this.redirectUrl);
+                }
+            });
+    })();

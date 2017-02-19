@@ -1,0 +1,115 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="../../../bower_components/paper-dialog-behavior/paper-dialog-shared-styles.html">
+<link rel="import" href="../../../bower_components/neon-animation/neon-animations.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<dom-module id="question-element">
+    <template>
+        <style>
+        :host {
+            display: block;
+        }
+        
+        #viewbox {
+            width: 50%;
+            height: 88%;
+            margin: 0px;
+            padding: 0px;
+        }
+        
+        #questionimage {
+            height: 100%;
+            width: 100%;
+            padding: 0px;
+            margin: 0px;
+        }
+        #container {
+            @apply(--layout-horizontal);
+            @apply(--layout-justified);
+         }
+        </style>
+            <div id="container">
+                <div>
+                    Question :  <b><span>{{questionnumber}}</span></b>
+                </div>
+                <div>
+                    Type :  <b><span>{{question_type}}</span></b>
+                </div>
+                <div>
+                    Marks :  <b><span>{{question_marks}}</span></b>
+                </div>
+            </div>
+            <p>{{question_text}}</p>
+            <paper-button id="ques_image_buttton" on-click="_lightboxshow" style="margin:auto;margin-right:auto;">
+                <iron-image style="height:175px;width:300px;" src={{question_image}} sizing="contain">
+                </iron-image>
+            </paper-button>
+            <paper-dialog class="size-position" id="viewbox" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+                <iron-image id="questionimage" src={{question_image}} sizing="contain"></iron-image>
+            </paper-dialog>
+    </template>
+    <script>
+    (function() {
+        'use strict';
+
+        Polymer({
+            is: 'question-element',
+
+            properties: {
+                questionnumber: {
+                    type: String,
+                    notify: true
+                },
+                question_text: {
+                    type: String,
+                    notify: true
+                },
+                question_image: {
+                    type: String,
+                    notify: true,
+                    observer: "_imagechanged"
+
+                },
+                question_marks: {
+                    type: String,
+                    notify: true
+                },
+                question_type: {
+                    type: String,
+                    notify: true
+                    }
+            },
+            _lightboxshow: function() {
+               
+                var dialog = document.getElementById('viewbox');
+                if (dialog) {
+                    dialog.open();
+                }
+            },
+            _lightboxhide: function() {
+              
+                this.$.viewbox.style.display = 'none';
+            },
+            _imagechanged: function() {
+                if (this.question_image != null && this.question_image != "") {
+                    this.$.ques_image_buttton.style.display = 'block';
+                } else {
+                    this.$.ques_image_buttton.style.display = 'none';
+                }
+            }
+        });
+    })();
+    </script>
+</dom-module>

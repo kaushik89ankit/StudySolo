@@ -1,0 +1,604 @@
+<link rel="import" href="../../../bower_components/iron-demo-helpers/demo-snippet.html">
+<link rel="import" href="../../../bower_components/iron-demo-helpers/demo-pages-shared-styles.html">
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="../../../bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../../../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../answer-element/answer-element.html">
+<link rel="import" href="../question-element/question-element.html">
+<link rel="import" href="../teacher-questionelement/teacher-questionelement.html">
+<link rel="import" href="../teacher-answerelement/teacher-answerelement.html">
+<link rel="import" href="../teacher-questionpalette/teacher-questionpalette.html">
+<dom-module id="teacher-previoustestview">
+    <template>
+        <style>
+        :host {
+            display: block;
+            width: 100%
+        }
+        
+
+        paper-material {
+            border-radius: 3px;
+            outline-width: 0;
+            display: block;
+            position: relative;
+            padding: 10px;
+            background-color: white;
+        }
+        
+        centerButton {
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+            background-color: blue;
+            text-align: center;
+        }
+        
+        #teacher_container {
+            @apply(--layout-horizontal);
+        }
+        
+        #teacher_firstdiv {
+            padding: 5px;
+            
+            width: 75%;
+        }
+         #teacher_seconddiv {
+            width: 25%;
+            padding: 5px;
+
+        }
+        
+        .answerimage {
+            height: 100%;
+            width: 100%;
+            padding: 0px;
+            margin: 0px;
+        }
+        
+        #image_dialog {
+            width: 50%;
+            height: 88%;
+            margin: 0px;
+            padding: 0px;
+        }
+        
+
+        
+        teacher-answerelement {
+            padding-top: 30px;
+            padding-left: 10px;
+            padding-right: 10px;
+            margin-left: -10px;
+            margin-right: -10px;
+        }
+        
+        paper-material {
+            border-radius: 5px;
+            background: white;
+            padding: 10px;
+        }
+        
+        .indigo {
+            background-color: #3f51b5;
+            color: white;
+            --paper-button-raised-keyboard-focus: {
+                color: white !important;
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+        }
+        
+        .indigo:hover {
+            background: #354497;
+        }
+        
+        #preview {
+            width: 80%;
+            height: auto;
+        }
+        
+        paper-card {
+            margin-top: 10px;
+            background: #ebebe0;
+            font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: #333;
+            padding-left: 10px;
+            width: 100%;
+        }
+        
+        paper-fab {
+            background: #6666ff;
+        }
+        
+        .keepitincenter {
+            @apply(--layout-horizontal);
+            @apply(--layout-center-justified);
+        }
+        </style>
+        <div id="teacher_container">
+            <div id="teacher_firstdiv">
+                <!--This is first child of first div named "teacher_firstdiv" of teacher-element   -->
+                <paper-material elevation="2">
+                    <div class="layout horizontal justified">
+                        <h4>Test ID :  <span>{{testId}}</span></h4>
+                        <h4>Test Title : <span>{{testTitle}}</span></h4>
+                    </div>
+                </paper-material>
+                <paper-material class="layout vertical justified" style="padding:10px; margin-top:5px; background:white" elevation="2">
+                    <teacher-questionelement id="teacherquestionelement" question-number="{{currentquestion}}" question-text="{{questiontext}}" question-imagepath="{{questionimage}}" type-selected="{{typeselected}}" question-marks="{{questionmarks}}"></teacher-questionelement>
+                    <!--  <paper-material class="layout vertical justified" style="margin-top:10px;margin:5px;" elevation="2"> -->
+                    <div class="keepitincenter">
+                        <paper-item style="text-align: center;">
+                            <h3>Options</h3></paper-item>
+                    </div>
+                    <div id="teacher_answerbox">
+                    </div>
+                    <div class="layout horizontal-reverse">
+                        <paper-fab class="indigo" mini icon="delete" title="Delete last option" on-click="_teacherdeleteanswer" style="margin-left: 5px;"></paper-fab>
+                        <paper-fab class="indigo" mini icon="add" title="Add another option" on-click="teacheraddanswer"></paper-fab>
+                    </div>
+                </paper-material>
+                <paper-material class="layout horizontal justified" style="padding:10px; margin-top:5px;" elevation="2">
+                    <paper-button class="indigo" on-click="teacher_preview" style="text-transform: initial;">Preview</paper-button>
+                    <paper-button style="text-transform: initial;" class="indigo" on-click="teacher_addquestion">Add</paper-button>
+                </paper-material>
+            </div>
+            <div id="teacher_seconddiv" class="layout vertical justififed">
+                
+                <teacher-questionpalette current-question="{{currentquestion}}" id="teacher_questionpalette"></teacher-questionpalette>
+            </div>
+            <paper-dialog id="preview" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+                <paper-dialog-scrollable>
+                    <question-element id="preview_question" style="padding-top:15px;"></question-element>
+                    <paper-card>
+                        <h2> Options :</h2>
+                        <div id="preview_answerbox"></div>
+                    </paper-card>
+                </paper-dialog-scrollable>
+                <div class="buttons">
+                    <paper-button dialog-confirm autofocus>CLOSE</paper-button>
+                </div>
+            </paper-dialog>
+            <paper-dialog class="size-position" id="image_dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+                <iron-image class="answerimage" src="{{dialog_image}}" sizing="contain"></iron-image>
+            </paper-dialog>
+            <paper-dialog id="submitDialog" style="background-color:rgba(255,0,0,0);" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+                <teacher-submitdialog></teacher-submitdialog>
+            </paper-dialog>
+            <paper-dialog id="waitDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop modal>
+                <div class="centerfield">
+                    <paper-spinner id="loadingspinner" active></paper-spinner>
+                    Please wait submitting test....
+                </div>
+            </paper-dialog>
+            <paper-dialog id="successDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+                <p>Test submitted successfully. Now you can access this test in previous tests.</p>
+                <div class="centercontainer">
+                    <paper-button class="centerButton" on-click="closeDialog">OK</paper-button>
+                </div>
+            </paper-dialog>
+        </div>
+        <!-- ajax call to update questions starts here -->
+        <iron-ajax id="testupdate_ironajax" url="/api/testdata/update" handle-as="json" content-type='application/json' params="{{testupdate_Params}}" method="POST" body="{{testupdate_body}}" on-response="testupdateonResponse" on-error="testupdateonError"></iron-ajax>
+        <!-- ajax call to update questions ends here -->
+        <!-- ajax call to submit test starts here -->
+        <iron-ajax id="testsubmit_ironajax" url="/api/testdata/update" handle-as="json" content-type='application/json' params="{{testupdate_Params}}" method="POST" body="{{testsubmit_body}}" on-response="testsubmitonResponse" on-error="testsubmiteonError"></iron-ajax>
+        <!-- ajax call to submit test ends here -->
+        <!-- ajax call to get the test question starts here -->
+        <iron-ajax id="testget_ironajax" url="/api/testdata/findOne" handle-as="json" content-type='application/json' params="{{testget_Params}}" method="GET" on-response="testgetonResponse" on-error="testgetonError"></iron-ajax>
+        <!-- ajax call to get the test question ends here -->
+    </template>
+    <script>
+    (function() {
+        'use strict';
+        Polymer({
+            is: 'teacher-previoustestview',
+            properties: {
+                numberOfoptions: {
+                    type: Number,
+                    notify: true
+                },
+                dialog_image: {
+                    type: String,
+                    notify: true
+                },
+                isSubmitted: {
+                    type: Boolean,
+                    value: false
+                },
+                testTitle: {
+                    type: String,
+                    value: "",
+                    notify: true
+                },
+                testId: {
+                    type: String,
+                    notify: true
+                },
+                testDetails: {
+                    type: String,
+                    notify: true,
+                    value: "",
+                    observer: '_testdetailsChanged'
+                },
+                questions: {
+                    type: Array,
+                    notify: true
+                },
+                tempquestions: {
+                    type: String,
+                    notify: true,
+                    value: ""
+                },
+                currentquestion: {
+                    type: Number,
+                    value: 1,
+                    notify: true,
+                    observer: '_currentquestionChanged'
+                },
+                questiontext: {
+                    type: String,
+                    notify: true
+                },
+                questionimage: {
+                    type: String,
+                    notify: true
+                },
+                typeselected: {
+                    type: String,
+                    notify: true
+                },
+                questionmarks: {
+                    type: Number,
+                    notify: true
+                },
+                totalMarks: {
+                    type: Number,
+                    notify: true,
+                    value: 0
+                },
+                // for ajax request starts here
+                testupdate_Params: {
+                    type: Object,
+                    notify: true,
+                    computed: '_computetest_updateParams(testId)'
+                },
+                testget_Params: {
+                    type: Object,
+                    notify: true
+                },
+                testupdate_body: {
+                    type: String,
+                    notify: true
+                },
+                testsubmit_body: {
+                    type: String,
+                    notify: true
+                },
+                pageFunction: {
+                    type: String,
+                    notify: true,
+                    value: "loadfromserver"
+                },
+                testStarttime: {
+                    type: Number,
+                    notify: true
+                },
+                testEndtime: {
+                    type: Number,
+                    notify: true
+                },
+               
+                // for ajax request ends here
+            },
+            attached: function() {
+
+            },
+            loadOldTest: function() {
+                if (this.pageFunction == "loadfromserver") {
+                    var tempVar = window.location.href.split("/");
+                    this.testDetails = tempVar[tempVar.length];
+                    this.getdatafromServer();
+                } else if (this.pageFunction == "createnewtest") {
+                    // this._setdefaultscreen();
+                    this.questions = [];
+                    this.currentquestion = 1;
+                    this._addemptyquestion();
+                    this.$.teacher_questionpalette.defaultScreen();
+                    this.$.teacher_questionpalette.setScreen(1);
+                    this.tempquestions = "";
+                    this.set_currentquestion(1);
+                    
+                }
+            },
+            _setdefaultscreen: function() {
+                while (this.$.teacher_answerbox.hasChildNodes()) {
+                    this.$.teacher_answerbox.removeChild(this.$.teacher_answerbox.firstChild);
+                }
+                for (var i = 1; i < 5; i++) {
+                    this._teacheraddanswer(i);
+                }
+                this.questiontext = "";
+                this.questionimage = "";
+                this.typeselected = 0;
+                this.questionmarks = "";
+            },
+            _testdetailsChanged: function(newValue, oldValue) {
+                if (this.testDetails != null && this.testDetails != "") {
+                    var res = this.testDetails.split("-");
+                    this.testId = res[0];
+                    this.testTitle = res[1];
+                }
+            },
+            _addemptyquestion: function() {
+                var answer_array = [];
+                var answer_key = "";
+                for (var i = 1; i < 5; i++) {
+                    var answer = {
+                        option_number: i,
+                        answer_title: "",
+                        answer_image: "",
+                        answer_marked: false
+                    };
+                    answer_array.push(answer);
+                }
+                var new_question = {
+                    question_marks: "",
+                    question_title: "",
+                    question_image: "",
+                    question_type: 0,
+                    answer_array: answer_array,
+                    answer_key: answer_key
+                };
+                this.questions.push(new_question);
+            },
+            _savecurrentquestion: function(questionnumber) {
+                var answer_array = [];
+                var answer_key = "";
+                this.numberOfoptions = this.$.teacher_answerbox.getElementsByTagName('teacher-answerelement').length;
+                for (var i = 0; i < this.numberOfoptions; i++) {
+                    var answer = {
+                        option_number: this.$.teacher_answerbox.childNodes[i].option_number,
+                        answer_title: this.$.teacher_answerbox.childNodes[i].answer_text,
+                        answer_image: this.$.teacher_answerbox.childNodes[i].answer_image,
+                        answer_marked: this.$.teacher_answerbox.childNodes[i].marked_answer
+                    };
+                    answer_array.push(answer);
+                    if (this.$.teacher_answerbox.childNodes[i].marked_answer) {
+                        answer_key = answer_key + "T";
+                    } else {
+                        answer_key = answer_key + "F";
+                    }
+                }
+                var new_question = {
+                    question_marks: this.questionmarks,
+                    question_title: this.questiontext,
+                    question_image: this.questionimage,
+                    question_type: this.typeselected,
+                    answer_array: answer_array,
+                    answer_key: answer_key
+                };
+                this.questions[questionnumber] = new_question;
+                this._savelocalquestionChanged();
+            },
+            set_currentquestion: function(currentquestion) {
+                this.questiontext = this.questions[currentquestion].question_title;
+                this.questionimage = this.questions[currentquestion].question_image;
+                this.typeselected = this.questions[currentquestion].question_type;
+                this.questionmarks = this.questions[currentquestion].question_marks;
+                while (this.$.teacher_answerbox.firstChild) {
+                    this.$.teacher_answerbox.removeChild(this.$.teacher_answerbox.firstChild);
+                }
+                for (var i = 0; i < this.questions[currentquestion].answer_array.length; i++) {
+                    var teacher_answer = document.createElement("teacher-answerelement");
+                    teacher_answer.option_number = this.questions[currentquestion].answer_array[i].option_number;
+                    teacher_answer.answer_text = this.questions[currentquestion].answer_array[i].answer_title;
+                    teacher_answer.answer_image = this.questions[currentquestion].answer_array[i].answer_image;
+                    teacher_answer.marked_answer = this.questions[currentquestion].answer_array[i].answer_marked;
+                    if (teacher_answer.option_number % 2 == 0)
+                        teacher_answer.style.background = 'white';
+                    else
+                        teacher_answer.style.background = "#f2f2f2";
+                    this.$.teacher_answerbox.appendChild(teacher_answer);
+                }
+            },
+            _currentquestionChanged: function(newValue, oldValue) {
+
+                if (this.questions != null && this.questions.length > 0 && newValue != undefined && oldValue != undefined) {
+                    if (oldValue > 0 && this.submitEnabled) {
+                        this._savecurrentquestion(oldValue - 1);
+                    }
+                    if (newValue <= this.questions.length) {
+                        this.set_currentquestion(newValue - 1);
+                    } else {
+                        this._addemptyquestion();
+                        this.set_currentquestion(newValue - 1);
+                    }
+                }
+            },
+            teacher_addquestion: function() {
+                if (this.checkemptyValues()) {
+                    this.$.teacher_questionpalette.addnewbutton();
+                    this.currentquestion = this.questions.length + 1;
+                    app.$.toast.text = 'New question added successfully. And test saved in drafts';
+                    app.$.toast.show();
+                }
+            },
+            _teacheraddanswer: function(optionnumber) {
+                var teacher_answer = document.createElement("teacher-answerelement");
+                if (optionnumber % 2 == 0)
+                    teacher_answer.style.background = "white";
+                else
+                    teacher_answer.style.background = "#f2f2f2";
+                teacher_answer.option_number = optionnumber;
+                this.$.teacher_answerbox.appendChild(teacher_answer);
+            },
+            teacheraddanswer: function() {
+                var tempNumber = this.$.teacher_answerbox.getElementsByTagName('teacher-answerelement').length;
+                this._teacheraddanswer(tempNumber + 1);
+            },
+            _teacherdeleteanswer: function() {
+                var element = this.$.teacher_answerbox;
+                this.numberOfoptions = element.getElementsByTagName('teacher-answerelement').length;
+                if (this.numberOfoptions == 2) {
+                    alert("You can't have less than 2 options");
+                } else {
+                    this.$.teacher_answerbox.removeChild(this.$.teacher_answerbox.lastChild);
+                }
+            },
+            teacher_preview: function() {
+                // Delete previous answers
+                while (this.$.preview_answerbox.firstChild) {
+                    this.$.preview_answerbox.removeChild(this.$.preview_answerbox.firstChild);
+                }
+                this.$.preview_question.question_text = this.questiontext;
+                this.$.preview_question.question_image = this.questionimage;
+                this.$.preview_question.questionnumber = this.currentquestion;
+                this.$.preview_question.question_marks = this.questionmarks;
+                if (this.typeselected == 0)
+                    this.$.preview_question.question_type = "Single Choice";
+                else
+                    this.$.preview_question.question_type = "Multiple Choice";
+                // Add new answers
+                this.numberOfoptions = this.$.teacher_answerbox.getElementsByTagName('teacher-answerelement').length;
+                for (var i = 0; i < this.numberOfoptions; i++) {
+                    var preview_answerelement = document.createElement("answer-element");
+                    preview_answerelement.answer_text = this.$.teacher_answerbox.childNodes[i].answer_text;
+                    preview_answerelement.answer_image = this.$.teacher_answerbox.childNodes[i].answer_image;
+                    preview_answerelement.$.answer_checkbox.checked = this.$.teacher_answerbox.childNodes[i].marked_answer;
+                    preview_answerelement.$.answer_checkbox.disabled = true;
+                    this.$.preview_answerbox.appendChild(preview_answerelement);
+                }
+                var dialog = document.getElementById('preview');
+                if (dialog) {
+                    dialog.open();
+                }
+            },
+            _savelocalquestionChanged: function() {
+                if (JSON.stringify(this.questions) != this.tempquestions) {
+                    this.tempquestions = JSON.stringify(this.questions);
+                    localStorage.createtestquestions = JSON.stringify(this.questions);
+                    localStorage.testid = this.testId;
+                    this._saveserverquestionChanged();
+                }
+            },
+            _saveserverquestionChanged: function() {
+                this.testupdate_body = {
+                    questions: this.questions
+                };
+                this.updateTest();
+            },
+            checkemptyValues: function() {
+                if (isNaN(this.questionmarks) || this.questionmarks == "") {
+                    alert("Please enter valid question marks");
+                    return false;
+                } else {
+                    if (this.questiontext == "" && this.questionimage == "") {
+                        alert("Question can't be left empty. Please either add text or image.");
+                        return false;
+                    } else {
+                        var checkforMarked = false;
+                        this.numberOfoptions = this.$.teacher_answerbox.getElementsByTagName('teacher-answerelement').length;
+                        for (var i = 0; i < this.numberOfoptions; i++) {
+                            if (this.$.teacher_answerbox.childNodes[i].marked_answer)
+                                checkforMarked = true;
+                            if (typeof this.$.teacher_answerbox.childNodes[i].answer_text == 'undefined' || this.$.teacher_answerbox.childNodes[i].answer_text == '' || this.$.teacher_answerbox.childNodes[i].answer_text == null) {
+                                if (typeof this.$.teacher_answerbox.childNodes[i].answer_image == 'undefined' || this.$.teacher_answerbox.childNodes[i].answer_image == '' || this.$.teacher_answerbox.childNodes[i].answer_image == null) {
+                                    alert("You left the answer " + parseInt(i + 1) + " empty");
+                                    return false;
+                                }
+                            }
+                        }
+                        if (!checkforMarked) {
+                            alert("No option marked as correct answer");
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            },
+            
+            // Different dialog functions starts here
+            on_dialogopen: function(image_path) {
+                this.dialog_image = image_path;
+                var dialog = this.$.image_dialog;
+                if (dialog) {
+                    dialog.open();
+                }
+            },
+            // Different dialog functions ends here
+            // ajax call functions starts here
+            _computetest_updateParams: function(testId) {
+                var selObj = JSON.stringify({
+                    test_id: testId
+                });
+                var retObj = {
+                    where: selObj
+                };
+                return retObj;
+            },
+            updateTest: function() {
+                this.$.testupdate_ironajax.generateRequest();
+            },
+            testupdateonResponse: function() {
+                localStorage.createtestquestions = "";
+                localStorage.testid = "";
+            },
+            testupdateonError: function() {},
+            getdatafromServer: function() {
+                var selObj = JSON.stringify({
+                    "where": {
+                        test_id: this.testId
+                    }
+                });
+                var retObj = {
+                    filter: selObj
+                };
+                this.testget_Params = retObj;
+                this.$.testget_ironajax.generateRequest();
+            },
+            testgetonResponse: function() {
+                var responseValue = this.$.testget_ironajax.lastResponse;
+                if (responseValue != null) {
+                    if (responseValue.status == "submitted")
+                        this.submitEnabled = false;
+                    else
+                        this.submitEnabled = true;
+
+                    this.currentquestion = 1;
+                    this.questions = responseValue.questions;
+                    if (this.questions != undefined) {
+                        this.$.teacher_questionpalette.defaultScreen();
+                        this.$.teacher_questionpalette.setScreen(this.questions.length);
+                        this.tempquestions = "";
+                        this.set_currentquestion(this.currentquestion - 1);
+                    }
+                }
+            },
+            testgetonError: function() {},
+            // ajax call function ends here
+           
+            
+            closeDialog: function() {
+                this.$.successDialog.close();
+                window.location.assign("#!/previoustests");
+            },
+            _submitbuttonChanged: function(newValue, oldValue) {
+                if (newValue) {
+                    this.$.buttonSubmitEnabled.style.display = 'block';
+                } else {
+                    this.$.buttonSubmitEnabled.style.display = 'none';
+                }
+
+            }
+        });
+    })();
+    </script>
+</dom-module>

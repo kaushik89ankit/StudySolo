@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="Study Solo" content="Study Solo (Ask Question, Seek Answers)">
+    <meta name="description" content="At StudySolo our vision is to take traditional classroom experience online by enabling teachers to create content and connect with their students on our platform">
+    <meta name="keywords" content="study solo, studysolo, coaching, teacher, help, online, portal, test portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Solo</title>
+    <!-- Place favicon.ico in the `app/` directory -->
+    <!-- Chrome for Android theme color -->
+    <meta name="theme-color" content="#2E3AA1">
+    <!-- Web Application Manifest -->
+    <link rel="app/manifest" href="manifest.json">
+    <!-- Tile color for Win8 -->
+    <meta name="msapplication-TileColor" content="#3372DF">
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="STUDYSOLO">
+    <link rel="icon" sizes="192x192" href="/app/images/touch/studysolo_icon_chrometouch.png">
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="StudySolo">
+    <link rel="apple-touch-icon" href="/app/images/touch/studysolo_icon_apple_touch.png">
+    <!-- Tile icon for Win8 (144x144) -->
+    <meta name="msapplication-TileImage" content="/app/images/touch/studysolo_icon_144.png">
+    <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
+    <script src="../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <!-- endbuild -->
+    <!-- will be replaced with elements/elements.vulcanized.html -->
+    <link rel="import" href="../elements/elements.html">
+    <!-- endreplace-->
+    <link rel="stylesheet" href="../styles/main.css">
+</head>
+
+<body>
+    <div class="container">
+        <iron-image alt="Study Solo" src="../images/studysolologo.png" style="margin-left:100px; width:80px; height:80px;" sizing="contain"></iron-image>
+        <login-element logincheck-url="/api/superadmins/checklogin" afterlogin-url="dashboard/admin/"></login-element>
+    </div>
+    <div class="footer">
+        <paper-item style="margin-left:25%;">Don't have an account?</paper-item>
+        <paper-item style="margin-top:-30px;"><a href="http://studysolo.com">Create an Account</a>&nbsp;&nbsp;and our team will contact you</paper-item>
+    </div>
+    <!-- build:js scripts/app.js -->
+    <script src="/app/scripts/app.js"></script>
+    <!-- endbuild-->
+</body>
+
+</html>

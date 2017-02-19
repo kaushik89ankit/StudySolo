@@ -1,0 +1,52 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-input/iron-input.html">
+<link rel="import" href="min-validator.html">
+<dom-module id="min-input">
+  <template>
+    <style>
+    :host {
+      display: inline-block;
+    }
+    
+    input[is="iron-input"] {
+      font: inherit;
+      outline: none;
+      box-shadow: none;
+      border: none;
+      width: auto;
+      text-align: center;
+      label:"minutes";
+    }
+    </style>
+    <min-validator></min-validator>
+    <input is="iron-input" maxlength="3" bind-value="{{minutes}}" size="5" placeholder="e.g 1,2">
+  </template>
+</dom-module>
+<script>
+Polymer({
+  is: 'min-input',
+  behaviors: [
+    Polymer.IronValidatableBehavior
+  ],
+  properties: {
+    value1: {
+      notify: true,
+      type: String
+    },
+    minutes: {
+      type: String
+
+    },
+    validator: {
+      type: String,
+      value: 'min-validator'
+    }
+  },
+  observers: [
+    '_computeValue(minutes)'
+  ],
+  _computeValue: function(mts) {
+    this.value1 = mts.trim();
+  }
+});
+</script>

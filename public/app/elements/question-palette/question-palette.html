@@ -1,0 +1,125 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<dom-module id="question-palette">
+    <template>
+        <style>
+    :host {
+            display: block;
+        }
+        
+        paper-fab.label {
+            font-size: 50px;
+            height: 50px;
+            width: 50px;
+        }
+        
+        paper-fab {
+            --paper-fab-background: #b3c6ff;
+            color: black;
+            margin: 2px;
+            padding: -10px;
+        }
+        
+        #quesicon {
+            border-radius: 2px;
+            padding-bottom: 5px;
+            padding-top: 5px;
+            padding-left: 15px;
+        }
+    }
+    .legend {
+        padding: 10px;
+        padding-top: 5px;
+    }
+    #divlegend {
+        padding: 5px;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+    }
+        </style>
+        <paper-material class="vertical layout wrap" elevation="1">
+            <div id="quesicon" class="horizontal layout start wrap">
+            </div>
+        </paper-material>
+        <paper-material class="legend">
+            <h4>Legend :</h4>
+            <div class="vertical layout">
+                <div id="divlegend" style="height:30px;">
+                    <div style="margin-right:2px;">
+                        <paper-fab mini style="height:20px;width:20px;background:green"></paper-fab>
+                    </div>
+                    <div>
+                        <h6>Question Answered</h6>
+                    </div>
+                </div>
+                <div id="divlegend" style="height:30px;">
+                    <div style="margin-right:2px;">
+                        <paper-fab mini style="height:20px;width:20px;background:red"></paper-fab>
+                    </div>
+                    <div>
+                        <h6>Question Unanswered</h6>
+                    </div>
+                </div>
+                <div id="divlegend" style="height:30px;">
+                    <div style="margin-right:2px;">
+                        <paper-fab mini style="height:20px;width:20px;background:red"></paper-fab>
+                    </div>
+                    <div>
+                        <h6>Marked for Review</h6>
+                    </div>
+                </div>
+                <div id="divlegend" style="height:30px;">
+                    <div style="margin-right:2px;">
+                        <paper-fab mini style="height:20px;width:20px;background:orange"></paper-fab>
+                    </div>
+                    <div>
+                        <h6>Question Answered</h6>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </paper-material>
+    </template>
+    <script>
+    (function() {
+        'use strict';
+        var dyel = [];
+
+        Polymer({
+            is: 'question-palette',
+
+            properties: {
+                numberofQuestions: {
+                    type: Number,
+                    notify: true,
+                    observer:'_onTotalchanged'
+                }
+            },
+            ready:function(){},
+            _onTotalchanged: function() {
+                for (var i = 1; i <= this.numberofQuestions; i++) {
+                    dyel[i] = document.createElement("paper-fab");
+                    dyel[i].mini = true;
+                    dyel[i].label = i;
+                    Polymer.dom(this.$.quesicon).appendChild(dyel[i]);
+                    dyel[i].style.background = "white";
+                    dyel[i].addEventListener('tap', this._handleonclick);
+                }
+            },
+            _handleonclick: function(e) {
+            }
+
+        });
+    })();
+    </script>
+</dom-module>

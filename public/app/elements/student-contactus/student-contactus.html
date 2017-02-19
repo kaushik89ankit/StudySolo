@@ -1,0 +1,176 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../../../../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="../../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../../bower_components/iron-form/iron-form.html">
+<dom-module id="student-contactus">
+    <template>
+        <style is="custom-style">
+        :host {
+            display: block;
+        }
+        /* .contactus {
+            width: 1000px;
+            padding: 1%;
+            margin: auto;
+        }*/
+        
+        #inaround {
+            @apply(--layout-horizontal);
+            margin-left: 10px;
+            padding-left: 0;
+        }
+        
+        .card {
+            width: 98%;
+            font-size: 22px;
+        }
+        
+        .heading {
+            font-size: 28px;
+            margin: 15px 15px 0px 15px;
+            padding: 10px 10px 0px 10px;
+        }
+        
+        .sendmsgbutton {
+            background-color: black;
+            color: white;
+            height: auto;
+            font-size: 12px;
+            width: 40%;
+            text-transform: capitalize;
+        }
+        
+        .container {
+            @apply(--layout-vertical);
+            @apply(--layout-center-justified);
+        }
+        
+        .okButton {
+            background-color: var(--button-normal);
+            color: var(--color-white);
+        }
+        
+        .okButton:hover {
+            background-color: var(--button-hover);
+        }
+        </style>
+        <paper-card class="layout horizontal" style="height: 89vh;width: 99%;margin:5px; margin-bottom:-10px;">
+            <paper-card image="../../../app/images/GIF_contactus.gif" style="height: 58%;width: 30%;margin-top: 3%;margin-left: 2%;" class="card" preloadImage="true" elevation="0" class="layout horizontal"></paper-card>
+            <div class="container" style="margin-left: 25%;">
+                <paper-card style="margin-bottom: 4%;" elevation="4">
+                    <div class="heading"><b style="font-family: 'Bodoni MT';color: #3F51B5;">StudySolo</b></div>
+                    <div class="card-content">
+                        <div>
+                            <paper-icon-button icon="communication:contacts" style="color: grey;"></paper-icon-button>
+                            <span>II A-23, Nehru Nagar, Ghaziabad, UP(India)</span>
+                        </div>
+                        <div>
+                            <paper-icon-button icon="communication:email" style="color: grey;"></paper-icon-button>
+                            <span>info@studysolo.com</span>
+                        </div>
+                        <div class="layout horizontal-reverse" style="margin-top: 2%;">
+                            <paper-button class="okButton" style="height: 20%;text-transform: initial;" raised onclick="app.openFeedback()">Ask StudySolo</paper-button>
+                        </div>
+                    </div>
+                </paper-card>
+                <!-- ********************************************************************************************************************** -->
+                <!-- ********************************************************************************************************************** -->
+                <paper-card style="margin-bottom: 5%;" elevation="4">
+                    <div class="heading"><b style="font-family: 'Bodoni MT';color: #3F51B5;">{{teacher_name}}</b></div>
+                    <div class="card-content">
+                        <div>
+                            <paper-icon-button icon="communication:contacts" style="color: grey;"></paper-icon-button>
+                            <span>{{address}}</span>
+                        </div>
+                        <div>
+                            <paper-icon-button icon="communication:email" style="color: grey;"></paper-icon-button>
+                            <span>{{email}}</span>
+                        </div>
+                        <div>
+                            <paper-icon-button icon="communication:call" style="color: grey;"></paper-icon-button>
+                            <span>{{contactno}}</span></div>
+                        <div>
+                            <div class="layout horizontal-reverse" style="margin-top: 2%; display:none" ;>
+                                <paper-button class="okButton" style="height: 20%;text-transform: initial;" raised onclick="app.$.emailtutor.open()">Ask my Teacher</paper-button>
+                            </div>
+                        </div>
+                </paper-card>
+                </div>
+        </paper-card>
+        <!-- ********************************************************************************************************************** -->
+        <paper-dialog modal id="emailtutor">
+            <form is="iron-form" method="get" action="/" id="basic">
+                <div>
+                    <paper-input class="subject" label="Title"></paper-input>
+                </div>
+                <div>
+                    <iron-autogrow-textarea class="emailbody" placeholder="Write your message here..."></iron-autogrow-textarea>
+                </div>
+                <div class="buttons">
+                    <paper-button dialog-confirm raised onclick="_submit(event)" class="indigo">Submit</paper-button>
+                    <paper-button raised onclick="_reset(event)" class="indigo">Reset</paper-button>
+                    <!-- <paper-button dialog-dismiss raised>Cancel</paper-button>
+                                <paper-button type="submit" dialog-confirm>Send</paper-button> -->
+                </div>
+            </form>
+        </paper-dialog>
+        <paper-dialog modal id="emailstudysolo">
+            <form is="iron-form" method="get" action="/" id="basic">
+                <div>
+                    <paper-input class="subject" label="Title"></paper-input>
+                </div>
+                <div>
+                    <iron-autogrow-textarea class="emailbody" placeholder="Write your message here..."></iron-autogrow-textarea>
+                </div>
+                <div class="buttons">
+                    <paper-button dialog-confirm raised onclick="_submit(event)" class="indigo">Submit</paper-button>
+                    <paper-button raised onclick="_reset(event)" class="indigo">Reset</paper-button>
+                    <!-- <paper-button dialog-dismiss raised>Cancel</paper-button>
+                                <paper-button type="submit" dialog-confirm>Send</paper-button> -->
+                </div>
+            </form>
+        </paper-dialog>
+    </template>
+    <script>
+    (function() {
+        'use strict';
+
+        Polymer({
+            is: 'student-contactus',
+            properties: {
+                address: {
+                    type: String,
+                    notify: true
+                },
+                contactno: {
+                    type: String,
+                    notify: true
+                },
+                email: {
+                    type: String,
+                    notify: true
+                },
+                teacher_name: {
+                    type: String,
+                    notify: true
+                }
+
+            },
+            load_teacher_contactDetails: function(student_ofteacher) {
+                this.address = student_ofteacher.teacher_address;
+                this.contactno = student_ofteacher.teacher_mobile;
+                this.email = student_ofteacher.teacher_email;
+                this.teacher_name = student_ofteacher.teacher_name;
+            }
+
+        });
+    })();
+    </script>
+</dom-module>

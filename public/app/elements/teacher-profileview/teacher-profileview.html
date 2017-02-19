@@ -1,0 +1,586 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../../../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../../../../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="../../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../../bower_components/paper-date-picker/paper-date-picker.html">
+<link rel="import" href="../../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<dom-module id="teacher-profileview">
+    <template>
+        <style>
+        :host {
+            background-color: #E9EAED;
+            font-family: 'Arial', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+        
+        paper-card {
+            background-color: white;
+            color: #000000;
+            padding-top: 0px;
+            border-radius: 3px;
+            border: 2px solid #CCCCCC;
+            font-family: 'Arial';
+        }
+        
+        paper-button {
+            margin: 5px;
+            width: 45%;
+            background: #006622;
+            color: #ffffff;
+        }
+        
+        paper-checkbox {
+            margin-top: 20px;
+            --paper-checkbox-checked-color: var(--paper-green-500);
+            --paper-checkbox-checked-ink-color: var(--paper-green-500);
+            --paper-checkbox-unchecked-color: var(--paper-green-900);
+            --paper-checkbox-unchecked-ink-color: var(--paper-green-900);
+            --paper-checkbox-label-color: #004d1a;
+        }
+        
+        .heading {
+            background-color: #009933;
+            text-align: center;
+            color: #ffffff;
+            height: 50px;
+        }
+        
+        .big {
+            --iron-icon-height: 30px;
+            --iron-icon-width: 30px;
+            padding-right: 20px;
+        }
+        
+        .error {
+            color: red;
+        }
+        
+        .centercontainer {
+            @apply(--layout-horizontal);
+            @apply(--layout-center-justified);
+        }
+        
+        paper-dialog {
+            border: 2px solid;
+            border-color: var(--paper-green-500);
+            background-color: var(--paper-light-green-50);
+            color: black;
+            padding: -10px;
+        }
+        
+        paper-button.indigo {
+            background-color: #3f51b5;
+            color: white;
+            --paper-button-raised-keyboard-focus: {
+                color: white !important;
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+        }
+        
+        paper-button.indigo:hover {
+            background: #354497;
+        }
+        
+        #studentProfileHeading {
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+            background-color: #F6F7F8;
+            color: #373E4D;
+        }
+        
+        .truncate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .hovericon:hover {
+            background-color: red;
+            a {
+                color: yellow;
+            }
+            iron-icon {
+                color: black;
+            }
+        }
+        </style>
+        <paper-card elevation="2" style="margin:5px;width: 99%;overflow: hidden;">
+            <div id="studentProfileHeading">
+                <iron-icon icon="social:person" style="margin-left: 15px;margin-right: 10px;"></iron-icon>
+                <h2 style="margin-right: -4px;">My Profile </h2>
+                <a data-route="teacherprofileEdit" href="#!/teacherprofileEdit" style="text-decoration: none;">
+                    <paper-icon-button icon="editor:mode-edit" style="height: 25px;margin: 0;margin-bottom:2px;padding: 0;color: blue;"></paper-icon-button>
+                </a>
+                <div style="width:15%;margin-left: 60%;">
+                    <!-- <iron-image src="../../images/123.jpg" style="width: 200px;height: 200px;" sizing="containe"></iron-image> -->
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="layout horizontal" style="border-bottom:1px solid #DCDEE3;">
+                    <div style="width: 20%;padding: 0px;">
+                        <h3>Account Details</h3>
+                    </div>
+                    <div style="margin-top: 5%;width: 80%;margin-left: 10%;">
+                        <div class="horizontal layout">
+                            <div class="horizontal layout" style="margin-left: 0px;">
+                                <paper-item style="width:100px;color:#9B6B69;" disabled>
+                                    <h4>Login ID: </h4></paper-item>
+                                <paper-item style="margin-left: 0px;padding-left: 0px;color: #808080">{{loginid}}</paper-item>
+                            </div>
+                            <div class="horizontal layout" style="margin-left: 30%;">
+                                <paper-item style="width:100px;color:#9B6B69;" disabled>
+                                    <h4>Batches : </h4></paper-item>
+                                <paper-item style="margin-left: 0px;padding-left: 0px;color: #808080">{{batchid}}</paper-item>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layout horizontal" style="border-bottom:1px solid #DCDEE3;">
+                    <div style="width: 20%;padding: 0px;">
+                        <h3>Personal Details</h3>
+                    </div>
+                    <div class="horizontal layout" style="margin-top:5%;width: 80%;margin-left: 10%;">
+                        <div>
+                            <div class="horizontal layout">
+                                <div class="horizontal layout" style="margin-left: 0px;width: 100%;">
+                                    <paper-item style="width:100px;color:#9B6B69;" disabled>
+                                        <h4>Name: </h4></paper-item>
+                                    <paper-item style="margin-left: 0px;padding: 2px;color: #808080">{{fname}}</paper-item>
+                                    <paper-item style="margin-left: 0px;padding: 2px;color: #808080">{{mname}}</paper-item>
+                                    <paper-item style="margin-left: 0px;padding: 2px;color: #808080">{{lname}}</paper-item>
+                                </div>
+                                <div class="horizontal layout" style="margin-left: 40%;width: 40%;">
+                                    <paper-item style="width:100px;color:#9B6B69;" disabled>
+                                        <h4>Gender: </h4></paper-item>
+                                    <paper-item style="margin-left: 0px;padding: 2px;color: #808080">{{genderSelected}}</paper-item>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layout horizontal" style="border-bottom:1px solid #DCDEE3;">
+                    <div style="width: 20%;padding: 0px;">
+                        <h3>Institute Details :</h3>
+                    </div>
+                    <div style="margin-top: 5%;width: 80%;margin-left: 10%;">
+                        <div class="horizontal layout">
+                            <div class="horizontal layout" style="margin:0px;padding:0px;">
+                                <paper-item style="width:100px;color:#9B6B69;" disabled>
+                                    <h4>Address: </h4></paper-item>
+                                <div class="layout horizontal wrap" style="width:250px;margin:0px;">
+                                    <paper-item style="margin-left: 0px;padding-left: 0px;color: #808080">{{addline1}}</paper-item>
+                                    <paper-item style="margin-left: 0px;padding-left: 0px;color: #808080">{{addline2}}</paper-item>
+                                    <paper-item style="margin-left: 0px;padding-left: 0px;color: #808080">{{city}}</paper-item>
+                                    <paper-item style="margin-left: 0px;padding-left: 0px;color: #808080">{{district}}</paper-item>
+                                    <paper-item style="margin-left: 0px;padding-left: 0px;color: #808080">{{pincode}}</paper-item>
+                                    <paper-item style="margin-left: 0px;padding-left: 0px;color: #808080">{{state}}</paper-item>
+                                    <paper-item style="margin-left: 0px;padding-left: 0px;color: #808080">{{country}}</paper-item>
+                                </div>
+                            </div>
+                            <div class="horizontal layout" style="margin-left: 40px;">
+                                <paper-item style="width:80px;color:#9B6B69;" disabled>
+                                    <h4>Email ID: </h4></paper-item>
+                                <paper-item class="truncate" style="width:100px;margin-left: 0px;padding-left: 0px;color: #808080;text-overflow: ellipsis;">{{email}}</paper-item>
+                            </div>
+                        </div>
+                        <div style="margin-top: 2%;margin-left: 0;" class="layout horizontal">
+                            <div class="horizontal layout" style="margin-left:0;">
+                                <paper-item style="width:100px;color:#9B6B69;" disabled>
+                                    <h4>Mobile : </h4></paper-item>
+                                <paper-item class="truncate" style="width:250px;padding-left: 0px;color: #808080;">{{mobile}}</paper-item>
+                            </div>
+                            <div class="horizontal layout" style="margin-left:30px;">
+                                <paper-item style="width:100px;color:#9B6B69;" disabled>
+                                    <h4>Landline : </h4></paper-item>
+                                <paper-item class="truncate" style="margin-left: 0px;padding-left: 0px;color: #808080;text-overflow: clip;width: 100px;">{{landline}}</paper-item>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </paper-card>
+        <paper-dialog id="errorDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <h2 class="error">Error</h2>
+            <p>{{error}}</p>
+            <div class="centercontainer">
+                <paper-button class="errorbutton" dialog-dismiss>OK</paper-button>
+            </div>
+        </paper-dialog>
+        <!-- Paper Dialogs starts here -->
+        <paper-dialog id="waitDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop modal>
+            <div class="centerfield">
+                <paper-spinner id="loadingspinner" active></paper-spinner>
+                Please wait....
+            </div>
+        </paper-dialog>
+        <paper-dialog id="pickDOB" class="layout vertical" with-backdrop>
+            <div class="layout horizontal">
+                <paper-date-picker id="endingpicker" date="{{pickerDate}}"></paper-date-picker>
+            </div>
+            <div class="layout center-justified horizontal">
+                <paper-button class="indigo" dialog-dismiss>Cancel</paper-button>
+                <paper-button class="indigo" dialog-confirm>Ok</paper-button>
+            </div>
+        </paper-dialog>
+        <!-- Paper Dialogs ends here -->
+        <!-- ajax call  starts here-->
+        <!-- For posting the student data starts here -->
+        <iron-ajax id="updatestudent_ironajax" url="/api/students/update" handle-as="json" content-type='application/json' params="{{studentupdate_Params}}" method="POST" body="{{updatestudent_postbody}}" on-response="updateStudentOnResponse" on-error="updateStudentOnError"></iron-ajax>
+        <!-- For posting the student data ends here -->
+        <!-- For getting student profile details starts here -->
+        <iron-ajax id="studentget_ironajax" url="/api/students" handle-as="json" content-type='application/json' params="{{studentget_Params}}" method="GET" on-response="getStudentOnResponse" on-error="getStudentOnError"></iron-ajax>
+        <!-- For getting student profile details ends here -->
+        <!-- ajax call ends here -->
+    </template>
+    <script>
+    (function() {
+        'use strict';
+
+        Polymer({
+            is: 'teacher-profileview',
+
+            properties: {
+                loginid: {
+                    type: String,
+                    value: '',
+                    notify: true
+                },
+                batchid: {
+                    type: String,
+                    value: '',
+                    notify: true
+                },
+                batchname: {
+                    type: String,
+                    value: '',
+                    notify: true
+                },
+                fname: {
+                    type: String,
+                    notify: true,
+                    value: 'John'
+                },
+                mname: {
+                    type: String,
+                    notify: true,
+                    value: 'Snow'
+                },
+                lname: {
+                    type: String,
+                    notify: true,
+                    value: 'Stark'
+                },
+                imageurl: {
+                    type: String,
+                    value: '',
+                    notify: true
+                },
+                pickerDate: {
+                    notify: true
+                },
+                dob: {
+                    notify: true,
+                    computed: 'changeDob(pickerDate)'
+                },
+                genderSelected: {
+                    type: String,
+                    notify: true,
+                    value: "Male"
+                },
+                addline1: {
+                    type: String,
+                    notify: true,
+                    value: 'The wall,Westeros'
+                },
+                addline2: {
+                    type: String,
+                    notify: true,
+                    value: 'Kings Landing'
+                },
+                city: {
+                    type: String,
+                    notify: true,
+                    value: 'Seven Islands'
+                },
+                district: {
+                    type: String,
+                    notify: true
+                },
+                state: {
+                    type: String,
+                    notify: true
+                },
+                country: {
+                    type: String,
+                    notify: true,
+                    value: 'Scotland'
+                },
+                pincode: {
+                    type: String,
+                    notify: true
+                },
+                email: {
+                    type: String,
+                    notify: true,
+                    value: 'JohnSnowknowsnothing@westeros.com'
+                },
+                mobile: {
+                    type: String,
+                    notify: true,
+                    value: '011441417896833'
+                },
+                landline: {
+                    type: String,
+                    notify: true,
+                    value: '011441417896833'
+                },
+
+                error: {
+                    type: String,
+                    notify: true
+                },
+                studentupdate_Params: {
+                    type: String,
+                    notify: true
+                },
+                studentupdate_Params: {
+                    type: String,
+                    notify: true
+                },
+                studentGender: {
+                    type: Array,
+                    notify: true,
+                    value: ["Male", "Female"]
+                },
+
+                check: {
+                    type: Boolean,
+                    notify: true,
+                    value: false
+                }
+            },
+            ready: function() {
+                this.onLoad();
+            },
+            onLoad: function() {
+                this.loginid = localStorage.loginid;
+                this.batchid = localStorage.batchid;
+                this.batchname = localStorage.batchname;
+                if (this.check) {
+                    this.setDefault();
+                }
+            },
+            setDefault: function() {
+                this.setStudentgetParams();
+                this.getStudent();
+            },
+            opendatedialog: function() {
+                this.$.pickDOB.open();
+            },
+            changeDob: function(pickerDate) {
+                var fullDate = pickerDate.toDateString();
+                fullDate = fullDate.split(" ");
+                fullDate.splice(0, 1);
+                fullDate = fullDate.toString().replace(",", " ");
+                return fullDate;
+            },
+            onSubmit: function() {
+                if (this.validateStudent()) {
+                    this.setStudentUpdateParams();
+                    this.setStudentUpdateBody();
+                    this.updateStudent();
+                }
+            },
+            validateStudent: function() {
+                if (this.fname == null || this.fname == "") {
+                    this.error = "First Name cannot be left empty";
+                    this.$.errorDialog.open();
+                    return false;
+                } else if (this.lname == null || this.lname == "") {
+                    this.error = "Last Name cannot be left empty";
+                    this.$.errorDialog.open();
+                    return false;
+                } else if (this.imageurl == null || this.imageurl == "") {
+                    this.error = "Please upload image";
+                    this.$.errorDialog.open();
+                    return false;
+                } else if (this.imageurl == null || this.imageurl == "") {
+                    this.error = "Please upload image";
+                    this.$.errorDialog.open();
+                    return false;
+                } else if (this.pickerDate == null || this.pickerDate == "" || parseInt(new Date().getTime() - this.pickerDate.getTime()) < 24 * 60 * 60 * 1000) {
+                    this.error = "Please select date of birth";
+                    this.$.errorDialog.open();
+                    return false;
+                } else if (this.addline1 == null || this.addline1 == "") {
+                    this.error = "Address line can't be left empty";
+                    this.$.errorDialog.open();
+                    return false;
+                } else if (this.city == null || this.city == "") {
+                    this.error = "City can't be left empty";
+                    this.$.errorDialog.open();
+                    return false;
+                } else if (this.district == null || this.district == "") {
+                    this.error = "District can't be left empty";
+                    this.$.errorDialog.open();
+                    return false;
+                } else if (this.state == null || this.state == "") {
+                    this.error = "State can't be left empty";
+                    this.$.errorDialog.open();
+                    return false;
+                } else if (this.country == null || this.country == "") {
+                    this.error = "Country can't be left empty";
+                    this.$.errorDialog.open();
+                    return false;
+                } else if (this.pincode == null || this.pincode == "") {
+                    this.error = "Pincode can't be left empty";
+                    this.$.errorDialog.open();
+                    return false;
+                } else if (this.email == null || this.email == "") {
+                    this.error = "Email can't be left empty";
+                    this.$.errorDialog.open();
+                    return false;
+                } else if (this.email.indexOf('@') == -1) {
+                    this.error = "Email Id is not valid";
+                    this.$.errorDialog.open();
+                    return false;
+                } else if (this.mobile == null || this.mobile == "") {
+                    if (this.landline == null || this.landline == "") {
+                        this.error = "Either enter Mobile number or Landline number";
+                        this.$.errorDialog.open();
+                        return false;
+                    }
+                } else if (this.schoolname == null || this.schoolname == "") {
+                    this.error = "School can't be left empty";
+                    this.$.errorDialog.open();
+                    return false;
+                } else if (this.stream == null || this.stream == "") {
+                    this.error = "Stream can't be left empty";
+                    this.$.errorDialog.open();
+                    return false;
+                } else if (this.aboutme == null || this.aboutme == "") {
+                    this.error = "About me can't be left empty";
+                    this.$.errorDialog.open();
+                    return false;
+                }
+                return true;
+            },
+            setStudentUpdateParams: function() {
+                var selObj = JSON.stringify({
+                    loginid: localStorage.loginid
+                });
+                var retObj = {
+                    where: selObj
+                };
+                this.studentupdate_Params = retObj;
+            },
+            setStudentUpdateBody: function() {
+                var tempClass = this.studentClass[this.classSelected];
+                var tempGender = this.studentGender[this.genderSelected];
+                this.updatestudent_postbody = {
+                    student_firstname: this.fname,
+                    student_middlename: this.mname,
+                    student_lastname: this.lname,
+                    student_pic: this.imageurl,
+                    student_dob: this.pickerDate,
+                    student_gender: tempGender,
+                    student_addressl1: this.addline1,
+                    student_addressl2: this.addline2,
+                    student_city: this.city,
+                    student_district: this.district,
+                    student_state: this.state,
+                    student_country: this.country,
+                    student_pincode: this.pincode,
+                    student_emailid: this.email,
+                    student_phoneno: this.mobile,
+                    student_landlineno: this.landline,
+                    student_school: this.schoolname,
+                    student_class: tempClass,
+                    student_stream: this.stream,
+                    student_aboutme: this.aboutme
+                };
+            },
+            updateStudent: function() {
+                this.$.waitDialog.open();
+                this.$.updatestudent_ironajax.generateRequest();
+
+            },
+            updateStudentOnResponse: function() {
+                this.$.waitDialog.close();
+                localStorage.username = this.fname + " " + this.mname + " " + this.lname;
+                localStorage.userimage = this.imageurl;
+                if (!this.check)
+                    window.location.assign('/app/dashboard/student');
+                else {
+                    app.username = localStorage.username;
+                    app.userimage = localStorage.userimage;
+                    app.$.toast.text = "Profile updated successfully.";
+                    app.$.toast.show();
+                }
+            },
+            updateStudentOnError: function() {
+                this.$.waitDialog.close();
+                alert("Something went wrong please try again");
+            },
+            // Get student starts here
+            setStudentgetParams: function() {
+                var selObj = JSON.stringify({
+                    "where": {
+                        loginid: localStorage.loginid
+                    }
+                });
+                var retObj = {
+                    filter: selObj
+                };
+                this.studentget_Params = retObj;
+            },
+            getStudent: function() {
+                this.$.waitDialog.open();
+                this.$.studentget_ironajax.generateRequest();
+
+            },
+            getStudentOnResponse: function() {
+                this.$.waitDialog.close();
+                var tempResponse = this.$.studentget_ironajax.lastResponse[0];
+                var tempGender = "";
+                var tempClass = "";
+                this.fname = tempResponse.student_firstname;
+                this.mname = tempResponse.student_middlename;
+                this.lname = tempResponse.student_lastname;
+                this.imageurl = tempResponse.student_pic;
+                this.pickerDate = new Date(tempResponse.student_dob);
+                tempGender = tempResponse.student_gender;
+                this.addline1 = tempResponse.student_addressl1;
+                this.addline2 = tempResponse.student_addressl2;
+                this.city = tempResponse.student_city;
+                this.district = tempResponse.student_district;
+                this.state = tempResponse.student_state;
+                this.country = tempResponse.student_country;
+                this.pincode = tempResponse.student_pincode;
+                this.email = tempResponse.student_emailid;
+                this.mobile = tempResponse.student_phoneno;
+                this.landline = tempResponse.student_landlineno;
+                this.schoolname = tempResponse.student_school;
+                tempClass = tempResponse.student_class;
+                this.stream = tempResponse.student_stream;
+                this.aboutme = tempResponse.student_aboutme;
+                this.genderSelected = this.studentGender.indexOf(tempGender);
+                this.classSelected = this.studentClass.indexOf(tempClass);
+                console.log(this.genderSelected);
+                console.log(tempGender);
+            },
+            getStudentOnError: function() {
+                    this.$.waitDialog.close();
+                    alert("Something went wrong please try again");
+                }
+                // Get student ends here
+        });
+    })();
+    </script>
+</dom-module>

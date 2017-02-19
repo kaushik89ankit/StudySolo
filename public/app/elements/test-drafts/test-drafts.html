@@ -1,0 +1,29 @@
+<dom-module id="test-drafts">
+    <template>
+        <style is="custom-style">
+        paper-tab[link] a {
+            /* These mixins (from iron-flex-layout) center the link text. */
+            @apply(--layout-horizontal);
+            @apply(--layout-center-center);
+            color: #000000;
+            text-decoration: none;
+        }
+        </style>
+        "Hi this is a test drafts"
+    </template>
+    <script>
+    (function() {
+        'use strict';
+        Polymer({
+            is: 'test-drafts',
+            properties: {
+                totalquestions: {
+                    type: String,
+                    value: 1,
+                    notify: true
+                },
+            }
+        });
+    })();
+    </script>
+</dom-module>

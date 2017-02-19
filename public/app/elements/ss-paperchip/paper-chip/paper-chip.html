@@ -1,0 +1,60 @@
+<link rel='import' href='../../../../bower_components/polymer/polymer.html'>
+<link rel='import' href='../../../../bower_components/paper-styles/paper-styles.html'>
+
+<!--
+A material design [chip](https://www.google.com/design/spec/components/chips.html)
+
+### Example
+
+```html
+<paper-chip>Apples</paper-chip>
+```
+
+@demo demo/chip.html
+-->
+<dom-module id='paper-chip'>
+
+	<template>
+
+		<style>
+			:host {
+				display: inline-block;
+				background-color: #f2f2f2;
+				margin-bottom: 5px;			
+			
+				padding: 0 1%;
+				border-radius: 16px;
+				color: black;
+				font-size: 14px!important;
+				@apply(--paper-font-body1);
+			}
+
+			:host[selectable]:hover {
+				color: white!important;
+				background-color: var(--paper-grey-600);
+			}
+		</style>
+
+		<content></content>
+
+	</template>
+
+</dom-module>
+
+<script>
+
+(function() {
+
+	Polymer({
+		is: 'paper-chip',
+		properties: {
+			selectable: {
+				type: Boolean,
+				value: false
+			}
+		}
+	});
+
+})();
+
+</script>

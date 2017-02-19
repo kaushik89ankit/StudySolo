@@ -1,0 +1,464 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../../bower_components/neon-animation/neon-animations.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="stylesheet" type="text/css" href="./studentsignin.css">
+<dom-module id="login-element">
+    <template>
+        <style>
+        /* local DOM styles go here */
+        
+        :host {
+            display: inline-block;
+        }
+        </style>
+        <paper-card elevation="1" style="border-radius:1%;">
+            <!-- Taking the user credentials -->
+            <div class="card-content">
+                <div class="heading">
+                    <h2>StudySolo</h2>
+                </div>
+                <paper-input id="username" type="text" label="[[usernameInputLabel]]" value="{{username}}" no-label-float style="padding-top:10px;">
+                    <div prefix>
+                        <iron-icon class="big" icon="icons:account-box"></iron-icon>
+                    </div>
+                </paper-input>
+                <paper-input id="password" type="password" label="[[passwordInputLabel]]" value="{{password}}" no-label-float style="padding-top:10px;">
+                    <div prefix>
+                        <iron-icon class="big" icon="lock"></iron-icon>
+                    </div>
+                </paper-input>
+                <paper-checkbox id="remember_me">Remember Me</paper-checkbox>
+                <!-- <paper-checkbox id="loginas_teacher">Login as a <b>TEACHER</b></paper-checkbox> -->
+            </div>
+            <!-- Definig card actions OK and Forgot Password -->
+            <div class="card-actions ">
+                <div class="horizontal layout center">
+                    <paper-button class="okButton" raised style="width:100%; margin-left:auto;  margin-right:auto;" on-click="validate">Login</paper-button>
+                </div>
+                <div class="horizontal layout center">
+                    <paper-item class="forgotpassword" on-click="openForget">Forgot Password ?</paper-item>
+                </div>
+            </div>
+        </paper-card>
+        <!-- Paper Dialogs starts here -->
+        <paper-dialog id="errorDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <h2>Login Error</h2>
+            <p>{{error}}</p>
+            <div class="centercontainer">
+                <paper-button class="errorbutton" dialog-dismiss>OK</paper-button>
+            </div>
+        </paper-dialog>
+        <paper-dialog id="waitDialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop modal>
+            <div class="centerfield">
+                <paper-spinner id="loadingspinner" active></paper-spinner>
+                Please wait....
+            </div>
+        </paper-dialog>
+        <paper-dialog id="forgetPassword" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <div class="centerfield">
+                Please contact your teacher for password recovery.
+            </div>
+            <div class="centercontainer">
+                <paper-button class="errorbutton" dialog-dismiss>OK</paper-button>
+            </div>
+        </paper-dialog>
+        <paper-dialog id="student_incorrectlogin" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <div class="centerfield">
+                Your loginID/Password is incorrect.Please try again.
+            </div>
+            <div class="centercontainer">
+                <paper-button class="errorbutton" dialog-dismiss>OK</paper-button>
+            </div>
+        </paper-dialog>
+        <!-- Paper Dialogs ends here -->
+        <!-- ajax call while login starts here-->
+        <iron-ajax id="ajax_call_student_signin" method="POST" url="/signin" handle-as="json" content-type='application/json' body="{{credentials}}" on-response="ajax_response_student_signin" on-error="ajax_error_student_signin"></iron-ajax>
+    </template>
+    <script>
+    (function() {
+        'use strict';
+
+        Polymer
+            ({
+                is: 'login-element',
+                properties: {
+                    usernameInputLabel: {
+                        type: String,
+                        value: 'Login ID',
+                        notify: true
+                    },
+                    passwordInputLabel: {
+                        type: String,
+                        value: 'Password',
+                        notify: true
+                    },
+                    username: {
+                        type: String,
+                        value: '',
+                        notify: true
+                    },
+                    password: {
+                        type: String,
+                        value: '',
+                        notify: true
+                    },
+                    credentials: {
+                        type: Object,
+                        notify: true,
+                        computed: '_computeCredentials(username, password)'
+                    }
+                },
+
+                _computeCredentials: function(username, password) {
+                    return JSON.stringify({
+                        'loginID': username,
+                        'password': password
+                    });
+                },
+                validate: function(e) {
+                    if (this.username && this.password) {
+                        this.postlogin();
+                        return true;
+                    } else {
+                        this.openDialog();
+                        return false;
+                    }
+                },
+                postlogin: function() {
+
+                    this.$.ajax_call_student_signin.generateRequest();
+                },
+                ajax_response_student_signin: function(callresponse) {
+
+                    var student_data = JSON.stringify(callresponse.detail.response);
+
+
+                    if (typeof(Storage) !== "undefined") {
+
+                        localStorage.setItem('student_data', student_data);
+
+                    } else {
+                        // whenever get the time , make user upgrade browser if it does not exists
+                        console.log("One need to update browser storage capacity");
+                    }
+
+                    window.location.href = "/student";
+                },
+                ajax_error_student_signin: function() {
+                    //     //this.closewaitDialog();
+                    this.$.student_incorrectlogin.open();
+                }
+
+
+
+            });
+    })();
+    </script>
+</dom-module>
+
+
+// this.closewaitDialog();
+                    // if (this.$.checklogin_ajaxCall.lastResponse != null && this.$.checklogin_ajaxCall.lastResponse != "") {
+                    //     if (this.$.checklogin_ajaxCall.lastResponse.response.loginid != null && this.$.checklogin_ajaxCall.lastResponse.response.loginid != "") {
+                    //         var userdata = this.$.checklogin_ajaxCall.lastResponse.response;
+                    //         if (this.rememberme) {
+                    //             localStorage.password = this.password;
+                    //         }
+                    //         localStorage.loginid = userdata.loginid;
+                    //         localStorage.coachingid = userdata.coaching_id;
+                    //         if (typeof userdata.student_firstname != 'undefined' && userdata.student_firstname != null && userdata.student_firstname != "") {
+                    //             localStorage.username = userdata.student_firstname + " " + userdata.student_middlename + " " + userdata.student_lastname;
+                    //             localStorage.userimage = userdata.student_pic;
+                    //         } else {
+                    //             localStorage.username = "";
+                    //             localStorage.userimage = "";
+                    //         }
+                    //         if (this.loginasteacher) {
+                    //             localStorage.type = "teacher";
+                    //             this.getBatches();
+                    //         } else {
+                    //             localStorage.type = "student";
+                    //             localStorage.batchid = userdata.batch_id;
+                    //             this.studentgetBatchname();
+                    //         }
+                    //         this._syncLocaldata(); //function for syncing the local data with server
+                    //     } else
+                    //         this.openDialog();
+                    // } else {
+                    //     alert("Something went wrong please try again.");
+                    // }
+              //  }
+                // 
+                // // post student poststudent_details end
+                // // Teacher get batches starts here
+                // getBatches: function() {
+                //     this.openwaitDialog();
+                //     var selObj = JSON.stringify({
+                //         "where": {
+                //             coaching_id: localStorage.coachingid
+                //         }
+                //     });
+                //     var tempVar = {
+                //         filter: selObj
+                //     };
+                //     this.batch_getParams = tempVar;
+                //     this.$.getbatches_ironajax.generateRequest();
+                // },
+                // batchgetnameonResponse: function(request) {
+                //     if (this.$.getbatches_ironajax.lastResponse != null) {
+                //         localStorage.batches = JSON.stringify(this.$.getbatches_ironajax.lastResponse);
+                //     }
+                //     window.location.assign(this.element_afterloginUrl);
+                //     this.closewaitDialog();
+                // },
+                // // Teacher get batches ends here
+                // // Student get batch name starts here
+                // studentgetBatchname: function() {
+                //     this.openwaitDialog();
+                //     var selObj = JSON.stringify({
+                //         "where": {
+                //             batch_id: localStorage.batchid
+                //         }
+                //     });
+                //     var tempVar = {
+                //         filter: selObj
+                //     };
+                //     this.studentbatch_getParams = tempVar;
+                //     this.$.getstudentbatches_ironajax.generateRequest();
+                // },
+                // studentgetBatchnameonResponse: function(request) {
+                //     if (this.$.getstudentbatches_ironajax.lastResponse != null && this.$.getstudentbatches_ironajax.lastResponse[0].name != null) {
+                //         localStorage.batchname = JSON.stringify(this.$.getstudentbatches_ironajax.lastResponse[0].name);
+                //     }
+
+                //     this.getCoachingDetails();
+                // },
+                // // Student get batch name ends here
+
+                // // function to get coaching details starts here
+                // getCoachingDetails: function() {
+                //     this.openwaitDialog();
+                //     var selObj = JSON.stringify({
+                //         "where": {
+                //             coaching_id: localStorage.coachingid
+                //         }
+                //     });
+                //     var tempVar = {
+                //         filter: selObj
+                //     };
+                //     this.coaching_getParams = tempVar;
+                //     this.$.getcoaching_ironajax.generateRequest();
+                // },
+                // getcoachingonResponse: function() {
+                //     var tempResponseArray = this.$.getcoaching_ironajax.lastResponse;
+                //     if (tempResponseArray != undefined && tempResponseArray != null && tempResponseArray.length > 0) {
+                //         var tempResponse = tempResponseArray[0];
+                //         this.storeloginCoachingDetails(tempResponse.name, tempResponse.address, tempResponse.contactno, tempResponse.email);
+                //         window.location.assign(this.element_afterloginUrl);
+                //     }
+                //     this.closewaitDialog();
+                // },
+                // getcoachingonError: function() {
+                //     this.closewaitDialog();
+                //     alert("Something went wrong please try again.");
+                // },
+                // // function to get coaching details ends here
+                // // Function for syncing starts here
+                // _syncLocaldata: function() {
+                //     if (typeof localStorage.createtestquestions != 'undefined' && localStorage.createtestquestions != null && localStorage.createtestquestions != "") {
+                //         this.testupdate_Params = this._test_updateParams();
+                //         this.testupdate_body = {
+                //             "questions": JSON.parse(localStorage.createtestquestions)
+                //         };
+                //         this.$.testupdate_ajaxCall.generateRequest();
+                //     }
+                // },
+                // // Function for syncing ends here
+                // // ajax call for syncing functions starts here
+                // _test_updateParams: function(testId) {
+                //     var selObj = JSON.stringify({
+                //         test_id: localStorage.testid
+                //     });
+                //     var retObj = {
+                //         where: selObj
+                //     };
+                //     return retObj;
+                // },
+                // testupdateonResponse: function() {
+                //     localStorage.createtestquestions = "";
+                //     localStorage.testid = "";
+                // },
+                // testupdateonError: function() {},
+                // // ajax call function ends here
+                // openForget: function() {
+                //     this.$.forgetPassword.open();
+                // },
+                // storeloginCoachingDetails: function(name, address, contactno, email) {
+                //     localStorage.coachingname = name;
+                //     localStorage.coachingaddress = address;
+                //     localStorage.coachingcontactno = contactno;
+                //     localStorage.coachingemail = email;
+                // }
+   
+
+
+
+
+    //     rememberme: {
+                //         notify: true,
+                //         value: false
+                //     },
+                //     loginasteacher: {
+                //         notify: true,
+                //         value: false
+                //     },
+                //     error: {
+                //         type: String,
+                //         notify: true,
+                //         value: "Invalid UserId or Password."
+
+                //     },
+                //     batch_getParams: {
+                //         type: Object,
+                //         notify: true
+                //     },
+                //     studentbatch_getParams: {
+                //         type: Object,
+                //         notify: true
+                //     },
+                //     testupdate_Params: {
+                //         type: Object,
+                //         notify: true
+                //     },
+                //     testupdate_body: {
+                //         type: Object,
+                //         notify: true
+                //     },
+                //     coaching_getParams: {
+                //         type: Object,
+                //         notify: true
+                //     }
+                // },
+                // listeners: {
+                //     'change': 'checkboxlistner'
+                // },
+
+                // Element Lifecycle
+                // ready: function() {
+                //     if (localStorage.loginid != null && localStorage.password != null && localStorage.loginid != "" && localStorage.password != "") {
+                //         this.username = localStorage.loginid;
+                //         this.password = localStorage.password;
+                //         this.rememberme = true;
+                //         if (localStorage.type == "teacher")
+                //             this.loginasteacher = true;
+                //         this.postlogin();
+                //     }
+                // },
+                // attached: function() {},
+                // detached: function() {},
+                // // Element Behavior
+                // checkboxlistner: function() {
+                //     this.rememberme = this.$.remember_me.checked;
+                //     this.loginasteacher = this.$.loginas_teacher.checked;
+                // },
+
+
+
+
+
+
+
+
+                <!--  <iron-ajax id="checklogin_ajaxCall" method="POST" url="{{element_logincheckUrl}}" handle-as="json" content-type='application/json' body="{{credentials}}" on-response="postloginonResponse" on-error="postloginonError"></iron-ajax>
+ -->
+        <!-- ajax call to check login ends here -->
+        <!-- ajax call to get available batches starts here -->
+        <!-- <iron-ajax id="getbatches_ironajax" url="/api/batchdata" params="{{batch_getParams}}" handle-as="json" content-type='application/json' method="GET" on-response="batchgetnameonResponse" on-error="postloginonError"></iron-ajax> -->
+        <!-- ajax call to get available batches ends here -->
+        <!-- ajax call to get student batch starts here -->
+        <!-- <iron-ajax id="getstudentbatches_ironajax" url="/api/batchdata" params="{{studentbatch_getParams}}" handle-as="json" content-type='application/json' method="GET" on-response="studentgetBatchnameonResponse" on-error="postloginonError"></iron-ajax> -->
+        <!-- ajax call to get student batch ends here -->
+        <!-- ajax call to get coaching details starts here -->
+       <!--  <iron-ajax id="getcoaching_ironajax" url="/api/coachingdata" params="{{coaching_getParams}}" handle-as="json" content-type='application/json' method="GET" on-response="getcoachingonResponse" on-error="getcoachingonError"></iron-ajax> -->
+        <!-- ajax call to get coaching details ends here -->
+        <!-- ajax call to update test starts here -->
+        <!-- <iron-ajax id="testupdate_ajaxCall" url="/api/testdata/update" handle-as="json" content-type='application/json' params="{{testupdate_Params}}" method="POST" body="{{testupdate_body}}" on-response="testupdateonResponse" on-error="testupdateonError"></iron-ajax> -->
+        <!-- ajax call to update questions ends here -->
+
+
+
+
+
+
+
+
+
+<!-- 
+        ,
+                    logincheckUrl: {
+                        type: String,
+                        notify: true
+
+                    },
+                    afterloginUrl: {
+                        type: String,
+                        notify: true
+                    },
+                    element_logincheckUrl: {
+                        type: String,
+                        notify: true
+                    },
+                    element_afterloginUrl: {
+                        type: String,
+                        notify: true
+                    }, -->
+
+
+
+
+
+
+
+                    // openDialog: function() {
+                //     this.$.errorDialog.open();
+                // },
+                // closeDialog: function() {
+                //     this.$.errorDialog.close();
+                // },
+                // openwaitDialog: function() {
+                //     this.$.waitDialog.open();
+                // },
+                // opensuccessDialog: function() {
+                //     this.$.successDialog.open();
+                // },
+                // closewaitDialog: function() {
+                //     this.$.waitDialog.close();
+                // },
+                // post student poststudent_details
+
+
+
+
+
+
+
+
+
+                  // this.openwaitDialog();
+                    // if (this.loginasteacher) {
+                    //     this.element_afterloginUrl = this.afterloginUrl + "teacher";
+                    //     this.element_logincheckUrl = this.logincheckUrl + "teacherdata/checklogin";
+                    // } else {
+                    //     this.element_afterloginUrl = this.afterloginUrl + "student/afterlogin.html";
+                    //     this.element_logincheckUrl = this.logincheckUrl + "students/checklogin";
+
+                    // }

@@ -1,0 +1,66 @@
+             paper-card {
+             background-color: white;
+         }
+         
+         paper-button {
+             margin: 5px;
+             width: 45%;
+             background: var(--darkcolor-main);
+             color: #ffffff;
+         }
+         
+         paper-checkbox {
+             margin-top: 20px;
+         }
+         
+         .heading {
+             background-color: #3b5998;
+             text-align: center;
+             font-family: 'Helvetica', 'Arial';
+             color: #fff;
+             height: 50px;
+             padding: 10px;
+             margin: 0px;
+             border-top-left-radius: 2%;
+             border-top-right-radius: 2%;
+             margin-bottom: -5px;
+         }
+         
+         .big {
+             --iron-icon-height: 10%;
+             --iron-icon-width: 10%;
+             padding-right: 0%;
+         }
+         
+         .centercontainer {
+             @apply(--layout-horizontal);
+             @apply(--layout-center-justified);
+         }
+         
+         paper-dialog {
+             border: 2px solid;
+             border-color: var(--darkcolor-main);
+             background-color: var(--lightcolor-second);
+             color: var(--color-black);
+             padding: -10px;
+         }
+         
+         .okButton {
+             background-color: #4267b2;
+             color: #ffffff;
+         }
+         
+         .okButton:hover {
+             background-color: #354497;
+         }
+         
+         .forgotpassword {
+             font-size: 0.8em;
+             color: #000000;
+             margin-left: auto;
+             margin-right: auto;
+             cursor: pointer;
+         }
+         
+         .forgotpassword:hover {
+             color: #3F51B5;

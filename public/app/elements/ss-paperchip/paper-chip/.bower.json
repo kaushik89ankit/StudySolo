@@ -1,0 +1,45 @@
+{
+  "name": "paper-chip",
+  "version": "1.0.10",
+  "authors": [
+    "collaborne"
+  ],
+  "description": "A Material Design chip (Polymer 1.x)",
+  "main": "paper-chip.html",
+  "keywords": [
+    "web-components",
+    "polymer",
+    "paper",
+    "material design",
+    "chip"
+  ],
+  "license": "Apache 2",
+  "homepage": "https://github.com/collaborne/paper-chip",
+  "ignore": [
+    "**/.*"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0",
+    "iron-a11y-keys-behavior": "PolymerElements/iron-a11y-keys-behavior#^1.0.0",
+    "iron-icon": "PolymerElements/iron-icon#^1.0.0",
+    "iron-icons": "PolymerElements/iron-icons#^1.0.0",
+    "iron-input": "PolymerElements/iron-input#^1.0.0",
+    "paper-styles": "PolymerElements/paper-styles#^1.0.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "test-fixture": "PolymerElements/test-fixture#^1.0.0",
+    "web-component-tester": "*",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+  },
+  "_release": "1.0.10",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.0.10",
+    "commit": "5614e6b79bf1cc96696c98adbc88b912ad9df0ac"
+  },
+  "_source": "git://github.com/Collaborne/paper-chip.git",
+  "_target": "^1.0.10",
+  "_originalSource": "Collaborne/paper-chip",
+  "_direct": true
+}

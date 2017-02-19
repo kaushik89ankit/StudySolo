@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="Study Solo" content="Study Solo (Ask Question, Seek Answers)">
+    <meta name="description" content="At StudySolo our vision is to take traditional classroom experience online by enabling teachers to create content and connect with their students on our platform">
+    <meta name="keywords" content="study solo, studysolo, coaching, teacher, help, online, portal, test portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Solo</title>
+    <!-- Place favicon.ico in the `app/` directory -->
+    <!-- Chrome for Android theme color -->
+    <meta name="theme-color" content="#2E3AA1">
+    <!-- Web Application Manifest -->
+    <link rel="app/manifest" href="manifest.json">
+    <!-- Tile color for Win8 -->
+    <meta name="msapplication-TileColor" content="#3372DF">
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="STUDYSOLO">
+    <link rel="icon" sizes="192x192" href="/app/images/touch/studysolo_icon_chrometouch.png">
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="StudySolo">
+    <link rel="apple-touch-icon" href="/app/images/touch/studysolo_icon_apple_touch.png">
+    <!-- Tile icon for Win8 (144x144) -->
+    <meta name="msapplication-TileImage" content="/app/images/touch/studysolo_icon_144.png">
+    <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <!-- endbuild -->
+    <!-- Because this project uses vulcanize this should be your only html import
+       in this file. All other imports should go in elements.html -->
+    <!--  <link rel="import" href="app/elements/landingElements.html"> -->
+    <link rel="import" href="app/elements/landingElements.html">
+    <link rel="import" href="app/styles/landing-theme.html">
+    <link rel="import" href="../../../bower_components/paper-card/paper-card.html">
+    <link rel="import" href="../../../bower_components/iron-icons/maps-icons.html">
+    <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+    <link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+    <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+    <link rel="stylesheet" href="app/styles/w3.css">
+</head>
+
+<body class="fullbleed layout vertical" style="background:white;">
+    <template is="dom-bind" id="app">
+        <paper-drawer-panel id="panel" force-narrow>
+            <paper-scroll-header-panel drawer fixed style="background-color: #E9EAED;">
+                <paper-toolbar id="drawerToolbar">
+                    <span class="menu-name">StudySolo</span>
+                </paper-toolbar>
+                <paper-menu>
+                    <a paper-drawer-toggle onclick="scrolltofeatures()">
+                        <span id="mob-option" paper-drawer-toggle>Features</span></a>
+                    <a paper-drawer-toggle href="/app" onclick="">
+                        <span id="mob-option" paper-drawer-toggle>Signin</span></a>
+                    <a paper-drawer-toggle onclick="scrolltocontactus()">
+                        <span id="mob-option" paper-drawer-toggle>Contact Us</span></a>
+                </paper-menu>
+            </paper-scroll-header-panel>
+            <paper-header-panel main id="headerPanelMain" condenses keep-condensed-header mode="waterfall">
+                <paper-toolbar id="headtoolbar" class="layout horizontal-justified">
+                    <paper-icon-button id="mob-icon" src="https://cdn4.iconfinder.com/data/icons/wirecons-free-vector-icons/32/menu-alt-512.png" onclick="document.querySelector('#panel').togglePanel()"></paper-icon-button>
+                    <div id="namePos">
+                        <div style="float:left;">
+                            <paper-button class="title" onclick="scrolltoregister()">
+                                <!-- <iron-image src="app/images/touch/studysolo_logo_withback.png" class="logoClass" sizing="contain"></iron-image> -->
+                                <div id="name">StudySolo</div>
+                            </paper-button>
+                        </div>
+                        <div id="landing-menu">
+                            <paper-button class="headertabs" onclick="scrolltofeatures()">
+                                Features</paper-button>
+                            <paper-button class="headertabs" onclick="scrolltocontactus()">
+                                Contact Us</paper-button>
+                                <paper-button class="headertabs" onclick="scrolltosigninforteacher()">
+                                Teacher</paper-button>
+                                <paper-button class="headertabs" onclick="scrolltosignin()">
+                                Sign In</paper-button>
+                        </div>
+                    </div>
+                </paper-toolbar>
+                <div id="scroll" onscroll="makeVisible()">
+                    <div id="scrolltop">
+                        <div id="landing-div0">
+                            <div id="landing-div1" elevation="1">
+                                <paper-item class="headingStyle"><b>See how Alisha is using StudySolo</b></paper-item>
+                                <br>
+                                <paper-material id="landing-div2" elevation="1">
+                                    <google-youtube id="landing-el2" video-id="T0HGyS1TjuE" rel="1" start="0" playsinline="0" controls="2" showinfo="0" autoplay="0">
+                                    </google-youtube>
+                                </paper-material>
+                            </div>
+                            <div id="signin">
+                                <leads-element id="leads-element"></leads-element>
+                            </div>
+                            <paper-dialog id="registrationDialog">
+                                <div id="signinmob">
+                                    <leads-element id="leads-element"></leads-element>
+                                </div>
+                            </paper-dialog>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <paper-item disabled id="features" id="whyStudySolo" style="color: black; font-family: 'Lato', sans-serif; font-size: 32px; font-weight: 400; padding: 2%; background-color: white;" class="horizontal center-justified layout">Why StudySolo?</paper-item>
+                    <br>
+                    <div>
+                        <div class="container">
+                            <ul class="timeline">
+                                <li>
+                                    <div class="timeline-badge ">
+                                        <iron-icon icon="maps:directions-bus"></iron-icon>
+                                    </div>
+                                    <paper-card id="hidVis" class="timeline-panel" image="http://wallpapercave.com/wp/sNxf34y.jpg">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">Conduct your Online Tests</h4></div>
+                                        <div class="timeline-body">
+                                            <p>StudySolo lets you to conduct tests online for your students.Test will be prepared by you and can be used any number of times in future.After test , you will get a detailed analysis of test result and ranks of students.</p>
+                                        </div>
+                                    </paper-card>
+                                </li>
+                                <li class="timeline-inverted">
+                                    <div class="timeline-badge warning">
+                                        <iron-icon icon="maps:directions-bus"></iron-icon>
+                                    </div>
+                                    <paper-card id="hidVis1" class="timeline-panel" image="http://wallpapercave.com/wp/sNxf34y.jpg">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">Practice Tests</h4>
+                                        </div>
+                                        <div class="timeline-body">
+                                            <p>Create multiple tests ranging from easy to difficult level for your students to let them practice whenever they feel comfortable with the topic.</p>
+                                        </div>
+                                    </paper-card>
+                                </li>
+                                <li>
+                                    <div class="timeline-badge danger">
+                                        <iron-icon icon="maps:directions-bus"></iron-icon>
+                                    </div>
+                                    <paper-card id="hidVis2" class="timeline-panel" image="http://wallpapercave.com/wp/sNxf34y.jpg">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">Manage your Fees</h4>
+                                        </div>
+                                        <div class="timeline-body">
+                                            <p>StudySolo helps you efficiently manage the fees of every student enrolled in your Institute.We also send reminders to students who have lapsed in depositing their fees.</p>
+                                        </div>
+                                    </paper-card>
+                                </li>
+                                <li class="timeline-inverted">
+                                    <div class="timeline-badge success2">
+                                        <iron-icon icon="maps:directions-bus"></iron-icon>
+                                    </div>
+                                    <paper-card id="hidVis3" class="timeline-panel" image="http://wallpapercave.com/wp/sNxf34y.jpg">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">Create your own study material</h4>
+                                        </div>
+                                        <div class="timeline-body">
+                                            <p>StudySolo lets teachers create interactive and intuitive study material which helps students to grasp the concept easily and effectively.Also , no need to give printed study material as students can access the same from their StudySolo account.</p>
+                                        </div>
+                                    </paper-card>
+                                </li>
+                                <!-- <li>
+                                    <div class="timeline-badge info">
+                                        <iron-icon icon="maps:directions-bus"></iron-icon>
+                                    </div>
+                                    <paper-card id="hidVis4" class="timeline-panel" image="http://wallpapercave.com/wp/sNxf34y.jpg">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">Mussum ipsum cacilds</h4>
+                                        </div>
+                                        <div class="timeline-body">
+                                            <p>Mussum ipsum cacilds, vidis litro abertis. Consetis adipiscings elitis. Pra lá , depois divoltis porris, paradis. Paisis, filhis, espiritis santis. Mé faiz elementum girarzis, nisi eros vermeio, in elementis mé pra quem é amistosis quis leo. Manduma pindureta quium dia nois paga. Sapien in monti palavris qui num significa nadis i pareci latim. Interessantiss quisso pudia ce receita de bolis, mais bolis eu num gostis.</p>
+                                            <hr>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                                                    <i class="glyphicon glyphicon-cog"></i> <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li><a href="#">Action</a></li>
+                                                    <li><a href="#">Another action</a></li>
+                                                    <li><a href="#">Something else here</a></li>
+                                                    <li class="divider"></li>
+                                                    <li><a href="#">Separated link</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </paper-card>
+                                </li> -->
+                                <!-- <li class="timeline-inverted">
+                                    <div class="timeline-badge success">
+                                        <iron-icon icon="maps:directions-bus"></iron-icon>
+                                    </div>
+                                    <paper-card id="hidVis5" class="timeline-panel" image="http://wallpapercave.com/wp/sNxf34y.jpg">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">Mussum ipsum cacilds</h4>
+                                        </div>
+                                        <div class="timeline-body">
+                                            <p>Mussum ipsum cacilds, vidis litro abertis. Consetis adipiscings elitis. Pra lá , depois divoltis porris, paradis. Paisis, filhis, espiritis santis. Mé faiz elementum girarzis, nisi eros vermeio, in elementis mé pra quem é amistosis quis leo. Manduma pindureta quium dia nois paga. Sapien in monti palavris qui num significa nadis i pareci latim. Interessantiss quisso pudia ce receita de bolis, mais bolis eu num gostis.</p>
+                                        </div>
+                                    </paper-card>
+                                </li> -->
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="footer" class="horizontal around-justified layout center">
+                        <div id="landing-div7">
+                            <h3>StudySolo ®</h3>
+                            <p>An online platform connecting Teachers & Students. It allows students to take tests online prepared by their teachers, discuss doubts with their batchmates anytime, anywhere from any device.</p>
+                            <div id="social_icons" class="layout horizontal">
+                                <a target="_blank" title="follow me on facebook" href="https://www.facebook.com/StudySoloNow/">
+                                    <iron-image id="fb" alt="follow me on facebook" src="app/images/fb_icon.png" style="width:30px; height:30px;" sizing="cover"></iron-image>
+                                </a>
+                                <a target="_blank" title="follow me on youtube" href="https://www.youtube.com/channel/UCOGZds3IUIwllWulwD9Lk1A">
+                                    <iron-image id="yt" alt="follow me on youtube" src="app/images/youtube_icon.png" style="width:30px; height:30px;" sizing="cover"></iron-image>
+                                </a>
+                                <a id="s1" target="_blank" title="follow me on Twitter" href="http://www.twitter.com/studysolo">
+                                    <iron-image id="tr" alt="follow me on Twitter" src="app/images/twitter_icon.png" style="width:30px; height:30px;" sizing="cover"></iron-image>
+                                </a>
+                            </div>
+                        </div>
+                        <div id="landing-div8">
+                            <div id="div8_box">
+                                <p id="div8_item1">Blog</p>
+                                <p id="div8_item2">Terms & Conditions</p>
+                                <p id="div8_item3">Privacy Policy</p>
+                                <p id="div8_item4">Careers</p>
+                            </div>
+                        </div>
+                        <div id="landing-div9">
+                            <div id="map_contact">
+                                <div id="map">
+                                    <google-map latitude="28.6617702" longitude="77.4415117" zoom="11" api-key="AIzaSyDIoVZTPqOrAVQijPQBb6CCLHsUYy3ApSw">
+                                        <google-map-marker latitude="28.6617702" longitude="77.4415117" draggable="true" title="Go Giants!"></google-map-marker>
+                                    </google-map>
+                                </div>
+                                <div id="contactdetails">
+                                    <p id="address">II-A 23, Nehru Nagar,</p>
+                                    <p id="address">Ghaziabad, Near Holy Child School,</p>
+                                    <p id="address">Uttar Pradesh,India 201001</p>
+                                    <div id="contactdetailsid1" class="horizontal center layout ">
+                                        <paper-icon-button disabled icon="icons:mail"></paper-icon-button>
+                                        <p>info@StudySolo.com</p>
+                                    </div>
+                                    <div id="contactdetailsid2" class="layout horizontal">
+                                        <paper-icon-button disabled icon="icons:settings-phone"></paper-icon-button>
+                                        <p>09711912205</p>
+                                    </div>
+                                    <div id="contactdetailsid3" class="layout horizontal">
+                                        <paper-icon-button disabled icon="icons:settings-phone"></paper-icon-button>
+                                        <p>09650319277</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layout center-justified" style="background-color: #323840; padding: 1%;">
+                        <div id="rights">© StudySolo Technologies (P) Limited 2016. All Rights Reserved.</div>
+                    </div>
+                </div>
+            </paper-header-panel>
+        </paper-drawer-panel>
+        <script>
+        function scrolltofeatures() {
+            document.getElementById('features').scrollIntoView(true);
+        }
+
+        function scrolltosignin() {
+            //window.location('/app');
+            window.location.href = "/signin";
+        }
+
+        function scrolltosigninforteacher(){
+
+            window.location.href = "/teachersignin";
+        }
+
+        function scrolltocontactus() {
+            document.getElementById('footer').scrollIntoView(true);
+        }
+
+        function showvideo() {
+            var dialog = document.getElementById('popupdialog');
+            if (dialog)
+                dialog.open();
+        }
+
+        function openregistrationDialog() {
+            var dialog = document.getElementById('registrationDialog');
+            if (dialog)
+                dialog.open();
+        }
+        // handling the visual effect of features paper card
+        function makeVisible() {
+            var getScrollPosition = document.getElementById("scroll");
+            var y = getScrollPosition.scrollTop;
+            var h = document.getElementById('scroll').scrollHeight;
+            var h1 = document.getElementById('hidVis1').scrollHeight;
+            var h2 = document.getElementById('hidVis2').scrollHeight;
+            var h3 = document.getElementById('hidVis3').scrollHeight;
+            // var h4 = document.getElementById('hidVis4').scrollHeight;
+            // var h5 = document.getElementById('hidVis5').scrollHeight;
+            var x = window.innerHeight / 1.5;
+            var t = 1.5;
+            if (y > x / 2) {
+                var el = document.getElementById("hidVis");
+                el.style.visibility = 'visible';
+                el.className += " w3-container w3-center w3-animate-opacity";
+            }
+            if (y > (x + h1 / t)) {
+                var el = document.getElementById("hidVis1");
+                el.style.visibility = 'visible';
+                el.className += " w3-container w3-center w3-animate-opacity";
+            }
+            if (y > (x + h1 + h2 / t)) {
+                var el = document.getElementById("hidVis2");
+                el.style.visibility = 'visible';
+                el.className += " w3-container w3-center w3-animate-opacity";
+            }
+            if (y > (x + h1 + h2 + h3 / t)) {
+                var el = document.getElementById("hidVis3");
+                el.style.visibility = 'visible';
+                el.className += " w3-container w3-center w3-animate-opacity";
+            }
+            // if (y > (x + h1 + h2 + h3 + h4 / t)) {
+            //     var el = document.getElementById("hidVis4");
+            //     el.style.visibility = 'visible';
+            //     el.className += " w3-container w3-center w3-animate-opacity";
+            // }
+            // if (y > (x + h1 + h2 + h3 + h4 + h5 / t)) {
+            //     var el = document.getElementById("hidVis5");
+            //     el.style.visibility = 'visible';
+            //     el.className += " w3-container w3-center w3-animate-opacity";
+            // }
+        }
+        </script>
+    </template>
+</body>
+
+</html>

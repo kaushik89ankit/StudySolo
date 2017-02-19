@@ -1,0 +1,603 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="../../../bower_components/paper-dialog-behavior/paper-dialog-shared-styles.html">
+<link rel="import" href="../../../bower_components/neon-animation/neon-animations.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../student-question/student-question.html">
+<link rel="import" href="../student-questionpalette/student-questionpalette.html">
+<link rel="import" href="../student-answer/student-answer.html">
+<dom-module id="student-viewtest">
+    <template>
+        <style>
+        :host {}
+        
+         paper-material {
+            border-radius: 5px;
+            background: white;
+            padding: 5px;
+        }
+                
+        #image_dialog {
+            width: 50vw;
+            height: 88vh;
+            margin: 0px;
+            padding: 0px;
+        }
+        
+        .answerimage {
+            height: 100%;
+            width: 100%;
+            padding: 0px;
+            margin: 0px;
+        }
+              
+        .heading {
+            padding: 10px 15px;
+            margin-top: 20px;
+            background-color: #f3f3f3;
+            border: 1px solid #dedede;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            width: 100%;
+            text-align: left;
+        }
+        
+        #timer {
+            margin-top: 7px;
+            padding: 6px;
+        }
+        
+        .seconddiv {
+            width: 25%;
+            margin-right: 5px;
+        }
+        
+        #questionpalette {
+            @apply(--layout-self-stretch);
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+               
+        .student_container {
+            @apply(--layout-horizontal);
+            height:100%;
+        }
+        
+        .student_firstdiv {
+            @apply(--layout-vertical);
+            width: 75%;
+            margin: 3px;
+            margin-right: 0px;
+            height:100%;
+           
+        }
+        
+        .legend {
+            padding: 10px;
+            padding-top: 5px;
+            background: white;
+            height: 80px;
+            width: 92%;
+            background-color: #E9EAED;
+        }
+        
+        #divlegend {
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+        }
+        .top_container{
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+            padding:5px;
+            padding-left:10px; 
+            padding-right:10px;
+            margin:5px; 
+            height:8vh;
+        }
+        .main_container{
+            height:64vh;
+            overflow-y:auto; 
+            padding:10px; 
+            margin:5px; 
+            margin-top:1px; 
+            margin-bottom:0px;
+            background:white;
+        }
+        .bottom_container {
+            @apply(--layout-horizontal);
+            @apply(--layout-justified);
+            padding: 10px;
+            margin: 5px;
+            width: 96%;
+            height:6vh;
+        }
+        .okButton {
+            background-color: var(--button-normal);
+            color: var(--color-white);
+            height:6vh;
+        }
+        
+        .okButton:hover {
+            background-color: var(--button-hover);
+        }
+        </style>
+        <div class="student_container">
+            <div class="student_firstdiv">
+                <paper-material elevation="1" class="top_container">
+                    <div style="width:100%;" class="horizontal start-justified layout"><b>Test ID :</b> <span style="padding-left:5px;text-transform: uppercase;">{{testId}}</span></div>
+                    <div style="width:100%;" class="horizontal end-justified layout"><b>Test Title :</b> <span style="padding-left:5px; text-transform: uppercase;">{{testTitle}}</span></div>
+                </paper-material>
+                <paper-material class="main_container" elevation="1">
+                    <div class="layout vertical justified" style="border-bottom: 2px solid #ccccff;">
+                        <student-question id="studentquestion" question-number="{{currentquestion}}" question-text="{{questiontext}}" question-imagepath="{{questionimage}}" type-selected="{{typeselected}}" question-marks="{{questionmarks}}"></student-question>
+                    </div>
+                    <div style="margin:-5px; margin-top:5px;">
+                        <paper-item style="color:black; margin:-5px; margin-top:-10px; padding-left:10px;" disabled><b>Options :</b></paper-item>
+                        <div id="student_answerbox" class="layout vertical justified" style="margin:-5px;padding:0px;overflow-x:hidden;"></div>
+                    </div>
+                </paper-material>
+                <paper-material class="bottom_container" elevation="1">
+                    <paper-button raised class="okButton" id="previousButton" on-click="studentPrevious">Previous</paper-button>
+                    <paper-button id="nextButton" on-click="studentNext" raised class="okButton">Next</paper-button>
+                </paper-material>
+            </div>
+            <div class="seconddiv">
+                <div class="layout vertical">
+                    <paper-material id="timer" elevation="1" class="vertical layout center" style="height:8vh;padding-left:10px;padding-right:10px;">
+                        <div class="horizontal layout center" style="width:100%;">
+                            <div class="horizontal start-justified layout" style="width:100%;"><b>Correct:</b><span style="margin-left:1px;">{{totalCorrect}}</span>
+                            </div>
+                            <div style="width:100%;" class="horizontal end-justified layout"><b>Attempted:</b><span style="margin-left:1px;">{{attemptedQuestions}}</span>
+                            </div>
+                        </div>
+                        <div class="horizontal layout center" style="width:100%;margin-top:10px;">
+                            <div style="width:100%;" class="horizontal start-justified layout"><b>Score:</b><span style="margin-left:1px;">{{totalScore}}</span>
+                            </div>
+                            <div style="width:100%;" class="horizontal end-justified layout"><b>Total Marks:</b><span style="margin-left:1px;">{{totalMarks}}</span>
+                            </div>
+                        </div>
+                    </paper-material>
+                    <paper-material id="questionpalette" style="border-radius: 3px; max-height:75vh; overflow-y: auto;">
+                        <student-questionpalette id="palette1" current-question="{{currentquestion}}" numberof-questions={{totalQuestions}}></student-questionpalette>
+                        <div class="vertical layout" style="margin-top: 10px;margin-left: 0;padding-left: 0; height:80px">
+                            <div id="divlegend" style="height:20px;">
+                                <div style="margin-right:5px;">
+                                    <paper-fab mini style="height:2px;width:2px;background:#c2f0c2"></paper-fab>
+                                </div>
+                                <div>
+                                    <h5>Correct</h5>
+                                </div>
+                            </div>
+                            <div id="divlegend" style="height:20px;">
+                                <div style="margin-right:5px;">
+                                    <paper-fab mini style="height:2px;width:2px;background:#ff8566"></paper-fab>
+                                </div>
+                                <div>
+                                    <h5>Wrong</h5>
+                                </div>
+                            </div>
+                            <div id="divlegend" style="height:20px;">
+                                <div style="margin-right:5px;">
+                                    <paper-fab mini style="height:2px;width:2px;background:white"></paper-fab>
+                                </div>
+                                <div>
+                                    <h5>Unattempted Questions </h5>
+                                </div>
+                            </div>
+                        </div>
+                    </paper-material>
+                </div>
+            </div>
+            <paper-dialog class="size-position" id="image_dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+                <iron-image class="answerimage" src={{dialog_image}} sizing="contain"></iron-image>
+            </paper-dialog>
+            <paper-dialog style="border: 3px solid #3F51B5;" id="instructions" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+                <paper-dialog-scrollable style="margin-top: 0;">
+                    <student-instructions></student-instructions>
+                </paper-dialog-scrollable>
+                <div class="layout horizontal center-justified" style="padding:2px;margin:0px;">
+                    <paper-button class="okButton" dialog-confirm autofocus>CLOSE</paper-button>
+                </div>
+            </paper-dialog>
+            <paper-dialog style="border: 3px solid #3F51B5; padding:10px;" id="submitTestWarning" entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+                <h4>Do you want to submit this test ?</h4>
+                <div class="layout horizontal center-justified">
+                    <paper-button class="okButton" dialog-confirm on-click="submitTest">Yes</paper-button>
+                    <paper-button class="okButton" dialog-dismiss autofocus>No</paper-button>
+                </div>
+            </paper-dialog>
+            <!-- ajax call starts here -->
+            <!-- ajax call to get the test question starts here -->
+            <iron-ajax id="student_testget_ironajax" url="/api/testdata/" handle-as="json" content-type='application/json' params="{{testget_Params}}" method="GET" on-response="testgetonResponse" on-error="onError"></iron-ajax>
+            <!-- ajax call to get the test question ends here -->
+            <!-- ajax to get test response starts here -->
+            <iron-ajax id="responseget_ironajax" url="/api/testresponses/" handle-as="json" content-type='application/json' method="GET" params="{{responseget_Params}}" on-response="responsegetonResponse" on-error="onError"></iron-ajax>
+            <!-- ajax to get test response ends here -->
+            <!-- ajax call to update questions starts here -->
+            <iron-ajax id="responseupdate_ironajax" url="/api/testresponses/update" handle-as="json" content-type='application/json' params="{{responseupdate_params}}" method="POST" body="{{responseupdate_body}}" on-response="responseupdateonResponse" on-error="responseupdateonError"></iron-ajax>
+            <!-- ajax call to update questions ends here -->
+            <!-- ajax call to submit test starts here -->
+            <iron-ajax id="responsesubmit_ironajax" url="/api/testresponses/update" handle-as="json" content-type='application/json' params="{{responseupdate_params}}" method="POST" body="{{responseupdate_body}}" on-response="responsesubmitonResponse" on-error="responsesubmiteonError"></iron-ajax>
+            <!-- ajax call to submit test ends here -->
+            <!-- For posting the create test starts here -->
+            <iron-ajax id="createresponse_ironajax" url="/api/testresponses/" handle-as="json" content-type='application/json' method="POST" body="{{createresponse_postbody}}" on-response="_createresponseonResponse" on-error="_createresponseonError"></iron-ajax>
+            <!-- For posting the create test ends here -->
+            <!-- ajax call ends here -->
+    </template>
+    <script>
+    (function() {
+        'use strict';
+        Polymer({
+            is: 'student-viewtest',
+            properties: {
+                getquestion_object: {
+                    notify: true
+                },
+                dialog_image: {
+                    notify: true
+                },
+                duration: {
+                    type: Number,
+                    notify: true
+                },
+                testTitle: {
+                    type: String,
+                    value: "",
+                    notify: true
+                },
+                testId: {
+                    type: String,
+                    notify: true
+                },
+                testget_Params: {
+                    type: Object,
+                    notify: true
+                },
+                responseget_Params: {
+                    type: Object,
+                    notify: true
+                },
+                responseupdate_params: {
+                    type: Object,
+                    notify: true
+                },
+                createresponse_postbody: {
+                    type: Object,
+                    notify: true
+                },
+                responseupdate_body: {
+                    type: Object,
+                    notify: true
+                },
+                currentquestion: {
+                    type: Number,
+                    value: 0,
+                    notify: true,
+                    observer: '_currentquestionChanged'
+                },
+                questions: {
+                    type: Array,
+                    notify: true
+                },
+                responses: {
+                    type: Array,
+                    notify: true
+                },
+                totalQuestions: {
+                    type: Number,
+                    notify: true
+                },
+                questiontext: {
+                    type: String,
+                    notify: true
+                },
+                questionimage: {
+                    type: String,
+                    notify: true
+                },
+                typeselected: {
+                    type: String,
+                    notify: true
+                },
+                questionmarks: {
+                    type: Number,
+                    notify: true
+                },
+                remainingTime: {
+                    type: Number,
+                    notify: true
+                },
+                timeLeft: {
+                    type: String,
+                    notify: true,
+                    computed: 'formatTime(remainingTime)'
+                },
+                attemptedQuestions: {
+                    type: Number,
+                    notify: true,
+                    value: 0
+                },
+                numberOfoptions: {
+                    type: Number,
+                    notify: true
+                },
+                tempresponses: {
+                    type: String,
+                    notify: true
+                },
+                current_state: {
+                    type: String,
+                    notify: true,
+                    value: "U"
+                },
+                reviewText: {
+                    type: String,
+                    notify: true,
+                    value: "Mark for Review & Next"
+                },
+                ReviewBoolean: {
+                    type: Boolean,
+                    notify: true,
+                    value: false
+                },
+                statusCheck: {
+                    type: Boolean,
+                    notify: true,
+                    value: false
+                },
+                totalScore: {
+                    type: Number,
+                    notify: true,
+                    value: 0
+                },
+                totalCorrect: {
+                    type: Number,
+                    notify: true,
+                    value: 0
+                }
+
+            },
+            ready: function() {},
+            loadTest: function(testId, testTitle) {
+                this.testId = testId;
+                this.testTitle = testTitle;
+                this.currentquestion = 0;
+                this.$.palette1.defaultScreen();
+                this.getDatafromServer();
+            },
+            toggle: function() {
+                var dialog = document.getElementById('helpinfo');
+                if (dialog) {
+                    dialog.open();
+                }
+            },
+            on_dialogopen: function(image_path) {
+                this.dialog_image = image_path;
+                var dialog = this.$.image_dialog;
+                if (dialog) {
+                    dialog.open();
+                }
+            },
+            _currentquestionChanged: function(newValue, oldValue) {
+                if (this.questions != null && this.questions.length > 0 && newValue != undefined && newValue>0) {
+                    this.set_currentquestion(newValue - 1);
+
+                    //this.$.palette1._changeColor("current", newValue);
+                    this.$.palette1._scrollTo(newValue);
+                }
+
+                // for visiblity of next and previous buttons starts here
+                if (newValue == 1) {
+                    this.$.previousButton.style.visibility = "hidden";
+                } else
+                    this.$.previousButton.style.visibility = "visible";
+
+                if (this.questions != null && newValue == this.questions.length) {
+                    this.$.nextButton.style.visibility = "hidden";
+                } else
+                    this.$.nextButton.style.visibility = "visible";
+                // for visiblity of next and previous buttons ends here
+            },
+            set_currentquestion: function(currentquestion) {
+                this.questiontext = this.questions[currentquestion].question_title;
+                this.questionimage = this.questions[currentquestion].question_image;
+                this.typeselected = this.questions[currentquestion].question_type;
+                this.questionmarks = this.questions[currentquestion].question_marks;
+
+                while (this.$.student_answerbox.firstChild) {
+                    this.$.student_answerbox.removeChild(this.$.student_answerbox.firstChild);
+                }
+                for (var i = 0; i < this.questions[currentquestion].answer_array.length; i++) {
+                    var student_answer = document.createElement("student-answer");
+                    student_answer.option_number = this.questions[currentquestion].answer_array[i].option_number;
+                    student_answer.answer_text = this.questions[currentquestion].answer_array[i].answer_title;
+                    student_answer.answer_image = this.questions[currentquestion].answer_array[i].answer_image;
+                    student_answer._changeState();
+                    if (this.responses != null && this.responses[currentquestion] != null && this.responses[currentquestion].answer_array != null && this.responses[currentquestion].answer_array[i] != null)
+                        student_answer.marked_answer = this.responses[currentquestion].answer_array[i].answer_marked;
+
+                    // if (student_answer.option_number % 2 == 0)
+                    //     student_answer.style.background = "white";
+                    // else
+                    //     student_answer.style.background = "#e6f9ff";
+
+                    if (this.questions[currentquestion].answer_array[i].answer_marked)
+                        student_answer.style.background = "#b3ffb3";
+
+                    this.$.student_answerbox.appendChild(student_answer);
+                }
+            },
+            studentNext: function() {
+                if (this.currentquestion < this.questions.length) {
+                    this.currentquestion = this.currentquestion + 1;
+                }
+            },
+            studentPrevious: function() {
+                if (this.currentquestion > 1) {
+                    this.currentquestion = this.currentquestion - 1;
+                }
+            },
+            // get test from server starts here
+            getDatafromServer: function() {
+                this.testgetSetparams();
+                app.waitDialogMessage = "Please wait getting test details";
+                app.$.commonWaitDialog.open();
+                this.$.student_testget_ironajax.generateRequest();
+            },
+            testgetSetparams: function() {
+                var selObj = JSON.stringify({
+                    "where": {
+                        test_id: this.testId
+                    }
+                });
+                var retObj = {
+                    filter: selObj
+                };
+                this.testget_Params = retObj;
+            },
+            testgetonResponse: function() {
+                app.$.commonWaitDialog.close();
+                if (this.$.student_testget_ironajax.lastResponse != null) {
+                    var tempResponse = this.$.student_testget_ironajax.lastResponse[0];
+                    this.duration = tempResponse.duration_seconds;
+                    this.questions = tempResponse.questions;
+                    this.totalQuestions = tempResponse.questions.length;
+                    this.totalMarks = tempResponse.total_marks;
+                    this.$.palette1.setScreen(this.totalQuestions);
+                    this.getResponse();
+                }
+            },
+            onError: function() {
+                alert("Something went wrong please try again");
+                app.$.commonWaitDialog.close();
+            },
+            // get test from server ends here
+
+            // get response from server starts here
+            getResponse: function() {
+                this.responsegetSetparams();
+                app.waitDialogMessage = "Please wait getting test details";
+                app.$.commonWaitDialog.open();
+                this.$.responseget_ironajax.generateRequest();
+            },
+            responsegetSetparams: function() {
+                var selObj = JSON.stringify({
+                    "where": {
+                        test_id: this.testId,
+                        student_id: localStorage.loginid
+                    }
+                });
+                var retObj = {
+                    filter: selObj
+                };
+                this.responseget_Params = retObj;
+            },
+            responsegetonResponse: function() {
+                app.$.commonWaitDialog.close();
+                if (this.$.responseget_ironajax.lastResponse != null && this.$.responseget_ironajax.lastResponse.length > 0) {
+                    var tempResponse = this.$.responseget_ironajax.lastResponse[0];
+                    if (tempResponse.testresponse.length > 0) {
+                        this.responses = tempResponse.testresponse;
+                        this.attemptedQuestions = tempResponse.attempted_questions;
+                        if (typeof tempResponse.score != undefined)
+                            this.totalScore = tempResponse.score;
+                        if (typeof tempResponse.correct_questions != undefined)
+                            this.totalCorrect = tempResponse.correct_questions;
+                        for (var i = 0; i < this.responses.length; i++) {
+                            this.changeState(i);
+                        }
+                    }
+
+                }
+                 this.currentquestion = 1;
+                //this.$.palette1._changeColor("current", this.currentquestion);
+            },
+            // get response from server ends here
+
+            // function to format time starts here
+            formatTime: function(time) {
+                var h = 0,
+                    m = 0,
+                    s = 0;
+                var newTime = '';
+                if (time > 0) {
+                    h = Math.floor(time / (60 * 60));
+                    time = time % (60 * 60);
+                    m = Math.floor(time / (60));
+                    time = time % (60);
+                    s = time;
+                    if (h < 10) {
+                        h = "0" + h;
+                    }
+                    if (m < 10) {
+                        m = "0" + m;
+                    }
+                    if (s < 10) {
+                        s = "0" + s;
+                    }
+                    newTime = h + ":" + m + ":" + s;
+                } else
+                    newTime = "Time Up";
+                return newTime;
+            },
+            // function to format time ends here
+
+
+            // function to submit test starts here
+            showSubmitDialog: function() {
+                this.$.submitTestWarning.open();
+            },
+            submitTest: function() {
+                this._saveserverSubmitTest();
+            },
+            // function to submit test ends here
+
+            // function to change state of button and calculate attempted in question pallete starts here
+            changeState: function(no) {
+                this.$.palette1._changeColorView(this.responses[no].answer_state, parseInt(no + 1));
+            },
+            changeStateWhite: function(no) {
+                this.$.palette1._changeColorView("Unattempted", parseInt(no + 1));
+            },
+            // function to change state of button and calculate attempted in question pallete ends here
+
+            // function to calculate attempted starts here
+            calculateAttempted: function(no) {
+                if (this.responses[no].answer_key.indexOf("T") > -1) {
+                    if (this.responses[no].answer_state == null || this.responses[no].answer_state == "" || this.responses[no].answer_state == "U" || this.responses[no].answer_state == "RU")
+                        this.attemptedQuestions++;
+                } else {
+                    if (this.responses[no].answer_state == "A" || this.responses[no].answer_state == "RA")
+                        this.attemptedQuestions--;
+                }
+            },
+            // function to calculate attempted ends here
+
+            // function to view instructions starts here
+            openInstructions: function() {
+                    this.$.instructions.open();
+                }
+                // function to view instructions ends here
+
+        });
+    })();
+    </script>
+</dom-module>
+<!-- Note:
+1. Code for different states of button
+    a. A -- Attempted.
+    b. U -- UnAttempted.
+    c. RU -- Marked for review and UnAttempted.
+    d. RA -- MArked for review and Attempted.
+ -->

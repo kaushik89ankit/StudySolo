@@ -1,0 +1,59 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-input/iron-input.html">
+<link rel="import" href="ssn-validator.html">
+
+<dom-module id="ssn-input">
+  <template>
+
+    <style>
+      :host {
+        display: inline-block;
+      }
+      input[is="iron-input"] {
+        font: inherit;
+        outline: none;
+        box-shadow: none;
+        border: none;
+        width: auto;
+        text-align: center;
+      }
+    </style>
+
+    <ssn-validator></ssn-validator>
+
+    <input is="iron-input" maxlength="3" bind-value="{{_ssn1}}" size="5" placeholder="e.g 1,2">
+
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: 'ssn-input',
+    behaviors: [
+      Polymer.IronValidatableBehavior
+    ],
+    properties: {
+      value: {
+        notify: true,
+        type: String
+      },
+      _ssn1: {
+        type: String
+      },
+      validator: {
+        type: String,
+        value: 'ssn-validator'
+      }
+    },
+    inputLabel:{
+      type: String,
+      value:"hi"
+    },
+    observers: [
+      '_computeValue(_ssn1)'
+    ],
+    _computeValue: function(ssn1) {
+      this.value = ssn1.trim();
+    }
+  });
+</script>

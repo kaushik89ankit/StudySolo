@@ -1,0 +1,145 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/file-input/file-input.html">
+<dom-module id="image-resize">
+    <template>
+        <style>
+        :host {
+            display: block;
+        }
+        
+        #input {
+            padding: 5px;
+            margin-top: 3px;
+            @apply(--layout-horizontal);
+            @apply(--layout-center-justified);
+            width: 100px;
+            background-color: #3f51b5;
+            height: 30px;
+            border-radius: 5px;
+        }
+        </style>
+        <div class="horizontal layout">
+            <paper-item>Click to add: </paper-item>
+            <div id="input">
+                <file-input style="color: white; line-height: 30px;" on-change="handleFiles">Select Image</file-input>
+            </div>
+        </div>
+        <div>
+            <iron-image id="image" src=""></iron-image>
+            <div id="noChange"></div>
+        </div>
+    </template>
+    <script>
+    (function() {
+        'use strict';
+
+        Polymer({
+            is: 'image-resize',
+
+            properties: {
+                foo: {
+                    type: String,
+                    value: 'image-resize',
+                    notify: true
+                },
+                dataurl: {
+                    type: String,
+                    notify: true
+                }
+            },
+            handleFiles: function(e) {
+                // var filesToUpload = document.getElementById("input").files;
+                var file = e.target.files[0];
+
+                // Reading image size
+                var size = parseFloat(file.size / 1024).toFixed(2);
+                // console.log("Normal Size: " + size + " KB");
+
+                // Create an image
+                var img = document.createElement("img");
+                // Create a file reader
+                var reader = new FileReader();
+                // Set the image once loaded into file reader
+                reader.onload = function(e) {
+                        img.src = e.target.result;
+
+                        var canvas = document.createElement("canvas");
+                        //var canvas = $("<canvas>", {"id":"testing"})[0];
+                        var ctx = canvas.getContext("2d");
+                        ctx.drawImage(img, 0, 0);
+
+                        var width = img.width;
+                        var height = img.height;
+                        var MAX_HEIGHT = 500;
+                        var MAX_WIDTH = 500;
+
+                        if (width > height) {
+                            if (width > MAX_WIDTH) {
+                                height *= MAX_WIDTH / width;
+                                width = MAX_WIDTH;
+                            }
+                        } else {
+                            if (height > MAX_HEIGHT) {
+                                width *= MAX_HEIGHT / height;
+                                height = MAX_HEIGHT;
+                            }
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        var ctx = canvas.getContext("2d");
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        this.dataurl = canvas.toDataURL("image/png");
+
+                        //Reading compressed image size
+                        var head = 'data:image/png;base64,';
+                        var compress_size = (parseFloat((this.dataurl.length - head.length) * 3 / 4) / 1024).toFixed(2);
+                        //console.log("Compressed Size: "+ compress_size + " KB");
+
+                        //Downloading compressed image
+                        if (Math.round(compress_size) < Math.round(size)) {
+                            var link = document.createElement('a');
+                            link.href = this.dataurl;
+                            link.download = 'compressed_image';
+                            document.body.appendChild(link);
+                            link.click();
+
+                            document.getElementById("noChange").innerHTML = "Image has been set in the editor.";
+                            // document.getElementById("noChange").innerHTML = "Image Downloaded.";
+                            document.querySelector("file-input").reset();
+                        } 
+
+                        else {
+                            document.getElementById("noChange").innerHTML = "Image has been set in the editor.";
+                            // document.getElementById("noChange").innerHTML = "Image is not downloaded due to no change in file size.";
+                            document.querySelector("file-input").reset();
+                        }
+
+                        document.getElementById('image').src = this.dataurl;
+
+                        tinyMCE.execCommand('mceInsertContent', false, '<img style="vertical-align: middle" src="' + this.dataurl + '"/>');
+                    }
+                    // Load files into file reader
+                reader.readAsDataURL(file);
+
+                // Post the data
+                /*
+                var fd = new FormData();
+                fd.append("name", "some_filename.jpg");
+                fd.append("image", this.dataurl);
+                fd.append("info", "lah_de_dah");
+                */
+            },
+        });
+    })();
+    </script>
+</dom-module>

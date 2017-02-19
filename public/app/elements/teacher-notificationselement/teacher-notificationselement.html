@@ -1,0 +1,261 @@
+<link rel="import" href="../../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-styles/color.html">
+<link rel="import" href="../../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../../bower_components/paper-select/paper-select.html">
+<dom-module id="teacher-notificationselement">
+  <template>
+    <style>
+    :host {
+      overflow-x: auto;
+      font: 400 100%/1.5 Roboto, sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.1;
+      color: rgba(0, 0, 0, 0.87);
+    }
+    
+    iron-list {
+      height: 89%;
+      width: 100%;
+      @apply(--layout-flex);
+      --iron-list-items-container: {
+        border-bottom: 1px solid #ddd;
+        width: 100%;
+        height: 100%;
+      }
+      ;
+    }
+    
+    .item {
+      @apply(--layout-horizontal);
+      padding: 20px;
+      background-color: white;
+      border: 1px solid #ddd;
+      cursor: pointer;
+      margin-bottom: 10px;
+      padding: 5px;
+      border-radius: 8px;
+    }
+    
+    .item:hover {
+      color: var(--default-primary-color, );
+      border: 1px solid #4E7AC7;
+    }
+    
+    .avatar {
+      height: 40px;
+      width: 40px;
+      border-radius: 20px;
+      box-sizing: border-box;
+      background-color: #DDD;
+    }
+    
+    .listContainer {
+      height: 550px;
+      width: 80%;
+      margin-top: 5px;
+      margin-left: 7px;
+    }
+    
+    .containerheader {
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      background-color: #f2f2f2;
+      padding: auto;
+      margin: auto;
+      margin-left: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 97%;
+      height: 56px;
+    }
+    
+    .item:focus {
+      outline: 0;
+      border-color: #333;
+    }
+    
+    .item .shortversion {
+      display: inline-block;
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 8px;
+      background-color: white;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      height: 55px;
+      width: 100%;
+    }
+    
+    .shortversion .ellitext {
+      list-style-position: inside;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .item-expanded .longversion {
+      display: block;
+      @apply(--layout-vertical);
+      @apply(--flex);
+      background-color: white;
+      padding: 5px;
+      border-radius: 8px;
+      height: 200px;
+    }
+    
+    .longversion .ellitext {
+      color: black;
+      white-space: normal;
+    }
+    
+    .item .longversion {
+      display: none;
+    }
+    
+    .item-expanded .shortversion {
+      display: none;
+    }
+    
+    .item p {
+      width: 20%;
+    }
+    
+    paper-button.indigo {
+      background-color: var(--paper-indigo-500);
+      color: white;
+      margin-top: 10px;
+      --paper-button-raised-keyboard-focus: {
+        color: white !important;
+        margin-left: 10px;
+      }
+      ;
+    }
+    
+    paper-button.indigo:hover {
+      background-color: var(--paper-indigo-100);
+    }
+    
+    paper-material {
+      display: inline-block;
+      background: white;
+      box-sizing: border-box;
+      margin: 8px;
+      padding: 16px;
+      border-radius: 3px;
+    }
+    </style>
+    <!-- <iron-ajax url="../teacher-saveddrafts/contacts.json" last-response="{{items}}" auto></iron-ajax> -->
+    <paper-material class="layout vertical" style="background:white;width:80%;margin-left:5px;padding:5px;margin-top:5px;padding-left:20px;" elevation="4">
+      <div class="layout horizontal" style="margin:0;">
+        <h3 style="width:15%;">Title :</h3>
+        <paper-textarea label="Title for your message" no-label-float style="width:80%;margin"></paper-textarea>
+      </div>
+      <div class="layout horizontal" style="margin:0;">
+        <h3 style="width:15%;">Message :</h3>
+        <paper-textarea label="Write your message here" no-label-float style="width:80%;"></paper-textarea>
+      </div>
+      <div class="layout horizontal" style="margin:0;">
+        <h3 style="width:15%;">For Batches :</h3>
+        <div style="width:80%;">
+          <paper-select id="input2" no-label-float multiple unique on-input-changed="inputChanged" on-adding-item="addItem" select-on-blur label="e.g B1 , B4 etc." label-field="name" bind-value="{{selectedavailablebatches}}"></paper-select>
+        </div>
+      </div>
+      <div class="layout horizontal-reverse">
+        <paper-button class="indigo" style="width:10%;">Send</paper-button>
+      </div>
+    </paper-material>
+    <paper-card style="background:#f2f2f2;" elevation="2" class="listContainer">
+      <iron-list id="mynotificationlist" items="[[items]]" selection-enabled="true" as="item" on-mouseover="onMouseOverItem">
+        <template>
+          <div class$="[[getClassForItem(item, selected)]]" selected$="[[selected]]">
+            <div class="shortversion">
+              <h3 class="ellitext" style="width:30%;padding:5px;">[[item.shortText]]</h3>
+              <p class="ellitext" style="width:65%;padding:5px;">[[item.longText]]</p>
+              <h4 class="ellitext" style="width:5%;padding:5px;">[[item.zip]]</h4>
+            </div>
+            <div class="longversion">
+              <p class="ellitext">[[item.name]]</p>
+              <p class="ellitext">[[item.state]]</p>
+              <p class="ellitext">[[item.country]]</p>
+              <p class="ellitext">[[item.phone]]</p>
+            </div>
+          </div>
+        </template>
+      </iron-list>
+    </paper-card>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'teacher-notificationselement',
+
+      properties: {
+        foo: {
+          type: String,
+          value: 'teacher-notificationselement',
+          notify: true
+        },
+        items: {
+          type: Array,
+          notify: true
+
+        },
+        availablebatches: {
+          type: Array,
+          value: [{
+            id: 1,
+            name: "B1"
+          }, {
+            id: 2,
+            name: "B2"
+          }, {
+            id: 3,
+            name: "B3"
+          }, {
+            id: 4,
+            name: "B4"
+          }, {
+            id: 5,
+            name: "B5"
+          }, {
+            id: 6,
+            name: "B6"
+          }]
+        }
+      },
+      getClassForItem: function(item, selected) {
+
+        return selected ? 'item-expanded' : 'item';
+      },
+      onMouseOverItem: function(e) {
+        this.$.mynotificationlist.notifyResize();
+      },
+      inputChanged: function(e, d) {
+        var input = (e.detail.value || '').trim().toLowerCase();
+        if (input)
+          e.target.options = this.availablebatches.filter(function(item) {
+            return item.name.toLowerCase().indexOf(input) === 0;
+          });
+        else
+          e.target.options = [];
+      }
+    });
+  })();
+  </script>
+</dom-module>

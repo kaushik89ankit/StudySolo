@@ -1,0 +1,191 @@
+<style is="custom-style">
+:root {
+    --darkcolor-main: #3F51B5;
+    --darkcolor-second: #E9EAED;
+    --lightcolor-main: #4E7AC7;
+    --lightcolor-second: #e6ecff;
+    --lightcolor-third: #6666ff;
+    --color-white: #ffffff;
+    --color-black: #000000;
+    --button-normal: #3f51b5;
+    --button-hover: #354497;
+    font-family:  'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+body {
+    background: var(--color-white);
+    font-family:  'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: black;
+}
+
+.container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 200px;
+    margin: -300px 0 0 -150px;
+}
+
+.containerAfterlogin {}
+
+.footer {
+    position: absolute;
+    top: 82%;
+    width: 98%;
+    @apply(--layout-vertical);
+    @apply(--layout-center);
+}
+
+.copyright {
+    text-align: center;
+}
+.copyright a{
+    color:#3F51B5;
+}
+
+.maincontent {
+    height: 100%;
+}
+
+.heading {
+    font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: .875rem;
+    text-transform: inherit;
+    line-height: 1;
+    font-weight: bold;
+    padding-left: 10px;
+    font-size: 75%;
+}
+
+a.menuList {
+    color: #59595A;
+}
+
+a.menuList:hover {
+    color: black;
+    font-weight: bold;
+    background: #E9EAED;
+}
+
+.menuHover {
+    width: 100%;
+    color: red;
+    font-weight: bold;
+    background: red;
+}
+
+.menuHover:hover {
+    width: 100%;
+    color: black;
+    font-weight: bold;
+    background: #E9EAED;
+}
+
+.app-menu {
+    --paper-menu-selected-item: {
+        color: black;
+        font-weight: bold;
+    }
+    ;
+}
+
+.menuList:hover {
+    background-color: #E9EAED;
+    font-weight: bold;
+}
+
+.hoveronmenu:hover {
+    background-color: #E9EAED;
+    font-weight: bold;
+    pointer-events: all;
+}
+
+.list {
+    font-style: bold;
+    --paper-menu-selected-item {
+        background-color: #b3b3b3;
+    }
+    ;
+}
+
+.profileButton {
+    @apply(--layout-horizontal);
+    @apply(--layout-justified);
+    background-color: var(--button-normal);
+    color: var(--color-white);
+}
+
+.profileButton:hover {
+    color: var(--lightcolor-second);
+}
+
+paper-dialog.size-position {
+    color: black;
+    padding: -10px;
+    position: fixed;
+    top: 40px;
+    right: -10px;
+    width: 200px;
+    border: none;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background-color: var(--color-white);
+}
+
+paper-dialog.size-position a {
+    color: #59595A;
+}
+
+paper-dialog.size-position a:hover {
+    color: black;
+}
+
+.error {
+    color: red;
+}
+
+.centercontainer {
+    @apply(--layout-horizontal);
+    @apply(--layout-center-justified);
+}
+
+paper-header-panel {
+    @apply(--shadow-elevation-2dp);
+}
+
+paper-dialog {
+    border: 2px solid;
+    border-color: var(--darkcolor-main);
+    background-color: var(--lightcolor-second);
+    color: black;
+    padding: -10px;
+}
+
+.okButton {
+    background-color: var(--button-normal);
+    color: var(--color-white);
+}
+
+.okButton:hover {
+    background-color: var(--button-hover);
+}
+
+.error {
+    color: var(--darkcolor-main);
+}
+.noAccount {
+    font-size: 90%;
+    margin-bottom: 5px;
+}
+
+@media all and (min-width: 0) and (max-width: 1000px) and (orientation: portrait) {
+    .copyright {
+        width: 70%;
+    }
+    .noAccount {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+}
+</style>
