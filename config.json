@@ -20,10 +20,11 @@
         "dialect": "update me"
     },
     "production": {
-        "username": "admin",
-        "password": "password",
-        "database": "update me",
-        "host": "update me",
+        "username": "rtzglhtgrsgbqy",
+        "password": "77c6c3167d3740e8dd82d86fae9dc538bbad9c02d2fb5756a8a9107bed38fa99",
+        "database": "dbn2mc11m452j0",
+        "host": "ec2-54-83-25-217.compute-1.amazonaws.com",
+        "port": "5432",
         "dialect": "postgres"
     }
 }

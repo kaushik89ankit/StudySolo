@@ -9,7 +9,11 @@ var db = {};
 var pg = require('pg');
 
 
-var conString = process.env.ELEPHANTSQL_URL || "postgres://postgres:5432@localhost/postgres";
+//var conString = process.env.ELEPHANTSQL_URL || "postgres://postgres:5432@localhost/postgres";
+
+var conString = "postgres://rtzglhtgrsgbqy:77c6c3167d3740e8dd82d86fae9dc538bbad9c02d2fb5756a8a9107bed38fa99@ec2-54-83-25-217.compute-1.amazonaws.com:5432/dbn2mc11m452j0";
+
+
 var client = new pg.Client(conString);
 client.connect();
 

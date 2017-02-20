@@ -9,7 +9,9 @@ var bcrypt = require('bcrypt');
 var middleware = require('./middleware.js')(db);
 var cookieParser = require('cookie-parser');
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
@@ -21,7 +23,11 @@ app.use(express.static(__dirname + '/public'));
 
 //displaying landing page
 app.get('/', function(req, res) {
+
+
     res.sendFile(path.join(__dirname + '/public/index.html'));
+
+
 });
 
 
@@ -40,7 +46,6 @@ app.post('/', function(req, res) {
 app.get('/signin', function(req, res) {
     res.status(200).sendFile(path.join(__dirname + '/public/app/index.html'));
 });
-
 
 
 
@@ -94,7 +99,9 @@ app.get('/studentget/upcomingtests', middleware.requireStudentAuthentication, fu
                 where: {
                     teacherId: teacher.id,
                     test_status: 'Scheduled',
-                    test_for_batches: { $contains: [batch.batchname] }
+                    test_for_batches: {
+                        $contains: [batch.batchname]
+                    }
                 }
             }).then(function(testdetails) {
                 res.json(testdetails);
@@ -111,42 +118,21 @@ app.get('/studentget/upcomingtests', middleware.requireStudentAuthentication, fu
 });
 
 
-
-
-
-
-
-
-
 // Requesting Test Questions while taking test
-app.get('/studenttake/test/:test_ID',middleware.requireStudentAuthentication, function(req, res){
+app.get('/studenttake/test/:test_ID', middleware.requireStudentAuthentication, function(req, res) {
 
-    
-    db.testdetail.findOne({ where :
-        {test_ID : req.params.test_ID
+
+    db.testdetail.findOne({
+        where: {
+            test_ID: req.params.test_ID
         }
-    }).then(function(testdetail){
+    }).then(function(testdetail) {
         res.json(testdetail);
-    },function(e){
+    }, function(e) {
         console.error(e);
     });
 
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -181,12 +167,10 @@ app.post('/rootuser', function(req, res) {
 
 
 
-
 // display sign in for teachers 
 app.get('/teachersignin', function(req, res) {
     res.send("This is where teachers will sign in after authenticate git ");
 });
-
 
 
 
@@ -202,12 +186,6 @@ app.post('/teachersignin', function(req, res) {
 
 
 //GET Homepage for Teacher
-
-
-
-
-
-
 
 
 
@@ -270,19 +248,9 @@ app.post('/teacher/Mybatches/:batchname', middleware.requireTeacherAuthenticatio
 
 
 
-
-
-
-
-
-
-
-
-
-
 // Creating new Test by teacher
 app.post('/teacher/createtest', middleware.requireTeacherAuthentication, function(req, res) {
-    var body = _.pick(req.body, 'test_ID', 'test_title', 'test_duration_seconds', 'test_description', 'test_window_duration_start', 'test_window_duration_end', 'test_status', 'test_for_batches', 'test_topics','test_questions');
+    var body = _.pick(req.body, 'test_ID', 'test_title', 'test_duration_seconds', 'test_description', 'test_window_duration_start', 'test_window_duration_end', 'test_status', 'test_for_batches', 'test_topics', 'test_questions');
     db.testdetail.create(body).then(function(testdetail) {
         req.teacher.addTestdetail(testdetail).then(function() {
             return testdetail.reload();
@@ -303,15 +271,3 @@ db.sequelize.sync().then(function() {
         console.log('Express server started on ' + PORT);
     });
 });
-
-
-
-
-
-
-
-
-
-// Add models for questions
-
-// Student can take tests and submit them
